@@ -74,6 +74,7 @@ export function ProveedorEstadoClinico({ children }: { children: ReactNode }) {
       setMedicoActualId,
       atenciones,
       registrarAtencion,
+      reasignarPrincipal,
       obtenerPaciente: (id) => pacientes.find((paciente) => paciente.id === id),
       atencionesDePaciente: (pacienteId) =>
         atenciones.filter((atencion) => atencion.pacienteId === pacienteId),
