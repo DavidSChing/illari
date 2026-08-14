@@ -173,21 +173,29 @@ function PantallaDemo() {
         </div>
       </header>
 
+      <p
+        role="note"
+        className="rounded-md border border-border bg-secondary px-3 py-2 text-base font-semibold text-secondary-foreground lg:hidden"
+      >
+        Para la comparación completa, use una pantalla más grande. Aquí se muestra una encima de la
+        otra.
+      </p>
+
       <div className="grid min-h-0 flex-1 gap-2 lg:grid-cols-2">
-        <section aria-labelledby="titulo-planilla" className="flex min-h-0 flex-col gap-1">
+        <section aria-labelledby="titulo-planilla" className="flex min-h-0 min-w-0 flex-col gap-1">
           <h2 id="titulo-planilla" className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
             Hoy: planilla de cálculo (200 filas · 25 columnas)
           </h2>
-          <div className="min-h-0 flex-1">
+          <div className="h-[50vh] min-h-0 lg:h-auto lg:flex-1">
             <PlanillaExcel />
           </div>
         </section>
 
-        <section aria-labelledby="titulo-ficha-demo" className="flex min-h-0 flex-col gap-1">
+        <section aria-labelledby="titulo-ficha-demo" className="flex min-h-0 min-w-0 flex-col gap-1">
           <h2 id="titulo-ficha-demo" className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
             Propuesta: Ficha de Continuidad
           </h2>
-          <div className="min-h-0 flex-1">
+          <div className="min-h-0 lg:flex-1">
             <FichaCompacta paciente={paciente} />
           </div>
         </section>
