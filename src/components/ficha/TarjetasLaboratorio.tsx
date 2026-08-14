@@ -18,7 +18,7 @@ export function TarjetasLaboratorio({ laboratorio }: { laboratorio: Laboratorio 
   const lecturas = lecturasLaboratorio(laboratorio);
 
   return (
-    <section aria-labelledby="titulo-lab" className="rounded-md border border-border bg-card p-4">
+    <section aria-labelledby="titulo-lab" className="rounded-md border border-border bg-card px-4 py-3">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h2 id="titulo-lab" className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
           Últimos valores de laboratorio
@@ -35,7 +35,7 @@ export function TarjetasLaboratorio({ laboratorio }: { laboratorio: Laboratorio 
               <span aria-hidden="true" className={`size-3 rounded-full ${PUNTO[lectura.nivel]}`} />
               <span className="text-sm font-semibold uppercase tracking-wide">{lectura.nombre}</span>
             </div>
-            <p className="mt-1 text-2xl font-bold leading-tight">
+            <p className="mt-1 text-xl font-bold leading-tight">
               {lectura.valor}
               <span className="ml-1 text-sm font-medium">{lectura.unidad}</span>
             </p>

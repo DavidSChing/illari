@@ -126,7 +126,7 @@ function FichaContinuidad() {
         <div className="flex flex-col gap-2">
           <BloqueResponsables paciente={paciente} />
           <ProximoPaso texto={paciente.proximoPasoSugerido} />
-          <div className="flex flex-col gap-2 rounded-md border border-border bg-card p-4">
+          <div className="flex flex-col gap-2 rounded-md border border-border bg-card px-4 py-3">
             <DialogoRegistrarAtencion paciente={paciente} />
             {registros.length > 0 && (
               <div>

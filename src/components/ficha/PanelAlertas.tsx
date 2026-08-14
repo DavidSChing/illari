@@ -16,7 +16,7 @@ const CLASES: Record<NivelSemaforo, string> = {
 
 export function PanelAlertas({ alertas }: { alertas: string[] }) {
   return (
-    <section aria-labelledby="titulo-alertas" className="rounded-md border border-border bg-card p-4">
+    <section aria-labelledby="titulo-alertas" className="rounded-md border border-border bg-card px-4 py-3">
       <h2 id="titulo-alertas" className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
         Alertas
       </h2>
