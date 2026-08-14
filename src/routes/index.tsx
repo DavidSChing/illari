@@ -1,24 +1,31 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
-  component: Index,
+  head: () => ({
+    meta: [
+      { title: "Jornada de hoy · Ficha de Continuidad" },
+      {
+        name: "description",
+        content:
+          "Jornada de clínica de día en hematología pediátrica: dónde está cada paciente y cuál es el siguiente paso.",
+      },
+      { property: "og:title", content: "Jornada de hoy · Ficha de Continuidad" },
+      {
+        property: "og:description",
+        content: "Prototipo demostrativo de ruta asistencial con datos sintéticos.",
+      },
+    ],
+  }),
+  component: JornadaDeHoy,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+function JornadaDeHoy() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <section aria-labelledby="titulo-jornada">
+      <h1 id="titulo-jornada" className="text-2xl font-bold text-foreground">
+        Jornada de hoy
+      </h1>
+      <p className="mt-2 text-base text-muted-foreground">Sección en construcción.</p>
+    </section>
   );
 }
