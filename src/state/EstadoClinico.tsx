@@ -2,6 +2,8 @@ import { createContext, useCallback, useContext, useMemo, useState, type ReactNo
 import { pacientes as pacientesIniciales } from "@/data/pacientes";
 import type { Paciente } from "@/data/tipos";
 
+export const ALERTA_FIEBRE_FAMILIA = "Fiebre reportada por la familia";
+
 export interface RegistroAtencion {
   id: string;
   pacienteId: string;
@@ -12,6 +14,16 @@ export interface RegistroAtencion {
   fecha: string;
 }
 
+export type AsistenciaFamilia = "sin_responder" | "confirmado" | "no_asistira";
+
+export interface RespuestaFamilia {
+  asistencia: AsistenciaFamilia;
+  motivo?: string;
+  fiebreReportada: boolean;
+}
+
+const RESPUESTA_VACIA: RespuestaFamilia = { asistencia: "sin_responder", fiebreReportada: false };
+
 interface EstadoClinicoValor {
   pacientes: Paciente[];
   medicoActualId: string;
@@ -21,7 +33,12 @@ interface EstadoClinicoValor {
   obtenerPaciente: (id: string) => Paciente | undefined;
   atencionesDePaciente: (pacienteId: string) => RegistroAtencion[];
   reasignarPrincipal: (cambios: { pacienteId: string; aMedicoId: string }[]) => void;
+  respuestaFamilia: (pacienteId: string) => RespuestaFamilia;
+  confirmarAsistencia: (pacienteId: string) => void;
+  cancelarAsistencia: (pacienteId: string, motivo: string) => void;
+  reportarFiebre: (pacienteId: string) => void;
 }
+
 
 const Contexto = createContext<EstadoClinicoValor | null>(null);
 
