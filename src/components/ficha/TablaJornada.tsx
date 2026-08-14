@@ -1,12 +1,11 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { AlertTriangle, AlertCircle, CheckCircle2, ShieldAlert } from "lucide-react";
+import { AlertTriangle, AlertCircle, CheckCircle2, ShieldAlert, CalendarCheck, CalendarX, Thermometer } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 import { useEstadoClinico } from "@/state/EstadoClinico";
 
 import { citasDeHoy } from "@/data/agenda";
-import { pacientes } from "@/data/pacientes";
 import { nombreMedico } from "@/data/medicos";
 import type { Cita, Paciente, NivelSemaforo } from "@/data/tipos";
 
@@ -58,6 +57,54 @@ function IconosAlerta({ alertas }: { alertas: string[] }) {
   );
 }
 
+function EstadoFamilia({ pacienteId }: { pacienteId: string }) {
+  const { respuestaFamilia } = useEstadoClinico();
+  const respuesta = respuestaFamilia(pacienteId);
+
+  if (respuesta.asistencia === "sin_responder" && !respuesta.fiebreReportada) {
+    return <span className="text-sm text-muted-foreground">Sin respuesta de la familia</span>;
+  }
+
+  return (
+    <ul className="flex flex-wrap items-center gap-1">
+      {respuesta.asistencia === "confirmado" && (
+        <li>
+          <span className="inline-flex items-center gap-1 rounded-full border border-clinico-verde bg-clinico-verde-suave px-2 py-0.5 text-sm font-bold text-clinico-verde-foreground">
+            <CalendarCheck aria-hidden="true" className="size-4" />
+            Confirmado
+          </span>
+        </li>
+      )}
+      {respuesta.asistencia === "no_asistira" && (
+        <>
+          <li>
+            <span
+              className="inline-flex items-center gap-1 rounded-full border border-clinico-ambar bg-clinico-ambar-suave px-2 py-0.5 text-sm font-bold text-clinico-ambar-foreground"
+              title={respuesta.motivo ? `Motivo: ${respuesta.motivo}` : undefined}
+            >
+              <CalendarX aria-hidden="true" className="size-4" />
+              No asistirá
+            </span>
+          </li>
+          <li>
+            <span className="inline-flex items-center gap-1 rounded-full border border-primary bg-secondary px-2 py-0.5 text-sm font-bold text-secondary-foreground">
+              Cupo liberado
+            </span>
+          </li>
+        </>
+      )}
+      {respuesta.fiebreReportada && (
+        <li>
+          <span className="inline-flex items-center gap-1 rounded-full border border-clinico-rojo bg-clinico-rojo-suave px-2 py-0.5 text-sm font-bold text-clinico-rojo-foreground">
+            <Thermometer aria-hidden="true" className="size-4" />
+            Fiebre reportada
+          </span>
+        </li>
+      )}
+    </ul>
+  );
+}
+
 function FilaPaciente({ cita, paciente }: { cita: Cita; paciente: Paciente }) {
   const { medicoActualId } = useEstadoClinico();
   const fueraDeDupla = medicoActualId !== paciente.medicoPrincipalId && medicoActualId !== paciente.medicoSoporteId;
@@ -100,12 +147,16 @@ function FilaPaciente({ cita, paciente }: { cita: Cita; paciente: Paciente }) {
       <td className="px-3 py-2 text-base text-foreground">
         {nombreMedico(paciente.medicoPrincipalId)}
       </td>
+      <td className="px-3 py-2">
+        <EstadoFamilia pacienteId={paciente.id} />
+      </td>
     </tr>
   );
 }
 
 export function TablaJornada() {
   const [busqueda, setBusqueda] = useState("");
+  const { pacientes } = useEstadoClinico();
 
   const filas = citasDeHoy
     .map((cita) => ({ cita, paciente: pacientes.find((p) => p.id === cita.pacienteId) }))
@@ -157,12 +208,15 @@ export function TablaJornada() {
               <th scope="col" className="px-3 py-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
                 Médico responsable
               </th>
+              <th scope="col" className="px-3 py-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                Respuesta de la familia
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
             {filas.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-3 py-6 text-center text-base text-muted-foreground">
+                <td colSpan={6} className="px-3 py-6 text-center text-base text-muted-foreground">
                   No se encontraron pacientes para “{busqueda}”.
                 </td>
               </tr>
