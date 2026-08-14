@@ -39,7 +39,7 @@ const BOTON_GRANDE =
   "flex min-h-14 w-full items-center justify-center gap-2 rounded-lg px-4 text-lg font-bold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
 
 export function VistaFamilia({ paciente }: { paciente: Paciente }) {
-  const { respuestaFamilia, confirmarAsistencia, cancelarAsistencia, reportarFiebre } =
+  const { respuestaFamilia, confirmarAsistencia, cancelarAsistencia, reportarFiebre, medicos } =
     useEstadoClinico();
   const respuesta = respuestaFamilia(paciente.id);
   const [eligiendoMotivo, setEligiendoMotivo] = useState(false);
