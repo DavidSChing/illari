@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { CalendarDays, Users, PlayCircle } from "lucide-react";
+import { CalendarDays, Users, PlayCircle, Timer } from "lucide-react";
 
 const secciones = [
   { to: "/", etiqueta: "Jornada de hoy", Icono: CalendarDays },
