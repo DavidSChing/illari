@@ -76,27 +76,30 @@ function FichaContinuidad() {
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-2 md:justify-end">
-          <SelectorMedico />
-          {paciente.procedencia.fueraDeLima ? (
-            <p className="inline-flex items-center gap-2 rounded-md border border-primary bg-primary px-3 py-1.5 text-base font-bold text-primary-foreground">
-              <MapPin aria-hidden="true" className="size-5" />
-              Viaja {paciente.horasDeViaje} h desde {paciente.procedencia.region}
-            </p>
-          ) : (
-            <p className="inline-flex items-center gap-2 rounded-md border border-border bg-secondary px-3 py-1.5 text-base font-semibold text-secondary-foreground">
-              <MapPin aria-hidden="true" className="size-5" />
-              Reside en {paciente.procedencia.ciudad}
-            </p>
-          )}
+        <div className="flex flex-col gap-1 md:items-end">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2 md:justify-end">
+            <SelectorMedico />
+            {paciente.procedencia.fueraDeLima ? (
+              <p className="inline-flex items-center gap-2 rounded-md border border-primary bg-primary px-3 py-1.5 text-base font-bold text-primary-foreground">
+                <MapPin aria-hidden="true" className="size-5" />
+                Viaja {paciente.horasDeViaje} h desde {paciente.procedencia.region}
+              </p>
+            ) : (
+              <p className="inline-flex items-center gap-2 rounded-md border border-border bg-secondary px-3 py-1.5 text-base font-semibold text-secondary-foreground">
+                <MapPin aria-hidden="true" className="size-5" />
+                Reside en {paciente.procedencia.ciudad}
+              </p>
+            )}
+          </div>
           <Link
             to="/familia/$id"
             params={{ id: paciente.id }}
-            className="inline-flex min-h-11 items-center rounded-md px-1 text-sm font-semibold text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            className="inline-flex items-center rounded-md py-1 text-sm font-semibold text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           >
             Ver versión para cuidadores
           </Link>
         </div>
+
       </header>
 
 
