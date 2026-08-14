@@ -183,7 +183,7 @@ export function DialogoRegistrarAtencion({ paciente }: { paciente: Paciente }) {
           Registrar atención
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
+      <DialogContent className="max-h-[90vh] w-[calc(100vw-1.5rem)] overflow-y-auto sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>Registrar atención</DialogTitle>
           <DialogDescription>
