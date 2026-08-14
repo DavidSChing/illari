@@ -9,7 +9,12 @@ import { ProximoPaso } from "@/components/ficha/ProximoPaso";
 /** Misma Ficha de Continuidad, reducida para el panel derecho de la demostración. */
 export function FichaCompacta({ paciente }: { paciente: Paciente }) {
   return (
-    <div className="flex h-full flex-col gap-2 overflow-auto">
+    <div
+      className="flex h-full flex-col gap-2 overflow-auto focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+      tabIndex={0}
+      role="group"
+      aria-label={`Ficha de Continuidad de ${paciente.nombre}`}
+    >
       <header className="rounded-md border border-border bg-card px-3 py-2">
         <h3 className="text-xl font-bold leading-tight text-foreground">{paciente.nombre}</h3>
         <p className="text-base text-foreground">
