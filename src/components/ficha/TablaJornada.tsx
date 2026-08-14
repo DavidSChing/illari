@@ -122,18 +122,19 @@ export function TablaJornada() {
       <label htmlFor="buscador-pacientes" className="sr-only">
         Buscar paciente por nombre
       </label>
-      <input
+      <Input
         id="buscador-pacientes"
         type="search"
         placeholder="Buscar paciente por nombre..."
         value={busqueda}
-        onChange={(evento: React.ChangeEvent<HTMLInputElement>) => setBusqueda(evento.target.value)}
-        className="h-9 max-w-sm rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+        onChange={(evento) => setBusqueda(evento.target.value)}
+        className="max-w-sm"
       />
       <p className="text-sm text-muted-foreground" aria-live="polite">
         {filas.length} de {citasDeHoy.length} citas
       </p>
     </div>
+
 
 
       <div className="overflow-hidden rounded-md border border-border">
