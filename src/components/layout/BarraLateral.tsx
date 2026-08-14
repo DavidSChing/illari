@@ -1,9 +1,10 @@
 import { Link } from "@tanstack/react-router";
-import { CalendarDays, Users, PlayCircle, Timer, FileSpreadsheet } from "lucide-react";
+import { CalendarDays, Users, PlayCircle, Timer, FileSpreadsheet, CalendarClock } from "lucide-react";
 
 const secciones = [
   { to: "/", etiqueta: "Jornada de hoy", Icono: CalendarDays },
   { to: "/cargar", etiqueta: "Cargar Excel", Icono: FileSpreadsheet },
+  { to: "/retrasos", etiqueta: "Pacientes retrasados", Icono: CalendarClock },
   { to: "/carga", etiqueta: "Carga médica", Icono: Users },
   { to: "/modo-demo", etiqueta: "Modo demo", Icono: PlayCircle },
   { to: "/demo", etiqueta: "Demostración de tiempos", Icono: Timer },
