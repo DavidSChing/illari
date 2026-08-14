@@ -54,7 +54,6 @@ function CargarExcel() {
   const [ocupado, setOcupado] = useState(false);
 
   const leerArchivo = async (entrada: File) => {
-    console.log("DEBUG leerArchivo", entrada.name, entrada.size);
     setError(null);
     setOcupado(true);
     try {
