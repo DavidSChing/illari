@@ -85,7 +85,7 @@ export const esquemas: Esquema[] = [
 ];
 
 export const obtenerEsquema = (id: string): Esquema =>
-  esquemas.find((esquema) => esquema.id === id) ?? esquemas[0];
+  esquemas.find((esquema) => esquema.id === id) ?? esquemas[0]!;
 
 export const FASES_ESQUEMA: Fase[] = [
   "Inducción",
