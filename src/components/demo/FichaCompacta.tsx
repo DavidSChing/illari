@@ -1,5 +1,5 @@
 import { MapPin, Syringe } from "lucide-react";
-import type { Paciente } from "@/data/tipos";
+import type { PacienteCompleto } from "@/data/tipos";
 import { formatearFecha } from "@/lib/formato";
 import { BarraFases } from "@/components/ficha/BarraFases";
 import { PanelAlertas } from "@/components/ficha/PanelAlertas";
@@ -7,7 +7,7 @@ import { TarjetasLaboratorio } from "@/components/ficha/TarjetasLaboratorio";
 import { ProximoPaso } from "@/components/ficha/ProximoPaso";
 
 /** Misma Ficha de Continuidad, reducida para el panel derecho de la demostración. */
-export function FichaCompacta({ paciente }: { paciente: Paciente }) {
+export function FichaCompacta({ paciente }: { paciente: PacienteCompleto }) {
   return (
     <div
       className="flex h-full flex-col gap-2 overflow-auto focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"

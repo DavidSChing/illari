@@ -1,11 +1,11 @@
-import type { Paciente } from "./tipos";
+import type { PacienteCompleto } from "./tipos";
 
 /**
  * Datos 100% sintéticos e inventados. Ninguna información real de pacientes.
  * Carga como médico principal (desbalanceada a propósito):
  * med-1: 5 · med-2: 3 · med-3: 2 · med-4: 1 · med-5: 1
  */
-export const pacientes: Paciente[] = [
+export const pacientes: PacienteCompleto[] = [
   {
     id: "pac-01",
     nombre: "Mateo Quispe",
