@@ -130,12 +130,15 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const rutaFamilia = useRouterState({
+    select: (estado) => estado.location.pathname.startsWith("/familia"),
+  });
 
   return (
     <QueryClientProvider client={queryClient}>
      <ProveedorEstadoClinico>
       <div className="flex min-h-screen flex-col bg-background md:flex-row">
-        <BarraLateral />
+        {!rutaFamilia && <BarraLateral />}
         <div className="flex min-w-0 flex-1 flex-col">
           <BannerPrototipo />
           <main className="flex-1 px-4 py-3 md:px-6">
@@ -148,4 +151,5 @@ function RootComponent() {
     </QueryClientProvider>
   );
 }
+
 
