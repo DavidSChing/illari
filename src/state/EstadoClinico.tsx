@@ -1,6 +1,9 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
 import { pacientes as pacientesIniciales } from "@/data/pacientes";
-import type { Paciente } from "@/data/tipos";
+import { medicos as medicosIniciales } from "@/data/medicos";
+import { citasDeHoy } from "@/data/agenda";
+import type { Cita, Medico, Paciente } from "@/data/tipos";
+import type { ResultadoCarga } from "@/lib/excel/consolidar";
 
 export const ALERTA_FIEBRE_FAMILIA = "Fiebre reportada por la familia";
 
@@ -26,6 +29,13 @@ const RESPUESTA_VACIA: RespuestaFamilia = { asistencia: "sin_responder", fiebreR
 
 interface EstadoClinicoValor {
   pacientes: Paciente[];
+  medicos: Medico[];
+  citas: Cita[];
+  nombreMedico: (id: string) => string;
+  /** Resultado de la última carga de Excel (solo lectura sobre el archivo). */
+  carga: ResultadoCarga | null;
+  aplicarCarga: (resultado: ResultadoCarga) => void;
+  limpiarCarga: () => void;
   medicoActualId: string;
   setMedicoActualId: (id: string) => void;
   atenciones: RegistroAtencion[];
@@ -45,6 +55,9 @@ const Contexto = createContext<EstadoClinicoValor | null>(null);
 /** Estado en memoria. No hay backend ni persistencia: al recargar vuelve a los datos sintéticos. */
 export function ProveedorEstadoClinico({ children }: { children: ReactNode }) {
   const [pacientes, setPacientes] = useState<Paciente[]>(pacientesIniciales);
+  const [medicos, setMedicos] = useState<Medico[]>(medicosIniciales);
+  const [citas, setCitas] = useState<Cita[]>(citasDeHoy);
+  const [carga, setCarga] = useState<ResultadoCarga | null>(null);
   const [medicoActualId, setMedicoActualId] = useState("med-4");
   const [atenciones, setAtenciones] = useState<RegistroAtencion[]>([]);
   const [respuestas, setRespuestas] = useState<Record<string, RespuestaFamilia>>({});
@@ -86,6 +99,27 @@ export function ProveedorEstadoClinico({ children }: { children: ReactNode }) {
     [],
   );
 
+  /** Reemplaza los datos sintéticos por los del Excel leído. Nunca modifica el archivo. */
+  const aplicarCarga = useCallback((resultado: ResultadoCarga) => {
+    setCarga(resultado);
+    setPacientes(resultado.pacientesApp);
+    setMedicos(resultado.medicos);
+    setCitas(resultado.citas);
+    setAtenciones([]);
+    setRespuestas({});
+    setMedicoActualId(resultado.medicos[0]?.id ?? "");
+  }, []);
+
+  const limpiarCarga = useCallback(() => {
+    setCarga(null);
+    setPacientes(pacientesIniciales);
+    setMedicos(medicosIniciales);
+    setCitas(citasDeHoy);
+    setAtenciones([]);
+    setRespuestas({});
+    setMedicoActualId("med-4");
+  }, []);
+
   const confirmarAsistencia = useCallback((pacienteId: string) => {
     setRespuestas((previas) => ({
       ...previas,
@@ -125,6 +159,12 @@ export function ProveedorEstadoClinico({ children }: { children: ReactNode }) {
   const valor = useMemo<EstadoClinicoValor>(
     () => ({
       pacientes,
+      medicos,
+      citas,
+      nombreMedico: (id: string) => medicos.find((medico) => medico.id === id)?.nombre ?? "No registrado",
+      carga,
+      aplicarCarga,
+      limpiarCarga,
       medicoActualId,
       setMedicoActualId,
       atenciones,
@@ -140,6 +180,11 @@ export function ProveedorEstadoClinico({ children }: { children: ReactNode }) {
     }),
     [
       pacientes,
+      medicos,
+      citas,
+      carga,
+      aplicarCarga,
+      limpiarCarga,
       medicoActualId,
       atenciones,
       registrarAtencion,
