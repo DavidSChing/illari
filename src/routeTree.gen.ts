@@ -10,33 +10,53 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CargaMedicaRouteImport } from './routes/carga-medica'
+import { Route as ModoDemoRouteImport } from './routes/modo-demo'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CargaMedicaRoute = CargaMedicaRouteImport.update({
+  id: '/carga-medica',
+  path: '/carga-medica',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ModoDemoRoute = ModoDemoRouteImport.update({
+  id: '/modo-demo',
+  path: '/modo-demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/carga-medica': typeof CargaMedicaRoute
+  '/modo-demo': typeof ModoDemoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/carga-medica': typeof CargaMedicaRoute
+  '/modo-demo': typeof ModoDemoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/carga-medica': typeof CargaMedicaRoute
+  '/modo-demo': typeof ModoDemoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/carga-medica' | '/modo-demo'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/carga-medica' | '/modo-demo'
+  id: '__root__' | '/' | '/carga-medica' | '/modo-demo'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CargaMedicaRoute: typeof CargaMedicaRoute
+  ModoDemoRoute: typeof ModoDemoRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +68,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/carga-medica': {
+      id: '/carga-medica'
+      path: '/carga-medica'
+      fullPath: '/carga-medica'
+      preLoaderRoute: typeof CargaMedicaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/modo-demo': {
+      id: '/modo-demo'
+      path: '/modo-demo'
+      fullPath: '/modo-demo'
+      preLoaderRoute: typeof ModoDemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CargaMedicaRoute: CargaMedicaRoute,
+  ModoDemoRoute: ModoDemoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
