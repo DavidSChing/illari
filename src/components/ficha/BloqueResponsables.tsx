@@ -1,10 +1,9 @@
 import { Info } from "lucide-react";
 import type { Paciente } from "@/data/tipos";
-import { nombreMedico } from "@/data/medicos";
 import { useEstadoClinico } from "@/state/EstadoClinico";
 
 export function BloqueResponsables({ paciente }: { paciente: Paciente }) {
-  const { medicoActualId } = useEstadoClinico();
+  const { medicoActualId, nombreMedico } = useEstadoClinico();
   const fueraDeDupla =
     medicoActualId !== paciente.medicoPrincipalId && medicoActualId !== paciente.medicoSoporteId;
 

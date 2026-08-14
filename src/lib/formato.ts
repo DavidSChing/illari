@@ -1,5 +1,6 @@
 /** Formatea "2026-08-14" como "14 ago 2026" en español (Perú). */
 export function formatearFecha(iso: string): string {
+  if (!iso) return "No registrada";
   const [anio, mes, dia] = iso.split("-").map(Number);
   if (!anio || !mes || !dia) return iso;
   return new Date(anio, mes - 1, dia).toLocaleDateString("es-PE", {

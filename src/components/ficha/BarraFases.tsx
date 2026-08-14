@@ -7,12 +7,12 @@ export function BarraFases({
   cicloActual,
   ciclosTotales,
 }: {
-  fase: Fase;
+  fase: Fase | null;
   cicloActual: number;
-  ciclosTotales: number;
+  ciclosTotales: number | null;
 }) {
-  const indiceActual = FASES.indexOf(fase);
-  const porcentaje = Math.round((cicloActual / ciclosTotales) * 100);
+  const indiceActual = fase ? FASES.indexOf(fase) : -1;
+  const porcentaje = ciclosTotales ? Math.round((cicloActual / ciclosTotales) * 100) : null;
 
   return (
     <section aria-labelledby="titulo-fases" className="rounded-md border border-border bg-card px-4 py-3">
@@ -21,10 +21,18 @@ export function BarraFases({
           Fase del tratamiento
         </h2>
         <p className="text-xl font-bold text-foreground">
-          Ciclo {cicloActual} de {ciclosTotales}
-          <span className="ml-2 text-base font-medium text-muted-foreground">({porcentaje}%)</span>
+          Ciclo {cicloActual}{ciclosTotales ? ` de ${ciclosTotales}` : " registrado"}
+          {porcentaje !== null && (
+            <span className="ml-2 text-base font-medium text-muted-foreground">({porcentaje}%)</span>
+          )}
         </p>
       </div>
+
+      {!fase && (
+        <p className="mt-2 text-base text-muted-foreground">
+          El Excel no registra la fase del tratamiento. Solo se muestra lo que el archivo contiene.
+        </p>
+      )}
 
       <ol className="mt-3 grid grid-cols-2 gap-2 md:grid-cols-4" aria-label="Fases del protocolo">
         {FASES.map((nombre, indice) => {

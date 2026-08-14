@@ -1,4 +1,4 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { MapPin, Syringe } from "lucide-react";
 import { useEstadoClinico } from "@/state/EstadoClinico";
 import { pacientes } from "@/data/pacientes";
@@ -14,7 +14,7 @@ import { DialogoRegistrarAtencion } from "@/components/ficha/DialogoRegistrarAte
 export const Route = createFileRoute("/paciente/$id")({
   loader: ({ params }) => {
     const paciente = pacientes.find((item) => item.id === params.id);
-    if (!paciente) throw notFound();
+    if (!paciente) return null;
     return { nombre: paciente.nombre, diagnostico: paciente.diagnostico };
   },
   head: ({ loaderData }) => {
@@ -64,12 +64,33 @@ function FichaContinuidad() {
         <div className="min-w-0">
           <h1 className="text-2xl font-bold leading-tight text-foreground">{paciente.nombre}</h1>
           <p className="text-lg text-foreground">
-            {paciente.edad} años · {paciente.sexo} ·{" "}
-            <span className="font-semibold">{paciente.diagnostico}</span>
+            {paciente.desdeExcel ? (
+              <>
+                HC {paciente.hc} ·{" "}
+                <span className="font-semibold">Edad y diagnóstico no registrados en el Excel</span>
+              </>
+            ) : (
+              <>
+                {paciente.edad} años · {paciente.sexo} ·{" "}
+                <span className="font-semibold">{paciente.diagnostico}</span>
+              </>
+            )}
           </p>
+          {paciente.origen && (
+            <p
+              className="text-sm font-medium text-muted-foreground"
+              title={`Origen: ${paciente.origen.archivo}, fila ${paciente.origen.fila}, cargado el ${formatearFecha(paciente.origen.fechaCarga)}`}
+            >
+              Origen: {paciente.origen.archivo}, fila {paciente.origen.fila}, cargado el{" "}
+              {formatearFecha(paciente.origen.fechaCarga)} · Solo lectura: el archivo no fue modificado
+            </p>
+          )}
           <p className="text-sm text-muted-foreground">
             {paciente.protocolo} · Última atención {formatearFecha(paciente.fechaUltimaAtencion)} · Próxima
             cita {formatearFecha(paciente.fechaProximaCita)}
+            {paciente.diasDesdeUltimaAtencion !== undefined
+              ? ` · ${paciente.diasDesdeUltimaAtencion} días desde la última atención`
+              : ""}
             {paciente.inasistenciasPrevias > 0
               ? ` · ${paciente.inasistenciasPrevias} inasistencia(s) previa(s)`
               : ""}
@@ -79,7 +100,7 @@ function FichaContinuidad() {
         <div className="flex flex-col gap-1 md:items-end">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-2 md:justify-end">
             <SelectorMedico />
-            {paciente.procedencia.fueraDeLima ? (
+            {paciente.procedencia?.fueraDeLima ? (
               <p className="inline-flex items-center gap-2 rounded-md border border-primary bg-primary px-3 py-1.5 text-base font-bold text-primary-foreground">
                 <MapPin aria-hidden="true" className="size-5" />
                 Viaja {paciente.horasDeViaje} h desde {paciente.procedencia.region}
@@ -87,7 +108,9 @@ function FichaContinuidad() {
             ) : (
               <p className="inline-flex items-center gap-2 rounded-md border border-border bg-secondary px-3 py-1.5 text-base font-semibold text-secondary-foreground">
                 <MapPin aria-hidden="true" className="size-5" />
-                Reside en {paciente.procedencia.ciudad}
+                {paciente.procedencia
+                  ? `Reside en ${paciente.procedencia.ciudad}`
+                  : "Procedencia no registrada en el Excel"}
               </p>
             )}
           </div>
@@ -123,14 +146,20 @@ function FichaContinuidad() {
             >
               Última administración
             </h2>
-            <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-lg font-semibold text-foreground">
-              <Syringe aria-hidden="true" className="size-5 text-primary" />
-              {paciente.ultimaAdministracion.medicamento}
-              <span className="font-medium">{paciente.ultimaAdministracion.dosis}</span>
-              <span className="text-base font-medium text-muted-foreground">
-                {formatearFecha(paciente.ultimaAdministracion.fecha)}
-              </span>
-            </p>
+            {paciente.ultimaAdministracion ? (
+              <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-lg font-semibold text-foreground">
+                <Syringe aria-hidden="true" className="size-5 text-primary" />
+                {paciente.ultimaAdministracion.medicamento}
+                <span className="font-medium">{paciente.ultimaAdministracion.dosis}</span>
+                <span className="text-base font-medium text-muted-foreground">
+                  {formatearFecha(paciente.ultimaAdministracion.fecha)}
+                </span>
+              </p>
+            ) : (
+              <p className="mt-1 text-base text-muted-foreground">
+                El Excel no registra medicamento ni dosis para este paciente.
+              </p>
+            )}
           </section>
         </div>
 
