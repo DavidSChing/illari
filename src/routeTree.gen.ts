@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CargaMedicaRouteImport } from './routes/carga-medica'
 import { Route as ModoDemoRouteImport } from './routes/modo-demo'
+import { Route as PacienteIdRouteImport } from './routes/paciente.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,35 +29,44 @@ const ModoDemoRoute = ModoDemoRouteImport.update({
   path: '/modo-demo',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PacienteIdRoute = PacienteIdRouteImport.update({
+  id: '/paciente/$id',
+  path: '/paciente/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/carga-medica': typeof CargaMedicaRoute
   '/modo-demo': typeof ModoDemoRoute
+  '/paciente/$id': typeof PacienteIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/carga-medica': typeof CargaMedicaRoute
   '/modo-demo': typeof ModoDemoRoute
+  '/paciente/$id': typeof PacienteIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/carga-medica': typeof CargaMedicaRoute
   '/modo-demo': typeof ModoDemoRoute
+  '/paciente/$id': typeof PacienteIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/carga-medica' | '/modo-demo'
+  fullPaths: '/' | '/carga-medica' | '/modo-demo' | '/paciente/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/carga-medica' | '/modo-demo'
-  id: '__root__' | '/' | '/carga-medica' | '/modo-demo'
+  to: '/' | '/carga-medica' | '/modo-demo' | '/paciente/$id'
+  id: '__root__' | '/' | '/carga-medica' | '/modo-demo' | '/paciente/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CargaMedicaRoute: typeof CargaMedicaRoute
   ModoDemoRoute: typeof ModoDemoRoute
+  PacienteIdRoute: typeof PacienteIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -82,6 +92,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ModoDemoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/paciente/$id': {
+      id: '/paciente/$id'
+      path: '/paciente/$id'
+      fullPath: '/paciente/$id'
+      preLoaderRoute: typeof PacienteIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -89,6 +106,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CargaMedicaRoute: CargaMedicaRoute,
   ModoDemoRoute: ModoDemoRoute,
+  PacienteIdRoute: PacienteIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
