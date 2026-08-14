@@ -103,6 +103,41 @@ function EstadoFamilia({ pacienteId }: { pacienteId: string }) {
   );
 }
 
+function TarjetaPaciente({ cita, paciente }: { cita: Cita; paciente: Paciente }) {
+  const { medicoActualId, nombreMedico } = useEstadoClinico();
+  const fueraDeDupla =
+    medicoActualId !== paciente.medicoPrincipalId && medicoActualId !== paciente.medicoSoporteId;
+
+  return (
+    <Link
+      to="/paciente/$id"
+      params={{ id: paciente.id }}
+      className={[
+        "flex min-h-24 w-full min-w-0 flex-col gap-1 rounded-md border px-3 py-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+        fueraDeDupla ? "border-clinico-ambar bg-clinico-ambar-suave/60" : "border-border bg-card",
+      ].join(" ")}
+    >
+      <div className="flex min-w-0 items-baseline justify-between gap-2">
+        <span className="truncate text-lg font-bold text-primary underline">{paciente.nombre}</span>
+        <span className="shrink-0 text-lg font-bold tabular-nums text-foreground">{cita.hora}</span>
+      </div>
+      <p className="text-base text-foreground">
+        <span className="font-semibold">{paciente.fase ?? "Fase no registrada"}</span> · Ciclo{" "}
+        {paciente.cicloActual}
+        {paciente.ciclosTotales ? ` de ${paciente.ciclosTotales}` : ""}
+      </p>
+      <p className="text-base text-foreground">{nombreMedico(paciente.medicoPrincipalId)}</p>
+      {fueraDeDupla && (
+        <p className="inline-flex items-center gap-1 text-sm font-bold text-clinico-ambar-foreground">
+          <ShieldAlert aria-hidden="true" className="size-4 shrink-0" />
+          No es de tu dupla
+        </p>
+      )}
+      <IconosAlerta alertas={paciente.alertas} />
+    </Link>
+  );
+}
+
 function FilaPaciente({ cita, paciente }: { cita: Cita; paciente: Paciente }) {
   const { medicoActualId, nombreMedico } = useEstadoClinico();
   const fueraDeDupla = medicoActualId !== paciente.medicoPrincipalId && medicoActualId !== paciente.medicoSoporteId;
