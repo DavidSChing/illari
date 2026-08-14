@@ -1,4 +1,4 @@
-import type { PacienteCompleto } from "./tipos";
+import type { Paciente, PacienteCompleto } from "./tipos";
 
 /**
  * Datos 100% sintéticos e inventados. Ninguna información real de pacientes.
