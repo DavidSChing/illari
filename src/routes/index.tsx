@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { TablaJornada } from "@/components/ficha/TablaJornada";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -21,11 +22,18 @@ export const Route = createFileRoute("/")({
 
 function JornadaDeHoy() {
   return (
-    <section aria-labelledby="titulo-jornada">
-      <h1 id="titulo-jornada" className="text-2xl font-bold text-foreground">
-        Jornada de hoy
-      </h1>
-      <p className="mt-2 text-base text-muted-foreground">Sección en construcción.</p>
+    <section aria-labelledby="titulo-jornada" className="flex flex-col gap-3">
+      <header>
+        <h1 id="titulo-jornada" className="text-2xl font-bold text-foreground">
+          Jornada de hoy
+        </h1>
+        <p className="mt-1 text-base text-muted-foreground">
+          Clínica de día · 14 citas programadas. Los pacientes que no son de tu dupla aparecen resaltados.
+        </p>
+      </header>
+
+      <TablaJornada />
     </section>
   );
 }
+
