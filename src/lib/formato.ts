@@ -11,6 +11,8 @@ export function formatearFecha(iso: string): string {
 
 export function diasDesde(iso: string, hoy = new Date()): number {
   const [anio, mes, dia] = iso.split("-").map(Number);
+  if (!anio || !mes || !dia) return 0;
   const fecha = new Date(anio, mes - 1, dia);
   return Math.round((hoy.getTime() - fecha.getTime()) / 86400000);
 }
+
