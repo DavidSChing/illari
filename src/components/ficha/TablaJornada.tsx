@@ -117,21 +117,22 @@ export function TablaJornada() {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <label htmlFor="buscador-pacientes" className="sr-only">
-          Buscar paciente por nombre
-        </label>
-        <Input
-          id="buscador-pacientes"
-          type="search"
-          placeholder="Buscar paciente por nombre..."
-          value={busqueda}
-          onChange={(evento) => setBusqueda(evento.target.value)}
-          className="max-w-sm"
-        />
-        <p className="text-sm text-muted-foreground" aria-live="polite">
-          {filas.length} de {citasDeHoy.length} citas
-        </p>
-      </div>
+      <label htmlFor="buscador-pacientes" className="sr-only">
+        Buscar paciente por nombre
+      </label>
+      <input
+        id="buscador-pacientes"
+        type="search"
+        placeholder="Buscar paciente por nombre..."
+        value={busqueda}
+        onChange={(evento: React.ChangeEvent<HTMLInputElement>) => setBusqueda(evento.target.value)}
+        className="h-9 max-w-sm rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+      />
+      <p className="text-sm text-muted-foreground" aria-live="polite">
+        {filas.length} de {citasDeHoy.length} citas
+      </p>
+    </div>
+
 
       <div className="overflow-hidden rounded-md border border-border">
         <table className="w-full border-collapse text-left">
