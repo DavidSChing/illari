@@ -79,7 +79,7 @@ export function ProveedorEstadoClinico({ children }: { children: ReactNode }) {
       atencionesDePaciente: (pacienteId) =>
         atenciones.filter((atencion) => atencion.pacienteId === pacienteId),
     }),
-    [pacientes, medicoActualId, atenciones, registrarAtencion],
+    [pacientes, medicoActualId, atenciones, registrarAtencion, reasignarPrincipal],
   );
 
   return <Contexto.Provider value={valor}>{children}</Contexto.Provider>;
