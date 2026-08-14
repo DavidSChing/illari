@@ -92,7 +92,7 @@ export function ProveedorEstadoClinico({ children }: { children: ReactNode }) {
       [pacienteId]: {
         ...(previas[pacienteId] ?? RESPUESTA_VACIA),
         asistencia: "confirmado",
-        motivo: undefined,
+        motivo: "",
       },
     }));
   }, []);
