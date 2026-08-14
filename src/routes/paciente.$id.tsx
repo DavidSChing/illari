@@ -78,6 +78,13 @@ function FichaContinuidad() {
 
         <div className="flex flex-col items-end gap-2">
           <SelectorMedico />
+          <Link
+            to="/familia/$id"
+            params={{ id: paciente.id }}
+            className="text-sm font-semibold text-primary underline"
+          >
+            Ver versión para cuidadores
+          </Link>
           {paciente.procedencia.fueraDeLima ? (
             <p className="inline-flex items-center gap-2 rounded-md border border-primary bg-primary px-3 py-1.5 text-base font-bold text-primary-foreground">
               <MapPin aria-hidden="true" className="size-5" />
