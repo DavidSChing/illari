@@ -20,6 +20,7 @@ interface EstadoClinicoValor {
   registrarAtencion: (registro: Omit<RegistroAtencion, "id" | "fecha">) => void;
   obtenerPaciente: (id: string) => Paciente | undefined;
   atencionesDePaciente: (pacienteId: string) => RegistroAtencion[];
+  reasignarPrincipal: (cambios: { pacienteId: string; aMedicoId: string }[]) => void;
 }
 
 const Contexto = createContext<EstadoClinicoValor | null>(null);
