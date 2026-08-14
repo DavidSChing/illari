@@ -64,12 +64,33 @@ function FichaContinuidad() {
         <div className="min-w-0">
           <h1 className="text-2xl font-bold leading-tight text-foreground">{paciente.nombre}</h1>
           <p className="text-lg text-foreground">
-            {paciente.edad} años · {paciente.sexo} ·{" "}
-            <span className="font-semibold">{paciente.diagnostico}</span>
+            {paciente.desdeExcel ? (
+              <>
+                HC {paciente.hc} ·{" "}
+                <span className="font-semibold">Edad y diagnóstico no registrados en el Excel</span>
+              </>
+            ) : (
+              <>
+                {paciente.edad} años · {paciente.sexo} ·{" "}
+                <span className="font-semibold">{paciente.diagnostico}</span>
+              </>
+            )}
           </p>
+          {paciente.origen && (
+            <p
+              className="text-sm font-medium text-muted-foreground"
+              title={`Origen: ${paciente.origen.archivo}, fila ${paciente.origen.fila}, cargado el ${formatearFecha(paciente.origen.fechaCarga)}`}
+            >
+              Origen: {paciente.origen.archivo}, fila {paciente.origen.fila}, cargado el{" "}
+              {formatearFecha(paciente.origen.fechaCarga)} · Solo lectura: el archivo no fue modificado
+            </p>
+          )}
           <p className="text-sm text-muted-foreground">
             {paciente.protocolo} · Última atención {formatearFecha(paciente.fechaUltimaAtencion)} · Próxima
             cita {formatearFecha(paciente.fechaProximaCita)}
+            {paciente.diasDesdeUltimaAtencion !== undefined
+              ? ` · ${paciente.diasDesdeUltimaAtencion} días desde la última atención`
+              : ""}
             {paciente.inasistenciasPrevias > 0
               ? ` · ${paciente.inasistenciasPrevias} inasistencia(s) previa(s)`
               : ""}
