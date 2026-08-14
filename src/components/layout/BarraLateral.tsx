@@ -14,7 +14,7 @@ export function BarraLateral() {
   return (
     <nav
       aria-label="Navegación principal"
-      className="flex w-full shrink-0 flex-col bg-sidebar text-sidebar-foreground md:w-72"
+      className="hidden w-full shrink-0 flex-col bg-sidebar text-sidebar-foreground md:flex md:w-72"
     >
       <div className="border-b border-sidebar-border px-5 py-5">
         <p className="text-xs font-semibold uppercase tracking-wider text-sidebar-foreground/80">
