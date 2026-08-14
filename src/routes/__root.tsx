@@ -13,6 +13,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { BarraLateral } from "../components/layout/BarraLateral";
+import { BarraInferior } from "../components/layout/BarraInferior";
 import { BannerPrototipo } from "../components/layout/BannerPrototipo";
 import { ProveedorEstadoClinico } from "../state/EstadoClinico";
 
