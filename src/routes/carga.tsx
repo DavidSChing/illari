@@ -2,8 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { ArrowRight, Info } from "lucide-react";
 
-import { medicos } from "@/data/medicos";
-import { nombreMedico } from "@/data/medicos";
 import { useEstadoClinico } from "@/state/EstadoClinico";
 import {
   calcularSugerencias,
@@ -32,13 +30,13 @@ export const Route = createFileRoute("/carga")({
 });
 
 function CargaMedica() {
-  const { pacientes, reasignarPrincipal } = useEstadoClinico();
+  const { pacientes, reasignarPrincipal, medicos, nombreMedico, carga } = useEstadoClinico();
   const [dispersionInicial, setDispersionInicial] = useState<number | null>(null);
   const [aplicadas, setAplicadas] = useState(0);
 
-  const conteo = useMemo(() => conteoPorMedico(pacientes, medicos), [pacientes]);
+  const conteo = useMemo(() => conteoPorMedico(pacientes, medicos), [pacientes, medicos]);
   const dispersion = dispersionCarga(conteo);
-  const sugerencias = useMemo(() => calcularSugerencias(pacientes, medicos), [pacientes]);
+  const sugerencias = useMemo(() => calcularSugerencias(pacientes, medicos), [pacientes, medicos]);
   const maximo = Math.max(1, ...Object.values(conteo));
 
   const aplicar = () => {
@@ -63,6 +61,12 @@ function CargaMedica() {
           Pacientes asignados como médico principal. El sistema muestra el desbalance; la
           reasignación la decide el equipo médico.
         </p>
+        {carga && (
+          <p className="mt-2 rounded-md border border-border bg-secondary px-3 py-2 text-sm font-medium text-secondary-foreground">
+            Carga calculada a partir de quién figura como médico que atendió en{" "}
+            <span className="font-bold">{carga.archivo}</span>. Solo lectura: el archivo no fue modificado.
+          </p>
+        )}
       </header>
 
       <div className="grid gap-3 sm:grid-cols-3">

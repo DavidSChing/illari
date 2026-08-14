@@ -1,9 +1,8 @@
-import { medicos } from "@/data/medicos";
 import { useEstadoClinico } from "@/state/EstadoClinico";
 import { Label } from "@/components/ui/label";
 
 export function SelectorMedico() {
-  const { medicoActualId, setMedicoActualId } = useEstadoClinico();
+  const { medicoActualId, setMedicoActualId, medicos } = useEstadoClinico();
 
   return (
     <div className="flex items-center gap-2">

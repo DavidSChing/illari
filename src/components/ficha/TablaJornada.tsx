@@ -5,8 +5,6 @@ import { AlertTriangle, AlertCircle, CheckCircle2, ShieldAlert, CalendarCheck, C
 import { Input } from "@/components/ui/input";
 import { useEstadoClinico } from "@/state/EstadoClinico";
 
-import { citasDeHoy } from "@/data/agenda";
-import { nombreMedico } from "@/data/medicos";
 import type { Cita, Paciente, NivelSemaforo } from "@/data/tipos";
 
 
@@ -106,7 +104,7 @@ function EstadoFamilia({ pacienteId }: { pacienteId: string }) {
 }
 
 function FilaPaciente({ cita, paciente }: { cita: Cita; paciente: Paciente }) {
-  const { medicoActualId } = useEstadoClinico();
+  const { medicoActualId, nombreMedico } = useEstadoClinico();
   const fueraDeDupla = medicoActualId !== paciente.medicoPrincipalId && medicoActualId !== paciente.medicoSoporteId;
 
   return (
@@ -156,7 +154,7 @@ function FilaPaciente({ cita, paciente }: { cita: Cita; paciente: Paciente }) {
 
 export function TablaJornada() {
   const [busqueda, setBusqueda] = useState("");
-  const { pacientes } = useEstadoClinico();
+  const { pacientes, citas: citasDeHoy, carga } = useEstadoClinico();
 
   const filas = citasDeHoy
     .map((cita) => ({ cita, paciente: pacientes.find((p) => p.id === cita.pacienteId) }))
