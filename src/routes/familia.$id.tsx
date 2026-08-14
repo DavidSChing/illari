@@ -58,8 +58,8 @@ function PaginaFamilia() {
   }
 
   return (
-    <div className="flex flex-col gap-3">
-      <div className="mx-auto w-full max-w-md">
+    <div className="flex w-full min-w-0 flex-col gap-2">
+      <div className="mx-auto w-full max-w-[480px]">
         <Link
           to="/paciente/$id"
           params={{ id: paciente.id }}
