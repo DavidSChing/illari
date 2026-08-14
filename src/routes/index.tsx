@@ -28,7 +28,7 @@ function JornadaDeHoy() {
           Jornada de hoy
         </h1>
         <p className="mt-1 text-base text-muted-foreground">
-          Clínica de día · 14 citas programadas. Los pacientes que no son de tu dupla aparecen resaltados.
+          Clínica de día. Los pacientes que no son de tu dupla aparecen resaltados.
         </p>
       </header>
 

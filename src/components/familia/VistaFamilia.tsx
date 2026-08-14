@@ -16,7 +16,6 @@ import {
 } from "lucide-react";
 
 import type { Paciente } from "@/data/tipos";
-import { obtenerMedico } from "@/data/medicos";
 import { obtenerResponsable } from "@/data/responsables";
 import { useEstadoClinico } from "@/state/EstadoClinico";
 import {
@@ -51,8 +50,8 @@ export function VistaFamilia({ paciente }: { paciente: Paciente }) {
   const hora = horaDeLaCita(paciente.id);
   const faltan = cuentaRegresiva(paciente.fechaProximaCita);
   const sms = mensajeSms(paciente);
-  const principal = obtenerMedico(paciente.medicoPrincipalId);
-  const soporte = obtenerMedico(paciente.medicoSoporteId);
+  const principal = medicos.find((medico) => medico.id === paciente.medicoPrincipalId);
+  const soporte = medicos.find((medico) => medico.id === paciente.medicoSoporteId);
   const totalSesiones = paciente.ciclosTotales ?? paciente.cicloActual;
   const avance = totalSesiones > 0 ? Math.round((paciente.cicloActual / totalSesiones) * 100) : 0;
 

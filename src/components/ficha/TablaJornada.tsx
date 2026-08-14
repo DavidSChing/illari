@@ -136,8 +136,11 @@ function FilaPaciente({ cita, paciente }: { cita: Cita; paciente: Paciente }) {
       </td>
       <td className="px-3 py-2 text-base font-semibold text-foreground">{cita.hora}</td>
       <td className="px-3 py-2 text-base text-foreground">
-        <span className="font-semibold">{paciente.fase}</span>
-        <span className="text-muted-foreground"> · Ciclo {paciente.cicloActual} de {paciente.ciclosTotales}</span>
+        <span className="font-semibold">{paciente.fase ?? "Fase no registrada"}</span>
+        <span className="text-muted-foreground">
+          {" "}· Ciclo {paciente.cicloActual}
+          {paciente.ciclosTotales ? ` de ${paciente.ciclosTotales}` : " registrado"}
+        </span>
       </td>
       <td className="px-3 py-2">
         <IconosAlerta alertas={paciente.alertas} />
@@ -181,6 +184,7 @@ export function TablaJornada() {
       />
       <p className="text-sm text-muted-foreground" aria-live="polite">
         {filas.length} de {citasDeHoy.length} citas
+        {carga ? ` · leídas de ${carga.archivo} (solo lectura)` : ""}
       </p>
     </div>
 
@@ -215,7 +219,9 @@ export function TablaJornada() {
             {filas.length === 0 ? (
               <tr>
                 <td colSpan={6} className="px-3 py-6 text-center text-base text-muted-foreground">
-                  No se encontraron pacientes para “{busqueda}”.
+                  {citasDeHoy.length === 0
+                    ? "El archivo cargado no registra próximas citas. Nada que mostrar en la jornada."
+                    : `No se encontraron pacientes para “${busqueda}”.`}
                 </td>
               </tr>
             ) : (
