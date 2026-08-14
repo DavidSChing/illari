@@ -84,6 +84,42 @@ export function ProveedorEstadoClinico({ children }: { children: ReactNode }) {
     [],
   );
 
+  const confirmarAsistencia = useCallback((pacienteId: string) => {
+    setRespuestas((previas) => ({
+      ...previas,
+      [pacienteId]: {
+        ...(previas[pacienteId] ?? RESPUESTA_VACIA),
+        asistencia: "confirmado",
+        motivo: undefined,
+      },
+    }));
+  }, []);
+
+  const cancelarAsistencia = useCallback((pacienteId: string, motivo: string) => {
+    setRespuestas((previas) => ({
+      ...previas,
+      [pacienteId]: {
+        ...(previas[pacienteId] ?? RESPUESTA_VACIA),
+        asistencia: "no_asistira",
+        motivo,
+      },
+    }));
+  }, []);
+
+  const reportarFiebre = useCallback((pacienteId: string) => {
+    setRespuestas((previas) => ({
+      ...previas,
+      [pacienteId]: { ...(previas[pacienteId] ?? RESPUESTA_VACIA), fiebreReportada: true },
+    }));
+    setPacientes((previos) =>
+      previos.map((paciente) =>
+        paciente.id === pacienteId && !paciente.alertas.includes(ALERTA_FIEBRE_FAMILIA)
+          ? { ...paciente, alertas: [ALERTA_FIEBRE_FAMILIA, ...paciente.alertas] }
+          : paciente,
+      ),
+    );
+  }, []);
+
   const valor = useMemo<EstadoClinicoValor>(
     () => ({
       pacientes,
@@ -95,9 +131,24 @@ export function ProveedorEstadoClinico({ children }: { children: ReactNode }) {
       obtenerPaciente: (id) => pacientes.find((paciente) => paciente.id === id),
       atencionesDePaciente: (pacienteId) =>
         atenciones.filter((atencion) => atencion.pacienteId === pacienteId),
+      respuestaFamilia: (pacienteId) => respuestas[pacienteId] ?? RESPUESTA_VACIA,
+      confirmarAsistencia,
+      cancelarAsistencia,
+      reportarFiebre,
     }),
-    [pacientes, medicoActualId, atenciones, registrarAtencion, reasignarPrincipal],
+    [
+      pacientes,
+      medicoActualId,
+      atenciones,
+      registrarAtencion,
+      reasignarPrincipal,
+      respuestas,
+      confirmarAsistencia,
+      cancelarAsistencia,
+      reportarFiebre,
+    ],
   );
+
 
   return <Contexto.Provider value={valor}>{children}</Contexto.Provider>;
 }
