@@ -136,7 +136,7 @@ function RootComponent() {
         <BarraLateral />
         <div className="flex min-w-0 flex-1 flex-col">
           <BannerPrototipo />
-          <main className="flex-1 px-5 py-6 md:px-8">
+          <main className="flex-1 px-4 py-4 md:px-6">
             {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
             <Outlet />
           </main>
