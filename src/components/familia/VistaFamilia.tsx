@@ -92,7 +92,7 @@ export function VistaFamilia({ paciente }: { paciente: Paciente }) {
         {/* 4. Próxima cita: lo más grande de la pantalla */}
         <section
           aria-labelledby="titulo-proxima-cita"
-          className="rounded-lg border-2 border-primary bg-card p-4"
+          className="rounded-lg border-2 border-primary bg-card px-4 py-3"
         >
           <h2
             id="titulo-proxima-cita"
@@ -100,7 +100,7 @@ export function VistaFamilia({ paciente }: { paciente: Paciente }) {
           >
             Su próxima cita
           </h2>
-          <p className="mt-1 text-[2.25rem] font-bold leading-tight text-foreground">{fecha}</p>
+          <p className="mt-1 text-[2.125rem] font-bold leading-none text-foreground">{fecha}</p>
           <p className="mt-1 flex items-center gap-2 text-[1.75rem] font-bold text-foreground">
             <Clock aria-hidden="true" className="size-7 shrink-0 text-primary" />
             {hora}
