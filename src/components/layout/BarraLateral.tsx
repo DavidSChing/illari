@@ -3,7 +3,7 @@ import { CalendarDays, Users, PlayCircle, Timer } from "lucide-react";
 
 const secciones = [
   { to: "/", etiqueta: "Jornada de hoy", Icono: CalendarDays },
-  { to: "/carga-medica", etiqueta: "Carga médica", Icono: Users },
+  { to: "/carga", etiqueta: "Carga médica", Icono: Users },
   { to: "/modo-demo", etiqueta: "Modo demo", Icono: PlayCircle },
   { to: "/demo", etiqueta: "Demostración de tiempos", Icono: Timer },
 ] as const;

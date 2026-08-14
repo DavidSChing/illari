@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CargaRouteImport } from './routes/carga'
 import { Route as CargaMedicaRouteImport } from './routes/carga-medica'
 import { Route as DemoRouteImport } from './routes/demo'
 import { Route as ModoDemoRouteImport } from './routes/modo-demo'
@@ -18,6 +19,11 @@ import { Route as PacienteIdRouteImport } from './routes/paciente.$id'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CargaRoute = CargaRouteImport.update({
+  id: '/carga',
+  path: '/carga',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CargaMedicaRoute = CargaMedicaRouteImport.update({
@@ -43,6 +49,7 @@ const PacienteIdRoute = PacienteIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/carga': typeof CargaRoute
   '/carga-medica': typeof CargaMedicaRoute
   '/demo': typeof DemoRoute
   '/modo-demo': typeof ModoDemoRoute
@@ -50,6 +57,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/carga': typeof CargaRoute
   '/carga-medica': typeof CargaMedicaRoute
   '/demo': typeof DemoRoute
   '/modo-demo': typeof ModoDemoRoute
@@ -58,6 +66,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/carga': typeof CargaRoute
   '/carga-medica': typeof CargaMedicaRoute
   '/demo': typeof DemoRoute
   '/modo-demo': typeof ModoDemoRoute
@@ -65,12 +74,15 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/carga-medica' | '/demo' | '/modo-demo' | '/paciente/$id'
+  fullPaths:
+    '/' | '/carga' | '/carga-medica' | '/demo' | '/modo-demo' | '/paciente/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/carga-medica' | '/demo' | '/modo-demo' | '/paciente/$id'
+  to:
+    '/' | '/carga' | '/carga-medica' | '/demo' | '/modo-demo' | '/paciente/$id'
   id:
     | '__root__'
     | '/'
+    | '/carga'
     | '/carga-medica'
     | '/demo'
     | '/modo-demo'
@@ -79,6 +91,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CargaRoute: typeof CargaRoute
   CargaMedicaRoute: typeof CargaMedicaRoute
   DemoRoute: typeof DemoRoute
   ModoDemoRoute: typeof ModoDemoRoute
@@ -92,6 +105,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/carga': {
+      id: '/carga'
+      path: '/carga'
+      fullPath: '/carga'
+      preLoaderRoute: typeof CargaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/carga-medica': {
@@ -127,6 +147,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CargaRoute: CargaRoute,
   CargaMedicaRoute: CargaMedicaRoute,
   DemoRoute: DemoRoute,
   ModoDemoRoute: ModoDemoRoute,
