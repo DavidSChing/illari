@@ -95,8 +95,8 @@ function PantallaDemo() {
       : null;
 
   return (
-    <div className="mx-auto flex h-[calc(100vh-9rem)] max-w-[1600px] flex-col gap-2">
-      <header className="rounded-md border border-border bg-card px-4 py-3">
+    <div className="mx-auto flex w-full min-w-0 max-w-[1600px] flex-col gap-2 lg:h-[calc(100vh-9rem)]">
+      <header className="rounded-md border border-border bg-card px-3 py-3 sm:px-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="min-w-0">
             <h1 className="text-xl font-bold text-foreground">Demostración de tiempos</h1>
