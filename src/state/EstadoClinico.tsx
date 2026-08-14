@@ -54,6 +54,19 @@ export function ProveedorEstadoClinico({ children }: { children: ReactNode }) {
     [],
   );
 
+  const reasignarPrincipal = useCallback(
+    (cambios: { pacienteId: string; aMedicoId: string }[]) => {
+      const mapa = new Map(cambios.map((cambio) => [cambio.pacienteId, cambio.aMedicoId]));
+      setPacientes((previos) =>
+        previos.map((paciente) => {
+          const nuevo = mapa.get(paciente.id);
+          return nuevo ? { ...paciente, medicoPrincipalId: nuevo } : paciente;
+        }),
+      );
+    },
+    [],
+  );
+
   const valor = useMemo<EstadoClinicoValor>(
     () => ({
       pacientes,
