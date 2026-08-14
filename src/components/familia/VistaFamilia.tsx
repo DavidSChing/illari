@@ -53,7 +53,8 @@ export function VistaFamilia({ paciente }: { paciente: Paciente }) {
   const sms = mensajeSms(paciente);
   const principal = obtenerMedico(paciente.medicoPrincipalId);
   const soporte = obtenerMedico(paciente.medicoSoporteId);
-  const avance = Math.round((paciente.cicloActual / paciente.ciclosTotales) * 100);
+  const totalSesiones = paciente.ciclosTotales ?? paciente.cicloActual;
+  const avance = totalSesiones > 0 ? Math.round((paciente.cicloActual / totalSesiones) * 100) : 0;
 
   return (
     <div className="mx-auto flex w-full max-w-md flex-col gap-4 pb-8">
@@ -68,14 +69,14 @@ export function VistaFamilia({ paciente }: { paciente: Paciente }) {
           {nino}, {paciente.edad} años
         </p>
         <p className="mt-3 text-2xl font-bold text-foreground">
-          Van {paciente.cicloActual} de {paciente.ciclosTotales} sesiones
+          Van {paciente.cicloActual} de {totalSesiones} sesiones
         </p>
         <div
           role="progressbar"
           aria-valuenow={paciente.cicloActual}
           aria-valuemin={0}
-          aria-valuemax={paciente.ciclosTotales}
-          aria-label={`Avance del tratamiento: ${paciente.cicloActual} de ${paciente.ciclosTotales} sesiones`}
+          aria-valuemax={totalSesiones}
+          aria-label={`Avance del tratamiento: ${paciente.cicloActual} de ${totalSesiones} sesiones`}
           className="mt-2 h-5 w-full overflow-hidden rounded-full border border-border bg-muted"
         >
           <div className="h-full rounded-full bg-primary" style={{ width: `${avance}%` }} />

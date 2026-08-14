@@ -14,7 +14,21 @@ const PUNTO: Record<NivelSemaforo, string> = {
   verde: "bg-clinico-verde",
 };
 
-export function TarjetasLaboratorio({ laboratorio }: { laboratorio: Laboratorio }) {
+export function TarjetasLaboratorio({ laboratorio }: { laboratorio: Laboratorio | null }) {
+  if (!laboratorio) {
+    return (
+      <section aria-labelledby="titulo-lab" className="rounded-md border border-dashed border-border bg-card px-4 py-3">
+        <h2 id="titulo-lab" className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+          Últimos valores de laboratorio
+        </h2>
+        <p className="mt-1 text-base text-foreground">
+          El Excel cargado no registra valores de laboratorio. La plataforma no completa datos que no existen
+          en el archivo.
+        </p>
+      </section>
+    );
+  }
+
   const lecturas = lecturasLaboratorio(laboratorio);
 
   return (

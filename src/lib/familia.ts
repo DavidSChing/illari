@@ -78,7 +78,8 @@ export interface SesionCalendario {
 /** Calendario completo de sesiones, calculado a partir de la sesión actual. */
 export function calendarioSesiones(paciente: Paciente): SesionCalendario[] {
   const base = aFecha(paciente.fechaProximaCita);
-  return Array.from({ length: paciente.ciclosTotales }, (_, indice) => {
+  const total = paciente.ciclosTotales ?? paciente.cicloActual;
+  return Array.from({ length: Math.max(total, 1) }, (_, indice) => {
     const numero = indice + 1;
     const fecha = new Date(base);
     fecha.setDate(base.getDate() + (numero - paciente.cicloActual) * DIAS_ENTRE_SESIONES);
