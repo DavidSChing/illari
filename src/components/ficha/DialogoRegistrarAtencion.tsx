@@ -179,7 +179,7 @@ export function DialogoRegistrarAtencion({ paciente }: { paciente: Paciente }) {
       }}
     >
       <DialogTrigger asChild>
-        <Button size="lg" className="min-h-11 text-base font-semibold">
+        <Button size="lg" className="min-h-14 w-full text-base font-semibold md:min-h-11 md:w-auto">
           Registrar atención
         </Button>
       </DialogTrigger>
