@@ -62,6 +62,7 @@ function FichaContinuidad() {
 
   return (
     <div className="mx-auto flex max-w-[1400px] flex-col gap-2">
+      <Tabs defaultValue="resumen" className="flex flex-col gap-2">
       <header className="grid grid-cols-1 items-start gap-2 rounded-md border border-border bg-card px-4 py-2 md:grid-cols-[minmax(0,1fr)_auto]">
         <div className="min-w-0">
           <h1 className="text-2xl font-bold leading-tight text-foreground">{paciente.nombre}</h1>
@@ -123,15 +124,13 @@ function FichaContinuidad() {
           >
             Ver versión para cuidadores
           </Link>
+          <TabsList aria-label="Secciones de la ficha" className="h-9">
+            <TabsTrigger value="resumen" className="text-base">Resumen</TabsTrigger>
+            <TabsTrigger value="esquema" className="text-base">Esquema</TabsTrigger>
+          </TabsList>
         </div>
 
       </header>
-
-      <Tabs defaultValue="resumen" className="gap-2">
-        <TabsList aria-label="Secciones de la ficha">
-          <TabsTrigger value="resumen">Resumen</TabsTrigger>
-          <TabsTrigger value="esquema">Esquema</TabsTrigger>
-        </TabsList>
 
         <TabsContent value="resumen" className="flex flex-col gap-2">
       <BarraFases
