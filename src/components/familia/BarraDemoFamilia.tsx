@@ -1,7 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useEstadoClinico } from "@/state/EstadoClinico";
 
-/** Controles que existen solo para la demostración ante el jurado. */
+/** Franja delgada de demostración: no debe robar espacio a la próxima cita. */
 export function BarraDemoFamilia({ pacienteId }: { pacienteId: string }) {
   const { pacientes } = useEstadoClinico();
   const navigate = useNavigate();
@@ -9,23 +9,22 @@ export function BarraDemoFamilia({ pacienteId }: { pacienteId: string }) {
   return (
     <section
       aria-labelledby="titulo-controles-demo"
-      className="rounded-lg border-2 border-dashed border-border bg-muted p-4"
+      className="flex items-center gap-2 rounded-md border border-dashed border-border bg-muted px-2 py-1"
     >
       <h2
         id="titulo-controles-demo"
-        className="text-sm font-bold uppercase tracking-wide text-muted-foreground"
+        className="shrink-0 text-[0.9375rem] font-bold uppercase tracking-wide text-foreground"
       >
-        Controles de demostración
+        Demo
       </h2>
-
-      <label htmlFor="selector-paciente-familia" className="mt-2 block text-base font-semibold text-foreground">
+      <label htmlFor="selector-paciente-familia" className="sr-only">
         Ver la pantalla de otro paciente
       </label>
       <select
         id="selector-paciente-familia"
         value={pacienteId}
         onChange={(evento) => navigate({ to: "/familia/$id", params: { id: evento.target.value } })}
-        className="mt-1 min-h-12 w-full rounded-md border border-input bg-card px-3 text-lg font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+        className="min-h-12 w-full min-w-0 rounded-md border border-input bg-card px-2 text-base font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
       >
         {pacientes.map((paciente) => (
           <option key={paciente.id} value={paciente.id}>
@@ -33,11 +32,6 @@ export function BarraDemoFamilia({ pacienteId }: { pacienteId: string }) {
           </option>
         ))}
       </select>
-
-      <p className="mt-2 text-sm text-muted-foreground">
-        En producción, el familiar accede por un enlace único enviado por SMS. Este selector existe
-        solo para esta demostración.
-      </p>
     </section>
   );
 }
