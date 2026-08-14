@@ -2,7 +2,9 @@ import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { AlertTriangle, AlertCircle, CheckCircle2, ShieldAlert } from "lucide-react";
 
+import { Input } from "@/components/ui/input";
 import { useEstadoClinico } from "@/state/EstadoClinico";
+
 import { citasDeHoy } from "@/data/agenda";
 import { pacientes } from "@/data/pacientes";
 import { nombreMedico } from "@/data/medicos";
