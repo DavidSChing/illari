@@ -66,7 +66,6 @@ export function resumenSms(paciente: Paciente): string {
   const cita = citaDelPaciente(paciente.id);
   const fecha = formatearFecha(paciente.fechaProximaCita);
   const hora = cita?.hora ?? "hora por confirmar";
-  const fase = faseEnPalabras(paciente.fase);
   const ciclo = `ciclo ${paciente.cicloActual} de ${paciente.ciclosTotales}`;
   const alertas = paciente.alertas.filter(
     (a) => a === "Neutropenia" || a === "Fiebre reportada por la familia",
@@ -74,7 +73,7 @@ export function resumenSms(paciente: Paciente): string {
   const alerta = alertas.length > 0 ? " Si fiebre, vaya a emergencias." : "";
 
   const maxBase = 160;
-  let mensaje = `Cita de ${paciente.nombre}: ${fecha} ${hora}. ${fase}, ${ciclo}. Lleve DNI, seguro y agua.${alerta} INSN SB`;
+  let mensaje = `Cita de ${paciente.nombre}: ${fecha} ${hora}. ${paciente.fase}, ${ciclo}. Lleve DNI, seguro y agua.${alerta} INSN SB`;
 
   if (mensaje.length > maxBase) {
     mensaje = `Cita ${paciente.nombre.split(" ")[0]}: ${fecha} ${hora}. ${paciente.fase}, ${ciclo}.${alerta} INSN SB`;
