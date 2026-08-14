@@ -96,12 +96,41 @@ function VistaRetrasos() {
         <h2 id="titulo-tabla-retrasos" className="sr-only">
           Lista de pacientes con retraso
         </h2>
+        {retrasados.length > 0 && (
+          <ul className="flex flex-col gap-2 p-2 md:hidden">
+            {retrasados.map(({ paciente, evaluacion }) => (
+              <li key={paciente.id}>
+                <Link
+                  to="/paciente/$id"
+                  params={{ id: paciente.id }}
+                  className="flex min-h-24 w-full min-w-0 flex-col gap-1 rounded-md border border-border bg-card px-3 py-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                >
+                  <div className="flex min-w-0 items-baseline justify-between gap-2">
+                    <span className="truncate text-lg font-bold text-primary underline">
+                      {paciente.nombre}
+                    </span>
+                    <span className="shrink-0 rounded-md border border-clinico-rojo bg-clinico-rojo-suave px-2 py-0.5 text-base font-bold text-clinico-rojo-foreground">
+                      {evaluacion.retrasoActual} días
+                    </span>
+                  </div>
+                  <p className="text-base text-foreground">
+                    {evaluacion.proximo?.fase ?? "Fase no registrada"} · Ciclo{" "}
+                    {evaluacion.proximo?.numero}
+                  </p>
+                  <p className="text-base text-foreground">
+                    {nombreMedico(paciente.medicoPrincipalId)}
+                  </p>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
         {retrasados.length === 0 ? (
           <p className="px-4 py-6 text-base text-muted-foreground">
             Ningún paciente figura retrasado respecto al calendario de su esquema.
           </p>
         ) : (
-          <table className="w-full border-collapse text-left">
+          <table className="hidden w-full border-collapse text-left md:table">
             <caption className="sr-only">
               Pacientes ordenados por días de retraso, de mayor a menor
             </caption>
