@@ -47,6 +47,8 @@ export function ProveedorEstadoClinico({ children }: { children: ReactNode }) {
   const [pacientes, setPacientes] = useState<Paciente[]>(pacientesIniciales);
   const [medicoActualId, setMedicoActualId] = useState("med-4");
   const [atenciones, setAtenciones] = useState<RegistroAtencion[]>([]);
+  const [respuestas, setRespuestas] = useState<Record<string, RespuestaFamilia>>({});
+
 
   const registrarAtencion = useCallback(
     (registro: Omit<RegistroAtencion, "id" | "fecha">) => {
