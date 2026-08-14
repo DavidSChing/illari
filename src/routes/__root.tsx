@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { BarraLateral } from "../components/layout/BarraLateral";
 import { BannerPrototipo } from "../components/layout/BannerPrototipo";
+import { ProveedorEstadoClinico } from "../state/EstadoClinico";
 
 
 function NotFoundComponent() {
@@ -130,6 +131,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+     <ProveedorEstadoClinico>
       <div className="flex min-h-screen flex-col bg-background md:flex-row">
         <BarraLateral />
         <div className="flex min-w-0 flex-1 flex-col">
@@ -140,6 +142,7 @@ function RootComponent() {
           </main>
         </div>
       </div>
+     </ProveedorEstadoClinico>
     </QueryClientProvider>
   );
 }
