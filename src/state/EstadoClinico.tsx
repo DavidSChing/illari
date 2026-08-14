@@ -20,6 +20,7 @@ interface EstadoClinicoValor {
   registrarAtencion: (registro: Omit<RegistroAtencion, "id" | "fecha">) => void;
   obtenerPaciente: (id: string) => Paciente | undefined;
   atencionesDePaciente: (pacienteId: string) => RegistroAtencion[];
+  reasignarPrincipal: (cambios: { pacienteId: string; aMedicoId: string }[]) => void;
 }
 
 const Contexto = createContext<EstadoClinicoValor | null>(null);
@@ -53,6 +54,19 @@ export function ProveedorEstadoClinico({ children }: { children: ReactNode }) {
     [],
   );
 
+  const reasignarPrincipal = useCallback(
+    (cambios: { pacienteId: string; aMedicoId: string }[]) => {
+      const mapa = new Map(cambios.map((cambio) => [cambio.pacienteId, cambio.aMedicoId]));
+      setPacientes((previos) =>
+        previos.map((paciente) => {
+          const nuevo = mapa.get(paciente.id);
+          return nuevo ? { ...paciente, medicoPrincipalId: nuevo } : paciente;
+        }),
+      );
+    },
+    [],
+  );
+
   const valor = useMemo<EstadoClinicoValor>(
     () => ({
       pacientes,
@@ -60,11 +74,12 @@ export function ProveedorEstadoClinico({ children }: { children: ReactNode }) {
       setMedicoActualId,
       atenciones,
       registrarAtencion,
+      reasignarPrincipal,
       obtenerPaciente: (id) => pacientes.find((paciente) => paciente.id === id),
       atencionesDePaciente: (pacienteId) =>
         atenciones.filter((atencion) => atencion.pacienteId === pacienteId),
     }),
-    [pacientes, medicoActualId, atenciones, registrarAtencion],
+    [pacientes, medicoActualId, atenciones, registrarAtencion, reasignarPrincipal],
   );
 
   return <Contexto.Provider value={valor}>{children}</Contexto.Provider>;
