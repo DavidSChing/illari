@@ -60,10 +60,10 @@ function FichaContinuidad() {
 
   return (
     <div className="mx-auto flex max-w-[1400px] flex-col gap-2">
-      <header className="flex flex-wrap items-start justify-between gap-3 rounded-md border border-border bg-card px-4 py-3">
+      <header className="grid grid-cols-1 items-start gap-2 rounded-md border border-border bg-card px-4 py-2 lg:grid-cols-[minmax(0,1fr)_auto]">
         <div className="min-w-0">
           <h1 className="text-2xl font-bold leading-tight text-foreground">{paciente.nombre}</h1>
-          <p className="mt-1 text-lg text-foreground">
+          <p className="text-lg text-foreground">
             {paciente.edad} años · {paciente.sexo} ·{" "}
             <span className="font-semibold">{paciente.diagnostico}</span>
           </p>
@@ -76,15 +76,8 @@ function FichaContinuidad() {
           </p>
         </div>
 
-        <div className="flex flex-col items-end gap-2">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2 lg:justify-end">
           <SelectorMedico />
-          <Link
-            to="/familia/$id"
-            params={{ id: paciente.id }}
-            className="text-sm font-semibold text-primary underline"
-          >
-            Ver versión para cuidadores
-          </Link>
           {paciente.procedencia.fueraDeLima ? (
             <p className="inline-flex items-center gap-2 rounded-md border border-primary bg-primary px-3 py-1.5 text-base font-bold text-primary-foreground">
               <MapPin aria-hidden="true" className="size-5" />
@@ -96,8 +89,16 @@ function FichaContinuidad() {
               Reside en {paciente.procedencia.ciudad}
             </p>
           )}
+          <Link
+            to="/familia/$id"
+            params={{ id: paciente.id }}
+            className="inline-flex min-h-11 items-center rounded-md px-1 text-sm font-semibold text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          >
+            Ver versión para cuidadores
+          </Link>
         </div>
       </header>
+
 
       <BarraFases
         fase={paciente.fase}
