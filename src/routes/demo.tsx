@@ -95,8 +95,8 @@ function PantallaDemo() {
       : null;
 
   return (
-    <div className="mx-auto flex h-[calc(100vh-9rem)] max-w-[1600px] flex-col gap-2">
-      <header className="rounded-md border border-border bg-card px-4 py-3">
+    <div className="mx-auto flex w-full min-w-0 max-w-[1600px] flex-col gap-2 lg:h-[calc(100vh-9rem)]">
+      <header className="rounded-md border border-border bg-card px-3 py-3 sm:px-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="min-w-0">
             <h1 className="text-xl font-bold text-foreground">Demostración de tiempos</h1>
@@ -173,21 +173,29 @@ function PantallaDemo() {
         </div>
       </header>
 
+      <p
+        role="note"
+        className="rounded-md border border-border bg-secondary px-3 py-2 text-base font-semibold text-secondary-foreground lg:hidden"
+      >
+        Para la comparación completa, use una pantalla más grande. Aquí se muestra una encima de la
+        otra.
+      </p>
+
       <div className="grid min-h-0 flex-1 gap-2 lg:grid-cols-2">
-        <section aria-labelledby="titulo-planilla" className="flex min-h-0 flex-col gap-1">
+        <section aria-labelledby="titulo-planilla" className="flex min-h-0 min-w-0 flex-col gap-1">
           <h2 id="titulo-planilla" className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
             Hoy: planilla de cálculo (200 filas · 25 columnas)
           </h2>
-          <div className="min-h-0 flex-1">
+          <div className="h-[50vh] min-h-0 lg:h-auto lg:flex-1">
             <PlanillaExcel />
           </div>
         </section>
 
-        <section aria-labelledby="titulo-ficha-demo" className="flex min-h-0 flex-col gap-1">
+        <section aria-labelledby="titulo-ficha-demo" className="flex min-h-0 min-w-0 flex-col gap-1">
           <h2 id="titulo-ficha-demo" className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
             Propuesta: Ficha de Continuidad
           </h2>
-          <div className="min-h-0 flex-1">
+          <div className="min-h-0 lg:flex-1">
             <FichaCompacta paciente={paciente} />
           </div>
         </section>

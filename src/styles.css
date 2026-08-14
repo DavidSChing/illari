@@ -171,3 +171,28 @@
     color: var(--color-foreground);
   }
 }
+
+@utility pb-segura {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@utility mb-segura {
+  margin-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@layer base {
+  html,
+  body {
+    overflow-x: hidden;
+    max-width: 100%;
+  }
+
+  /* Evita el zoom automático de iOS en los campos de formulario. */
+  @media (max-width: 640px) {
+    input,
+    select,
+    textarea {
+      font-size: 16px;
+    }
+  }
+}

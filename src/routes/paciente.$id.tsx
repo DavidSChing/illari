@@ -60,13 +60,22 @@ function FichaContinuidad() {
 
   const registros = atencionesDePaciente(paciente.id);
 
+  const franjaOrigen = paciente.origen ? (
+    <p className="text-sm font-medium text-muted-foreground">
+      Origen: {paciente.origen.archivo}, fila {paciente.origen.fila}, cargado el{" "}
+      {formatearFecha(paciente.origen.fechaCarga)} · Solo lectura: el archivo no fue modificado
+    </p>
+  ) : null;
+
   return (
-    <div className="mx-auto flex max-w-[1400px] flex-col gap-2">
+    <div className="mx-auto flex w-full min-w-0 max-w-[1400px] flex-col gap-2 pb-20 md:pb-0">
       <Tabs defaultValue="resumen" className="flex flex-col gap-2">
-      <header className="grid grid-cols-1 items-start gap-2 rounded-md border border-border bg-card px-4 py-2 md:grid-cols-[minmax(0,1fr)_auto]">
+      <header className="grid grid-cols-1 items-start gap-2 rounded-md border border-border bg-card px-3 py-2 sm:px-4 md:grid-cols-[minmax(0,1fr)_auto]">
         <div className="min-w-0">
-          <h1 className="text-2xl font-bold leading-tight text-foreground">{paciente.nombre}</h1>
-          <p className="text-lg text-foreground">
+          <h1 className="text-xl font-bold leading-tight text-foreground sm:text-2xl">
+            {paciente.nombre}
+          </h1>
+          <p className="text-base text-foreground sm:text-lg">
             {paciente.desdeExcel ? (
               <>
                 HC {paciente.hc} ·{" "}
@@ -79,15 +88,7 @@ function FichaContinuidad() {
               </>
             )}
           </p>
-          {paciente.origen && (
-            <p
-              className="text-sm font-medium text-muted-foreground"
-              title={`Origen: ${paciente.origen.archivo}, fila ${paciente.origen.fila}, cargado el ${formatearFecha(paciente.origen.fechaCarga)}`}
-            >
-              Origen: {paciente.origen.archivo}, fila {paciente.origen.fila}, cargado el{" "}
-              {formatearFecha(paciente.origen.fechaCarga)} · Solo lectura: el archivo no fue modificado
-            </p>
-          )}
+          <div className="hidden md:block">{franjaOrigen}</div>
           <p className="text-sm text-muted-foreground">
             {paciente.protocolo} · Última atención {formatearFecha(paciente.fechaUltimaAtencion)} · Próxima
             cita {formatearFecha(paciente.fechaProximaCita)}
@@ -100,17 +101,17 @@ function FichaContinuidad() {
           </p>
         </div>
 
-        <div className="flex flex-col gap-1 md:items-end">
+        <div className="flex min-w-0 flex-col gap-1 md:items-end">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-2 md:justify-end">
             <SelectorMedico />
             {paciente.procedencia?.fueraDeLima ? (
               <p className="inline-flex items-center gap-2 rounded-md border border-primary bg-primary px-3 py-1.5 text-base font-bold text-primary-foreground">
-                <MapPin aria-hidden="true" className="size-5" />
+                <MapPin aria-hidden="true" className="size-5 shrink-0" />
                 Viaja {paciente.horasDeViaje} h desde {paciente.procedencia.region}
               </p>
             ) : (
               <p className="inline-flex items-center gap-2 rounded-md border border-border bg-secondary px-3 py-1.5 text-base font-semibold text-secondary-foreground">
-                <MapPin aria-hidden="true" className="size-5" />
+                <MapPin aria-hidden="true" className="size-5 shrink-0" />
                 {paciente.procedencia
                   ? `Reside en ${paciente.procedencia.ciudad}`
                   : "Procedencia no registrada en el Excel"}
@@ -120,32 +121,50 @@ function FichaContinuidad() {
           <Link
             to="/familia/$id"
             params={{ id: paciente.id }}
-            className="inline-flex items-center rounded-md py-1 text-sm font-semibold text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            className="inline-flex min-h-11 items-center rounded-md text-sm font-semibold text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring md:min-h-0 md:py-1"
           >
             Ver versión para cuidadores
           </Link>
-          <TabsList aria-label="Secciones de la ficha" className="h-9">
-            <TabsTrigger value="resumen" className="text-base">Resumen</TabsTrigger>
-            <TabsTrigger value="esquema" className="text-base">Esquema</TabsTrigger>
+          <TabsList aria-label="Secciones de la ficha" className="h-11 w-full md:h-9 md:w-auto">
+            <TabsTrigger value="resumen" className="flex-1 text-base md:flex-none">Resumen</TabsTrigger>
+            <TabsTrigger value="esquema" className="flex-1 text-base md:flex-none">Esquema</TabsTrigger>
           </TabsList>
         </div>
 
       </header>
 
-        <TabsContent value="resumen" className="flex flex-col gap-2">
-      <BarraFases
-        fase={paciente.fase}
-        cicloActual={paciente.cicloActual}
-        ciclosTotales={paciente.ciclosTotales}
-      />
+        <TabsContent
+          value="resumen"
+          className="flex flex-col gap-2 lg:grid lg:grid-cols-3 lg:content-start"
+        >
+          {/* Móvil: alertas primero. Escritorio: se recolocan con la grilla. */}
+          <div className="lg:col-span-2 lg:col-start-1 lg:row-start-2">
+            <PanelAlertas alertas={paciente.alertas} />
+          </div>
 
-      <div className="grid gap-2 lg:grid-cols-3">
-        <div className="flex flex-col gap-2 lg:col-span-2">
-          <PanelAlertas alertas={paciente.alertas} />
-          <TarjetasLaboratorio laboratorio={paciente.laboratorio} />
+          <div className="lg:col-span-2 lg:col-start-1 lg:row-start-3">
+            <TarjetasLaboratorio laboratorio={paciente.laboratorio} />
+          </div>
+
+          <div className="lg:col-span-3 lg:row-start-1">
+            <BarraFases
+              fase={paciente.fase}
+              cicloActual={paciente.cicloActual}
+              ciclosTotales={paciente.ciclosTotales}
+            />
+          </div>
+
+          <div className="lg:col-start-3 lg:row-start-2">
+            <BloqueResponsables paciente={paciente} />
+          </div>
+
+          <div className="lg:col-start-3 lg:row-start-3">
+            <ProximoPaso texto={paciente.proximoPasoSugerido} />
+          </div>
+
           <section
             aria-labelledby="titulo-administracion"
-            className="rounded-md border border-border bg-card p-4"
+            className="rounded-md border border-border bg-card p-4 lg:col-span-2 lg:col-start-1 lg:row-start-4"
           >
             <h2
               id="titulo-administracion"
@@ -155,7 +174,7 @@ function FichaContinuidad() {
             </h2>
             {paciente.ultimaAdministracion ? (
               <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-lg font-semibold text-foreground">
-                <Syringe aria-hidden="true" className="size-5 text-primary" />
+                <Syringe aria-hidden="true" className="size-5 shrink-0 text-primary" />
                 {paciente.ultimaAdministracion.medicamento}
                 <span className="font-medium">{paciente.ultimaAdministracion.dosis}</span>
                 <span className="text-base font-medium text-muted-foreground">
@@ -168,14 +187,12 @@ function FichaContinuidad() {
               </p>
             )}
           </section>
-        </div>
 
-        <div className="flex flex-col gap-2">
-          <BloqueResponsables paciente={paciente} />
-          <ProximoPaso texto={paciente.proximoPasoSugerido} />
-          <div className="flex flex-col gap-2 rounded-md border border-border bg-card px-4 py-3">
-            <DialogoRegistrarAtencion paciente={paciente} />
-            {registros.length > 0 && (
+          <div className="flex flex-col gap-2 rounded-md border border-border bg-card px-4 py-3 lg:col-start-3 lg:row-start-4">
+            <div className="hidden md:block">
+              <DialogoRegistrarAtencion paciente={paciente} />
+            </div>
+            {registros.length > 0 ? (
               <div>
                 <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
                   Atenciones registradas en esta sesión
@@ -189,16 +206,29 @@ function FichaContinuidad() {
                   ))}
                 </ul>
               </div>
+            ) : (
+              <p className="text-sm text-muted-foreground md:hidden">
+                Use el botón fijo al pie para registrar la atención.
+              </p>
             )}
           </div>
-        </div>
-      </div>
+
+          {franjaOrigen && (
+            <div className="rounded-md border border-border bg-card px-3 py-2 md:hidden">
+              {franjaOrigen}
+            </div>
+          )}
         </TabsContent>
 
         <TabsContent value="esquema">
           <PestanaEsquema paciente={paciente} nombreMedico={nombreMedico} />
         </TabsContent>
       </Tabs>
+
+      {/* Móvil: acción principal siempre visible, encima de la navegación inferior. */}
+      <div className="pb-segura fixed inset-x-0 bottom-14 z-30 border-t border-border bg-card px-3 py-2 md:hidden">
+        <DialogoRegistrarAtencion paciente={paciente} />
+      </div>
     </div>
   );
 }

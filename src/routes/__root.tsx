@@ -13,6 +13,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { BarraLateral } from "../components/layout/BarraLateral";
+import { BarraInferior } from "../components/layout/BarraInferior";
 import { BannerPrototipo } from "../components/layout/BannerPrototipo";
 import { ProveedorEstadoClinico } from "../state/EstadoClinico";
 
@@ -138,15 +139,22 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
      <ProveedorEstadoClinico>
-      <div className="flex min-h-screen flex-col bg-background md:flex-row">
+      <div className="flex min-h-screen w-full flex-col bg-background md:flex-row">
         {!rutaFamilia && <BarraLateral />}
         <div className="flex min-w-0 flex-1 flex-col">
-          <BannerPrototipo />
-          <main className="flex-1 px-4 py-3 md:px-6">
+          <BannerPrototipo compacto={rutaFamilia} />
+          <main
+            className={
+              rutaFamilia
+                ? "flex-1 px-3 py-2"
+                : "flex-1 px-3 pb-24 pt-3 sm:px-4 md:px-6 md:pb-6"
+            }
+          >
             {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
             <Outlet />
           </main>
         </div>
+        {!rutaFamilia && <BarraInferior />}
       </div>
      </ProveedorEstadoClinico>
     </QueryClientProvider>

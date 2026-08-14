@@ -103,6 +103,41 @@ function EstadoFamilia({ pacienteId }: { pacienteId: string }) {
   );
 }
 
+function TarjetaPaciente({ cita, paciente }: { cita: Cita; paciente: Paciente }) {
+  const { medicoActualId, nombreMedico } = useEstadoClinico();
+  const fueraDeDupla =
+    medicoActualId !== paciente.medicoPrincipalId && medicoActualId !== paciente.medicoSoporteId;
+
+  return (
+    <Link
+      to="/paciente/$id"
+      params={{ id: paciente.id }}
+      className={[
+        "flex min-h-24 w-full min-w-0 flex-col gap-1 rounded-md border px-3 py-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+        fueraDeDupla ? "border-clinico-ambar bg-clinico-ambar-suave/60" : "border-border bg-card",
+      ].join(" ")}
+    >
+      <div className="flex min-w-0 items-baseline justify-between gap-2">
+        <span className="truncate text-lg font-bold text-primary underline">{paciente.nombre}</span>
+        <span className="shrink-0 text-lg font-bold tabular-nums text-foreground">{cita.hora}</span>
+      </div>
+      <p className="text-base text-foreground">
+        <span className="font-semibold">{paciente.fase ?? "Fase no registrada"}</span> · Ciclo{" "}
+        {paciente.cicloActual}
+        {paciente.ciclosTotales ? ` de ${paciente.ciclosTotales}` : ""}
+      </p>
+      <p className="text-base text-foreground">{nombreMedico(paciente.medicoPrincipalId)}</p>
+      {fueraDeDupla && (
+        <p className="inline-flex items-center gap-1 text-sm font-bold text-clinico-ambar-foreground">
+          <ShieldAlert aria-hidden="true" className="size-4 shrink-0" />
+          No es de tu dupla
+        </p>
+      )}
+      <IconosAlerta alertas={paciente.alertas} />
+    </Link>
+  );
+}
+
 function FilaPaciente({ cita, paciente }: { cita: Cita; paciente: Paciente }) {
   const { medicoActualId, nombreMedico } = useEstadoClinico();
   const fueraDeDupla = medicoActualId !== paciente.medicoPrincipalId && medicoActualId !== paciente.medicoSoporteId;
@@ -169,8 +204,8 @@ export function TablaJornada() {
     .sort((a, b) => a.cita.hora.localeCompare(b.cita.hora));
 
   return (
-    <div className="flex flex-col gap-3">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex w-full min-w-0 flex-col gap-3">
+      <div className="sticky top-0 z-20 -mx-3 flex flex-col gap-2 border-b border-border bg-background px-3 py-2 sm:static sm:mx-0 sm:flex-row sm:items-center sm:justify-between sm:border-0 sm:px-0 sm:py-0">
       <label htmlFor="buscador-pacientes" className="sr-only">
         Buscar paciente por nombre
       </label>
@@ -180,7 +215,7 @@ export function TablaJornada() {
         placeholder="Buscar paciente por nombre..."
         value={busqueda}
         onChange={(evento) => setBusqueda(evento.target.value)}
-        className="max-w-sm"
+        className="h-12 w-full text-base sm:max-w-sm"
       />
       <p className="text-sm text-muted-foreground" aria-live="polite">
         {filas.length} de {citasDeHoy.length} citas
@@ -188,9 +223,24 @@ export function TablaJornada() {
       </p>
     </div>
 
+      {/* Móvil: una tarjeta por paciente con los datos indispensables. */}
+      <ul className="flex flex-col gap-2 md:hidden">
+        {filas.length === 0 ? (
+          <li className="rounded-md border border-border bg-card px-3 py-6 text-center text-base text-muted-foreground">
+            {citasDeHoy.length === 0
+              ? "El archivo cargado no registra próximas citas."
+              : `No se encontraron pacientes para “${busqueda}”.`}
+          </li>
+        ) : (
+          filas.map(({ cita, paciente }) => (
+            <li key={cita.id}>
+              <TarjetaPaciente cita={cita} paciente={paciente} />
+            </li>
+          ))
+        )}
+      </ul>
 
-
-      <div className="overflow-hidden rounded-md border border-border">
+      <div className="hidden overflow-hidden rounded-md border border-border md:block">
         <table className="w-full border-collapse text-left">
           <caption className="sr-only">Pacientes citados en la clínica de día de hoy</caption>
           <thead className="bg-muted">
