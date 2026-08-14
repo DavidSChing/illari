@@ -1,7 +1,8 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { pacientes } from "@/data/pacientes";
-import { VistaFamilia } from "@/components/ficha/VistaFamilia";
+import { useEstadoClinico } from "@/state/EstadoClinico";
+import { VistaFamilia } from "@/components/familia/VistaFamilia";
 
 export const Route = createFileRoute("/familia/$id")({
   loader: ({ params }) => {
@@ -12,21 +13,25 @@ export const Route = createFileRoute("/familia/$id")({
   head: ({ loaderData }) => {
     if (!loaderData) {
       return {
-        meta: [{ title: "Paciente no encontrado · Ficha de Continuidad" }, { name: "robots", content: "noindex" }],
+        meta: [
+          { title: "Paciente no encontrado · Ficha de Continuidad" },
+          { name: "robots", content: "noindex" },
+        ],
       };
     }
-    const titulo = `Información para cuidadores · ${loaderData.nombre}`;
+    const titulo = `Información para la familia · ${loaderData.nombre}`;
     return {
       meta: [
         { title: titulo },
         {
           name: "description",
-          content: "Resumen sencillo para cuidadores: cita, fase del tratamiento, señales de alarma y contactos.",
+          content:
+            "Pantalla para el responsable legal: próxima cita, confirmación de asistencia, señales de alarma y calendario del tratamiento.",
         },
         { property: "og:title", content: titulo },
         {
           property: "og:description",
-          content: "Resumen sencillo para cuidadores con datos sintéticos.",
+          content: "Pantalla sencilla para la familia, con datos sintéticos.",
         },
         { name: "robots", content: "noindex" },
       ],
@@ -37,11 +42,12 @@ export const Route = createFileRoute("/familia/$id")({
 
 function PaginaFamilia() {
   const { id } = Route.useParams();
-  const paciente = pacientes.find((item) => item.id === id);
+  const { obtenerPaciente } = useEstadoClinico();
+  const paciente = obtenerPaciente(id);
 
   if (!paciente) {
     return (
-      <div className="rounded-lg border border-border bg-card p-6">
+      <div className="mx-auto max-w-md rounded-lg border border-border bg-card p-6">
         <h1 className="text-2xl font-bold text-foreground">Paciente no encontrado</h1>
         <Link to="/" className="mt-3 inline-flex items-center gap-2 text-lg text-primary underline">
           <ArrowLeft aria-hidden="true" className="size-5" />
@@ -52,22 +58,19 @@ function PaginaFamilia() {
   }
 
   return (
-    <section aria-labelledby="titulo-familia" className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <h1 id="titulo-familia" className="text-2xl font-bold text-foreground">
-          Vista para cuidadores
-        </h1>
+    <div className="flex flex-col gap-3">
+      <div className="mx-auto w-full max-w-md">
         <Link
           to="/paciente/$id"
           params={{ id: paciente.id }}
-          className="inline-flex items-center gap-2 text-base font-semibold text-primary underline"
+          className="inline-flex min-h-11 items-center gap-2 text-base font-semibold text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         >
           <ArrowLeft aria-hidden="true" className="size-5" />
-          Volver a ficha médica
+          Volver a la ficha médica
         </Link>
       </div>
 
       <VistaFamilia paciente={paciente} />
-    </section>
+    </div>
   );
 }
