@@ -12,7 +12,9 @@ export const conteoPorMedico = (pacientes: Paciente[], medicos: Medico[]): Recor
   const conteo: Record<string, number> = {};
   for (const medico of medicos) conteo[medico.id] = 0;
   for (const paciente of pacientes) {
-    if (paciente.medicoPrincipalId in conteo) conteo[paciente.medicoPrincipalId] += 1;
+    if (paciente.medicoPrincipalId in conteo) {
+      conteo[paciente.medicoPrincipalId] = (conteo[paciente.medicoPrincipalId] ?? 0) + 1;
+    }
   }
   return conteo;
 };
@@ -33,25 +35,26 @@ export const calcularSugerencias = (
   medicos: Medico[],
 ): SugerenciaReasignacion[] => {
   const conteo = { ...conteoPorMedico(pacientes, medicos) };
+  const carga = (id: string): number => conteo[id] ?? 0;
   const asignacion = new Map(pacientes.map((p) => [p.id, p.medicoPrincipalId]));
   const sugerencias: SugerenciaReasignacion[] = [];
   const yaMovidos = new Set<string>();
 
   for (let intento = 0; intento < 20; intento += 1) {
     const ids = medicos.map((m) => m.id);
-    const mayor = ids.reduce((a, b) => (conteo[a] >= conteo[b] ? a : b));
-    const menor = ids.reduce((a, b) => (conteo[a] <= conteo[b] ? a : b));
-    if (conteo[mayor] - conteo[menor] <= 1) break;
+    if (ids.length === 0) break;
+    const mayor = ids.reduce((a, b) => (carga(a) >= carga(b) ? a : b));
+    const menor = ids.reduce((a, b) => (carga(a) <= carga(b) ? a : b));
+    if (carga(mayor) - carga(menor) <= 1) break;
 
     const candidatos = pacientes.filter(
       (p) => asignacion.get(p.id) === mayor && !yaMovidos.has(p.id),
     );
-    if (candidatos.length === 0) break;
-
     const elegido =
       candidatos.find((p) => p.medicoSoporteId === menor) ??
       candidatos.find((p) => p.atendidoUltimaVezPorId === menor) ??
       candidatos[0];
+    if (!elegido) break;
 
     const motivo =
       elegido.medicoSoporteId === menor
@@ -70,8 +73,8 @@ export const calcularSugerencias = (
 
     yaMovidos.add(elegido.id);
     asignacion.set(elegido.id, menor);
-    conteo[mayor] -= 1;
-    conteo[menor] += 1;
+    conteo[mayor] = carga(mayor) - 1;
+    conteo[menor] = carga(menor) + 1;
   }
 
   return sugerencias;
