@@ -60,7 +60,7 @@ function FichaContinuidad() {
 
   return (
     <div className="mx-auto flex max-w-[1400px] flex-col gap-2">
-      <header className="grid grid-cols-1 items-start gap-2 rounded-md border border-border bg-card px-4 py-2 lg:grid-cols-[minmax(0,1fr)_auto]">
+      <header className="grid grid-cols-1 items-start gap-2 rounded-md border border-border bg-card px-4 py-2 md:grid-cols-[minmax(0,1fr)_auto]">
         <div className="min-w-0">
           <h1 className="text-2xl font-bold leading-tight text-foreground">{paciente.nombre}</h1>
           <p className="text-lg text-foreground">
@@ -76,7 +76,7 @@ function FichaContinuidad() {
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-2 lg:justify-end">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2 md:justify-end">
           <SelectorMedico />
           {paciente.procedencia.fueraDeLima ? (
             <p className="inline-flex items-center gap-2 rounded-md border border-primary bg-primary px-3 py-1.5 text-base font-bold text-primary-foreground">
