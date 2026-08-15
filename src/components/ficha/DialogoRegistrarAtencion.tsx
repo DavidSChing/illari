@@ -330,7 +330,8 @@ export function DialogoRegistrarAtencion({ paciente }: { paciente: Paciente }) {
     }
   }
 
-  const visibles = medicamentos.slice(0, 3);
+  // Siempre visibles los seleccionados (por ejemplo, los cargados del archivo), hasta 3 filas.
+  const visibles = Array.from(new Set([...seleccionados.filter((m) => medicamentos.includes(m)), ...medicamentos])).slice(0, 3);
 
   return (
     <Dialog
