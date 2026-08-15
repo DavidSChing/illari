@@ -40,7 +40,7 @@ export function BarraLateral() {
               to={to}
               activeOptions={{ exact: to === "/" }}
               activeProps={{
-                className: "border-l-primary text-sidebar-primary font-medium",
+                className: "border-l-sidebar-ring text-sidebar-primary font-medium",
                 "aria-current": "page",
               }}
               inactiveProps={{ className: "border-l-transparent" }}
