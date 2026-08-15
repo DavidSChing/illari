@@ -39,13 +39,12 @@ function IconosAlerta({ alertas }: { alertas: string[] }) {
         return (
           <li key={alerta} title={alerta}>
             <span
-              className={`inline-flex items-center gap-1 rounded-md px-0 py-0.5 text-[0.8125rem] font-medium ${
-                nivel === "rojo"
-                  ? "text-foreground"
-                  : "text-foreground"
-              }`}
+              className="inline-flex items-center gap-1 text-[0.8125rem] font-medium text-foreground"
             >
-              <Icono aria-hidden="true" className="size-4" />
+              <Icono
+                aria-hidden="true"
+                className={`size-4 shrink-0 ${nivel === "rojo" ? "text-clinico-rojo" : "text-clinico-ambar"}`}
+              />
               {alerta}
             </span>
           </li>
