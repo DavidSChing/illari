@@ -14,6 +14,7 @@ import { Route as CargaRouteImport } from './routes/carga'
 import { Route as CargarRouteImport } from './routes/cargar'
 import { Route as DemoRouteImport } from './routes/demo'
 import { Route as ModoDemoRouteImport } from './routes/modo-demo'
+import { Route as ProgramacionRouteImport } from './routes/programacion'
 import { Route as RetrasosRouteImport } from './routes/retrasos'
 import { Route as FamiliaIdRouteImport } from './routes/familia.$id'
 import { Route as PacienteIdRouteImport } from './routes/paciente.$id'
@@ -43,6 +44,11 @@ const ModoDemoRoute = ModoDemoRouteImport.update({
   path: '/modo-demo',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProgramacionRoute = ProgramacionRouteImport.update({
+  id: '/programacion',
+  path: '/programacion',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RetrasosRoute = RetrasosRouteImport.update({
   id: '/retrasos',
   path: '/retrasos',
@@ -65,6 +71,7 @@ export interface FileRoutesByFullPath {
   '/cargar': typeof CargarRoute
   '/demo': typeof DemoRoute
   '/modo-demo': typeof ModoDemoRoute
+  '/programacion': typeof ProgramacionRoute
   '/retrasos': typeof RetrasosRoute
   '/familia/$id': typeof FamiliaIdRoute
   '/paciente/$id': typeof PacienteIdRoute
@@ -75,6 +82,7 @@ export interface FileRoutesByTo {
   '/cargar': typeof CargarRoute
   '/demo': typeof DemoRoute
   '/modo-demo': typeof ModoDemoRoute
+  '/programacion': typeof ProgramacionRoute
   '/retrasos': typeof RetrasosRoute
   '/familia/$id': typeof FamiliaIdRoute
   '/paciente/$id': typeof PacienteIdRoute
@@ -86,6 +94,7 @@ export interface FileRoutesById {
   '/cargar': typeof CargarRoute
   '/demo': typeof DemoRoute
   '/modo-demo': typeof ModoDemoRoute
+  '/programacion': typeof ProgramacionRoute
   '/retrasos': typeof RetrasosRoute
   '/familia/$id': typeof FamiliaIdRoute
   '/paciente/$id': typeof PacienteIdRoute
@@ -98,6 +107,7 @@ export interface FileRouteTypes {
     | '/cargar'
     | '/demo'
     | '/modo-demo'
+    | '/programacion'
     | '/retrasos'
     | '/familia/$id'
     | '/paciente/$id'
@@ -108,6 +118,7 @@ export interface FileRouteTypes {
     | '/cargar'
     | '/demo'
     | '/modo-demo'
+    | '/programacion'
     | '/retrasos'
     | '/familia/$id'
     | '/paciente/$id'
@@ -118,6 +129,7 @@ export interface FileRouteTypes {
     | '/cargar'
     | '/demo'
     | '/modo-demo'
+    | '/programacion'
     | '/retrasos'
     | '/familia/$id'
     | '/paciente/$id'
@@ -129,6 +141,7 @@ export interface RootRouteChildren {
   CargarRoute: typeof CargarRoute
   DemoRoute: typeof DemoRoute
   ModoDemoRoute: typeof ModoDemoRoute
+  ProgramacionRoute: typeof ProgramacionRoute
   RetrasosRoute: typeof RetrasosRoute
   FamiliaIdRoute: typeof FamiliaIdRoute
   PacienteIdRoute: typeof PacienteIdRoute
@@ -171,6 +184,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ModoDemoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/programacion': {
+      id: '/programacion'
+      path: '/programacion'
+      fullPath: '/programacion'
+      preLoaderRoute: typeof ProgramacionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/retrasos': {
       id: '/retrasos'
       path: '/retrasos'
@@ -201,6 +221,7 @@ const rootRouteChildren: RootRouteChildren = {
   CargarRoute: CargarRoute,
   DemoRoute: DemoRoute,
   ModoDemoRoute: ModoDemoRoute,
+  ProgramacionRoute: ProgramacionRoute,
   RetrasosRoute: RetrasosRoute,
   FamiliaIdRoute: FamiliaIdRoute,
   PacienteIdRoute: PacienteIdRoute,
