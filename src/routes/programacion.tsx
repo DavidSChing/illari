@@ -48,13 +48,28 @@ const TITULO_GRUPO: Record<1 | 2 | 3, string> = {
 
 function VistaProgramacion() {
   const { pacientes } = useEstadoClinico();
+  const [config, setConfig] = useState<Required<OpcionesProgramacion>>(OPCIONES_POR_DEFECTO);
 
   const resultado = useMemo(
-    () => programarCitas(pacientes.map(aProgramable)),
-    [pacientes],
+    () => programarCitas(pacientes.map(aProgramable), config),
+    [pacientes, config],
   );
 
   const { cola, bloques, horaTermino, opciones } = resultado;
+
+  const sugerida = useMemo(() => ocupacionSugerida(resultado), [resultado]);
+  const actual = useMemo(
+    () =>
+      ocupacionActual(
+        cola.length,
+        opciones.capacidadPorBloque,
+        FRANJAS_ACTUALES,
+        PESOS_ACTUALES,
+        DURACION_FRANJA_ACTUAL,
+      ),
+    [cola.length, opciones.capacidadPorBloque],
+  );
+
 
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 p-3 md:p-6">
