@@ -55,6 +55,8 @@ export interface Paciente {
   fase: Fase | null;
   cicloActual: number;
   ciclosTotales: number | null;
+  /** Fecha de diagnóstico (AAAA-MM-DD), usada para ordenar la programación. */
+  fechaDiagnostico?: string;
   fechaUltimaAtencion: string;
   fechaProximaCita: string;
   ultimaAdministracion: Administracion | null;
