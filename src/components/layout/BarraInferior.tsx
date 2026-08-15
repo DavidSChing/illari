@@ -1,23 +1,26 @@
 import { Link } from "@tanstack/react-router";
 import { CalendarDays, Users, Timer, CalendarClock, ListOrdered } from "lucide-react";
 
+import { useEstadoClinico } from "@/state/EstadoClinico";
+
 const secciones = [
-  { to: "/", etiqueta: "Jornada", Icono: CalendarDays },
-  { to: "/programacion", etiqueta: "Programar", Icono: ListOrdered },
-  { to: "/retrasos", etiqueta: "Retrasos", Icono: CalendarClock },
-  { to: "/carga", etiqueta: "Carga", Icono: Users },
-  { to: "/demo", etiqueta: "Demo", Icono: Timer },
+  { to: "/", etiqueta: "Jornada", Icono: CalendarDays, soloMedico: false },
+  { to: "/programacion", etiqueta: "Programar", Icono: ListOrdered, soloMedico: false },
+  { to: "/retrasos", etiqueta: "Retrasos", Icono: CalendarClock, soloMedico: true },
+  { to: "/carga", etiqueta: "Carga", Icono: Users, soloMedico: true },
+  { to: "/demo", etiqueta: "Demo", Icono: Timer, soloMedico: true },
 ] as const;
 
-/** Navegación principal en móvil: barra inferior fija con icono y etiqueta. */
 export function BarraInferior() {
+  const { rol } = useEstadoClinico();
+  const visibles = secciones.filter((s) => rol === "medico" || !s.soloMedico);
   return (
     <nav
       aria-label="Navegación principal"
       className="pb-segura fixed inset-x-0 bottom-0 z-40 border-t border-sidebar-border bg-sidebar text-sidebar-foreground md:hidden"
     >
       <ul className="flex items-stretch">
-        {secciones.map(({ to, etiqueta, Icono }) => (
+        {visibles.map(({ to, etiqueta, Icono }) => (
           <li key={to} className="flex-1">
             <Link
               to={to}

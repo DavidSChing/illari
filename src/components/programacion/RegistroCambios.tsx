@@ -9,6 +9,8 @@ import type { CambioProgramacion } from "@/state/EstadoClinico";
 
 /** Trazabilidad: qué ajustó el equipo asistencial sobre la propuesta automática. */
 export function RegistroCambios({ cambios }: { cambios: CambioProgramacion[] }) {
+  if (cambios.length === 0) return null;
+
   return (
     <Collapsible defaultOpen className="bg-card">
       <CollapsibleTrigger className="group flex min-h-12 w-full items-center gap-2 px-3 py-2 text-left focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring md:px-4">
@@ -22,22 +24,16 @@ export function RegistroCambios({ cambios }: { cambios: CambioProgramacion[] }) 
         />
       </CollapsibleTrigger>
       <CollapsibleContent>
-        {cambios.length === 0 ? (
-          <p className="border-t border-border px-3 py-3 text-base text-muted-foreground md:px-4">
-            Aún no hay ajustes manuales. La propuesta mostrada es la automática.
-          </p>
-        ) : (
-          <ol className="divide-y divide-border border-t border-border">
-            {cambios.map((cambio) => (
-              <li key={cambio.id} className="flex gap-3 px-3 py-2 md:px-4">
-                <span className="shrink-0 text-base font-bold tabular-nums text-foreground">
-                  {cambio.hora}
-                </span>
-                <span className="text-base text-foreground">{cambio.accion}</span>
-              </li>
-            ))}
-          </ol>
-        )}
+        <ol className="divide-y divide-border border-t border-border">
+          {cambios.map((cambio) => (
+            <li key={cambio.id} className="flex gap-3 px-3 py-2 md:px-4">
+              <span className="shrink-0 text-base font-bold tabular-nums text-foreground">
+                {cambio.hora}
+              </span>
+              <span className="text-base text-foreground">{cambio.accion}</span>
+            </li>
+          ))}
+        </ol>
       </CollapsibleContent>
     </Collapsible>
   );

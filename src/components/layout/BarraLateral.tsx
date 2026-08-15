@@ -9,17 +9,21 @@ import {
   ListOrdered,
 } from "lucide-react";
 
+import { useEstadoClinico } from "@/state/EstadoClinico";
+
 const secciones = [
-  { to: "/", etiqueta: "Jornada de hoy", Icono: CalendarDays },
-  { to: "/programacion", etiqueta: "Programación sugerida", Icono: ListOrdered },
-  { to: "/cargar", etiqueta: "Cargar Excel", Icono: FileSpreadsheet },
-  { to: "/retrasos", etiqueta: "Pacientes retrasados", Icono: CalendarClock },
-  { to: "/carga", etiqueta: "Carga médica", Icono: Users },
-  { to: "/modo-demo", etiqueta: "Modo demo", Icono: PlayCircle },
-  { to: "/demo", etiqueta: "Demostración de tiempos", Icono: Timer },
+  { to: "/", etiqueta: "Jornada de hoy", Icono: CalendarDays, soloMedico: false },
+  { to: "/programacion", etiqueta: "Programación sugerida", Icono: ListOrdered, soloMedico: false },
+  { to: "/cargar", etiqueta: "Cargar Excel", Icono: FileSpreadsheet, soloMedico: true },
+  { to: "/retrasos", etiqueta: "Pacientes retrasados", Icono: CalendarClock, soloMedico: true },
+  { to: "/carga", etiqueta: "Carga médica", Icono: Users, soloMedico: true },
+  { to: "/modo-demo", etiqueta: "Modo demo", Icono: PlayCircle, soloMedico: true },
+  { to: "/demo", etiqueta: "Demostración de tiempos", Icono: Timer, soloMedico: true },
 ] as const;
 
 export function BarraLateral() {
+  const { rol } = useEstadoClinico();
+  const visibles = secciones.filter((s) => rol === "medico" || !s.soloMedico);
   return (
     <nav
       aria-label="Navegación principal"
@@ -34,7 +38,7 @@ export function BarraLateral() {
       </div>
 
       <ul className="flex flex-1 flex-col py-3">
-        {secciones.map(({ to, etiqueta, Icono }) => (
+        {visibles.map(({ to, etiqueta, Icono }) => (
           <li key={to}>
             <Link
               to={to}

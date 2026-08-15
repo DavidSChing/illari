@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { CalendarClock, ClipboardCopy, Info, LayoutGrid, PencilLine, Users } from "lucide-react";
+import { CalendarClock, ClipboardCopy, LayoutGrid, PencilLine, Users } from "lucide-react";
 
 import { useEstadoClinico } from "@/state/EstadoClinico";
 import { formatearFecha } from "@/lib/formato";
@@ -23,6 +23,7 @@ import { FueraDeProgramacion } from "@/components/programacion/FueraDeProgramaci
 import { RegistroCambios } from "@/components/programacion/RegistroCambios";
 import { MensajesFamilias } from "@/components/programacion/MensajesFamilias";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { NivelSemaforo } from "@/data/tipos";
 
 
@@ -38,7 +39,7 @@ export const Route = createFileRoute("/programacion")({
       { property: "og:title", content: "Programación sugerida · Ficha de Continuidad" },
       {
         property: "og:description",
-        content: "Cola de pacientes ordenada por prioridad y bloques de 9 sillones.",
+        content: "Cola de pacientes ordenada por prioridad y bloques de sillones configurables.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -85,14 +86,7 @@ function VistaProgramacion() {
     [cola.length, opciones.capacidadPorBloque],
   );
 
-  const mensajes = useMemo(
-    () =>
-      mensajesDeProgramacion(
-        bloques,
-        (pacienteId) => obtenerPaciente(pacienteId)?.fechaProximaCita ?? "",
-      ),
-    [bloques, obtenerPaciente],
-  );
+  const mensajes = useMemo(() => mensajesDeProgramacion(bloques, obtenerPaciente), [bloques, obtenerPaciente]);
 
   const ultimoCambio = cambiosProgramacion[0];
 
@@ -108,27 +102,10 @@ function VistaProgramacion() {
 
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 p-3 md:p-6">
-      <header className="flex flex-col gap-2">
+      <header>
         <h1 className="text-2xl font-semibold tracking-[-0.02em] text-foreground">
           Programación sugerida de clínica de día
         </h1>
-        <p className="text-base text-muted-foreground">
-          Propuesta de orden para {opciones.capacidadPorBloque} sillones, desde las{" "}
-          {opciones.horaInicio} y cada {opciones.intervaloBloques} horas.
-        </p>
-        <p
-          role="note"
-          className="flex items-start gap-2 rounded-md border-l-[3px] border-l-clinico-ambar bg-muted/40 px-3 py-2 text-base font-semibold text-foreground"
-        >
-          <Info aria-hidden="true" className="mt-0.5 size-5 shrink-0" />
-          Programación sugerida. La confirmación corresponde al equipo asistencial.
-        </p>
-        <p className="text-sm text-muted-foreground">
-          El orden no significa gravedad ni urgencia de tratamiento. Significa quién no debe
-          esperar: se cita más temprano a quien requiere evaluación prioritaria y a quien debe
-          pasar el menor tiempo posible en sala de espera. La decisión de si el ciclo procede es
-          del médico.
-        </p>
       </header>
 
       {ultimoCambio ? (
@@ -157,7 +134,6 @@ function VistaProgramacion() {
         onCambio={(parcial) => setConfigProgramacion(parcial)}
       />
 
-
       <section aria-label="Indicadores de la programación" className="grid gap-3 sm:grid-cols-3">
         <Indicador
           Icono={Users}
@@ -176,49 +152,45 @@ function VistaProgramacion() {
         />
       </section>
 
-      <section aria-labelledby="titulo-bloques" className="grid gap-3">
-        <h2 id="titulo-bloques" className="text-lg font-bold text-foreground">
-          Bloques propuestos
-        </h2>
-        <BloquesSugeridos bloques={bloques} capacidad={opciones.capacidadPorBloque} />
-      </section>
+      <Tabs defaultValue="bloques">
+        <TabsList aria-label="Secciones de la programación">
+          <TabsTrigger value="bloques">Bloques</TabsTrigger>
+          <TabsTrigger value="cola">Cola por prioridad</TabsTrigger>
+          <TabsTrigger value="comparacion">Comparación de ocupación</TabsTrigger>
+        </TabsList>
 
-      <FueraDeProgramacion excluidos={excluidos} />
+        <TabsContent value="bloques" className="flex flex-col gap-4">
+          <BloquesSugeridos bloques={bloques} capacidad={opciones.capacidadPorBloque} />
+          <FueraDeProgramacion excluidos={excluidos} />
+          <RegistroCambios cambios={cambiosProgramacion} />
+        </TabsContent>
 
-      <RegistroCambios cambios={cambiosProgramacion} />
+        <TabsContent value="cola" className="bg-card">
+          {cola.length === 0 ? (
+            <p className="px-3 py-6 text-base text-muted-foreground md:px-4">
+              No hay pacientes por programar con los datos cargados.
+            </p>
+          ) : (
+            <ol className="divide-y divide-border">
+              {cola.map((entrada, indice) => (
+                <FilaCola
+                  key={entrada.paciente.id}
+                  entrada={entrada}
+                  cierraGrupo={cola[indice + 1]?.grupo !== entrada.grupo}
+                />
+              ))}
+            </ol>
+          )}
+        </TabsContent>
 
-      <ComparacionOcupacion
-        actual={actual}
-        sugerida={sugerida}
-        capacidad={opciones.capacidadPorBloque}
-      />
-
-
-
-      <section aria-labelledby="titulo-cola" className="bg-card">
-        <h2
-          id="titulo-cola"
-          className="border-b border-border px-3 py-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground md:px-4"
-        >
-          Cola ordenada por prioridad
-        </h2>
-
-        {cola.length === 0 ? (
-          <p className="px-3 py-6 text-base text-muted-foreground md:px-4">
-            No hay pacientes por programar con los datos cargados.
-          </p>
-        ) : (
-          <ol className="divide-y divide-border">
-            {cola.map((entrada, indice) => (
-              <FilaCola
-                key={entrada.paciente.id}
-                entrada={entrada}
-                cierraGrupo={cola[indice + 1]?.grupo !== entrada.grupo}
-              />
-            ))}
-          </ol>
-        )}
-      </section>
+        <TabsContent value="comparacion">
+          <ComparacionOcupacion
+            actual={actual}
+            sugerida={sugerida}
+            capacidad={opciones.capacidadPorBloque}
+          />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

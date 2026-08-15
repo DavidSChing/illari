@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import {
   Dialog,
   DialogContent,
@@ -7,10 +8,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { MessageSquare } from "lucide-react";
+import { MessageSquare, Send } from "lucide-react";
 import type { MensajePrograma } from "@/lib/salidaProgramacion";
 
-/** Vista previa de los SMS. No envía nada: solo muestra el texto. */
 export function MensajesFamilias({ mensajes }: { mensajes: MensajePrograma[] }) {
   return (
     <Dialog>
@@ -24,7 +24,8 @@ export function MensajesFamilias({ mensajes }: { mensajes: MensajePrograma[] }) 
         <DialogHeader>
           <DialogTitle>Mensajes a familias</DialogTitle>
           <DialogDescription className="text-base">
-            Vista previa. El prototipo no envía mensajes ni confirma citas.
+            Vista previa del aviso de cada paciente. El envío se hace desde la ficha de cada
+            paciente, con el número del cuidador que corresponda.
           </DialogDescription>
         </DialogHeader>
 
@@ -36,12 +37,22 @@ export function MensajesFamilias({ mensajes }: { mensajes: MensajePrograma[] }) 
           <ul className="grid gap-3">
             {mensajes.map((mensaje) => (
               <li key={mensaje.pacienteId} className="rounded-md border border-border p-3">
-                <p className="flex flex-wrap items-baseline gap-x-3 text-base font-semibold text-foreground">
-                  {mensaje.nombre}
-                  <span className="text-sm font-semibold tabular-nums text-muted-foreground">
-                    {mensaje.hora}
-                  </span>
-                </p>
+                <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+                  <p className="flex flex-wrap items-baseline gap-x-3 text-base font-semibold text-foreground">
+                    {mensaje.nombre}
+                    <span className="text-sm font-semibold tabular-nums text-muted-foreground">
+                      {mensaje.hora}
+                    </span>
+                  </p>
+                  <Link
+                    to="/paciente/$id"
+                    params={{ id: mensaje.pacienteId }}
+                    className="inline-flex items-center gap-1 text-sm font-semibold text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                  >
+                    <Send aria-hidden="true" className="size-4" />
+                    Ir a enviar
+                  </Link>
+                </div>
                 <p className="mt-1 rounded-sm bg-muted px-3 py-2 text-base text-foreground">
                   {mensaje.texto}
                 </p>

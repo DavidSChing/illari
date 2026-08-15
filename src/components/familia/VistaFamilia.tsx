@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Check, Phone, Thermometer } from "lucide-react";
 
 import type { Paciente } from "@/data/tipos";
@@ -31,7 +31,13 @@ const BOTON_GRANDE =
 const DISPARADOR =
   "min-h-14 gap-3 py-0 text-left text-lg font-bold text-foreground no-underline hover:no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
 
-export function VistaFamilia({ paciente }: { paciente: Paciente }) {
+export function VistaFamilia({
+  paciente,
+  seccionInicial,
+}: {
+  paciente: Paciente;
+  seccionInicial?: string;
+}) {
   const {
     respuestaFamilia,
     confirmarAsistencia,
@@ -44,8 +50,16 @@ export function VistaFamilia({ paciente }: { paciente: Paciente }) {
   const respuesta = respuestaFamilia(paciente.id);
   const [eligiendoMotivo, setEligiendoMotivo] = useState(false);
   const [confirmacion, setConfirmacion] = useState<string | null>(null);
-  const [seccionAbierta, setSeccionAbierta] = useState<string>("");
+  const [seccionAbierta, setSeccionAbierta] = useState<string>(seccionInicial ?? "");
   const acordeonRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!seccionInicial) return;
+    window.requestAnimationFrame(() =>
+      acordeonRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const nino = primerNombre(paciente.nombre);
   const fecha = fechaCortaEnPalabras(paciente.fechaProximaCita);

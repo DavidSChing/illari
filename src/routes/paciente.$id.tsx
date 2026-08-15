@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { MapPin, Syringe } from "lucide-react";
+import { MapPin, Send, Syringe } from "lucide-react";
 import { useEstadoClinico } from "@/state/EstadoClinico";
 import { pacientes } from "@/data/pacientes";
 import { formatearFecha } from "@/lib/formato";
@@ -122,13 +122,24 @@ function FichaContinuidad() {
               </p>
             )}
           </div>
-          <Link
-            to="/familia/$id"
-            params={{ id: paciente.id }}
-            className="inline-flex min-h-11 items-center rounded-md text-sm font-semibold text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring md:min-h-0 md:py-1"
-          >
-            Ver versión para cuidadores
-          </Link>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <Link
+              to="/familia/$id"
+              params={{ id: paciente.id }}
+              search={{ abrir: "avisos" }}
+              className="inline-flex min-h-11 items-center gap-1.5 rounded-md bg-primary px-3 text-sm font-semibold text-primary-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring md:min-h-9 md:py-1"
+            >
+              <Send aria-hidden="true" className="size-4" />
+              Enviar aviso de cita por SMS
+            </Link>
+            <Link
+              to="/familia/$id"
+              params={{ id: paciente.id }}
+              className="inline-flex min-h-11 items-center rounded-md text-sm font-semibold text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring md:min-h-0 md:py-1"
+            >
+              Ver versión para cuidadores
+            </Link>
+          </div>
           <TabsList aria-label="Secciones de la ficha" className="h-11 w-full md:h-9 md:w-auto">
             <TabsTrigger value="resumen" className="flex-1 text-base md:flex-none">Resumen</TabsTrigger>
             <TabsTrigger value="esquema" className="flex-1 text-base md:flex-none">Esquema</TabsTrigger>

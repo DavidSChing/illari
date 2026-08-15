@@ -12,6 +12,8 @@ export function FueraDeProgramacion({
 }) {
   const { cambiarMotivoExclusion, reincluirPaciente } = useEstadoClinico();
 
+  if (excluidos.length === 0) return null;
+
   return (
     <section
       aria-labelledby="titulo-fuera"
@@ -24,13 +26,7 @@ export function FueraDeProgramacion({
         Fuera de la programación
       </h2>
 
-      {excluidos.length === 0 ? (
-        <p className="px-3 py-4 text-base text-muted-foreground md:px-4">
-          No hay pacientes excluidos. El equipo puede excluir a un paciente desde el menú de su
-          sillón.
-        </p>
-      ) : (
-        <ul className="divide-y divide-border">
+      <ul className="divide-y divide-border">
           {excluidos.map(({ paciente, motivo }) => (
             <li key={paciente.id} className="grid gap-2 px-3 py-3 md:px-4">
               <p className="text-base font-semibold text-foreground">{paciente.nombre}</p>
@@ -58,8 +54,7 @@ export function FueraDeProgramacion({
               </div>
             </li>
           ))}
-        </ul>
-      )}
+      </ul>
     </section>
   );
 }

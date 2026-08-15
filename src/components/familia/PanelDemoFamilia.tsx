@@ -3,16 +3,13 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, SlidersHorizontal } from "lucide-react";
 
 import type { Paciente } from "@/data/tipos";
-import { mensajeSms } from "@/lib/familia";
 import { useEstadoClinico } from "@/state/EstadoClinico";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
-/** Chip discreto de demostración: no ocupa espacio del contenido real. */
 export function PanelDemoFamilia({ paciente }: { paciente: Paciente }) {
   const { pacientes } = useEstadoClinico();
   const navigate = useNavigate();
   const [abierto, setAbierto] = useState(false);
-  const sms = mensajeSms(paciente);
 
   return (
     <>
@@ -60,16 +57,6 @@ export function PanelDemoFamilia({ paciente }: { paciente: Paciente }) {
                 ))}
               </select>
             </div>
-
-            <section aria-labelledby="titulo-sms-demo">
-              <h3 id="titulo-sms-demo" className="text-[0.9375rem] font-semibold text-foreground">
-                Cómo lo recibe una familia sin internet
-              </h3>
-              <p className="mt-1 rounded-md border border-border bg-muted p-3 text-base leading-snug text-foreground">
-                {sms}
-              </p>
-              <p className="mt-1 text-sm text-muted-foreground">{sms.length} / 160 caracteres</p>
-            </section>
 
             <Link
               to="/paciente/$id"

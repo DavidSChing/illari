@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MoreVertical, Plus } from "lucide-react";
+import { MoreVertical, Plus, Send } from "lucide-react";
 
 import type { Paciente } from "@/data/tipos";
 import {
@@ -11,6 +11,7 @@ import {
 import { mensajeRecordatorio } from "@/lib/familia";
 import { useEstadoClinico } from "@/state/EstadoClinico";
 import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,9 +26,23 @@ const BOTON =
 const AVISOS = ["1 semana antes", "3 días antes", "1 día antes"] as const;
 
 export function NumerosSms({ paciente }: { paciente: Paciente }) {
-  const { numerosSms, agregarNumeroSms, editarNumeroSms, alternarNumeroSms, eliminarNumeroSms, horaPropuesta } =
-    useEstadoClinico();
+  const {
+    numerosSms,
+    agregarNumeroSms,
+    editarNumeroSms,
+    alternarNumeroSms,
+    eliminarNumeroSms,
+    horaPropuesta,
+    enviarSms,
+    enviandoSms,
+    smsEnviados,
+  } = useEstadoClinico();
   const numeros = numerosSms(paciente.id);
+  const [enviandoA, setEnviandoA] = useState<string | null>(null);
+
+  function ultimoEnvio(numero: string) {
+    return smsEnviados.find((s) => s.pacienteId === paciente.id && s.numero === numero);
+  }
   const [editando, setEditando] = useState<NumeroSms | "nuevo" | null>(null);
   const [porEliminar, setPorEliminar] = useState<NumeroSms | null>(null);
   const [etiqueta, setEtiqueta] = useState("");
@@ -82,14 +97,36 @@ export function NumerosSms({ paciente }: { paciente: Paciente }) {
         {numeros.length === 0 && (
           <li className="py-4 text-lg text-muted-foreground">Aún no hay números registrados.</li>
         )}
-        {numeros.map((item) => (
-          <li key={item.id} className="flex min-h-14 items-center gap-3 py-2">
+        {numeros.map((item) => {
+          const envio = ultimoEnvio(item.numero);
+          return (
+          <li key={item.id} className="flex min-h-14 flex-wrap items-center gap-3 py-2">
             <div className="min-w-0 flex-1">
               <p className="truncate text-lg font-bold text-foreground">{item.etiqueta}</p>
               <p className="text-[1.0625rem] tabular-nums text-foreground">
                 {formatearNumero(item.numero)}
               </p>
+              {envio && (
+                <p className="text-sm text-muted-foreground">
+                  {envio.estado === "real" ? "Enviado" : envio.estado === "simulado" ? "Simulado" : "Falló"} ·{" "}
+                  {new Date(envio.fecha).toLocaleTimeString("es-PE", { hour: "2-digit", minute: "2-digit" })}
+                </p>
+              )}
             </div>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              disabled={enviandoSms}
+              onClick={() => {
+                setEnviandoA(item.id);
+                enviarSms(paciente.id, item.numero);
+              }}
+              className="min-h-10 shrink-0"
+            >
+              <Send aria-hidden="true" className={`size-4 ${enviandoSms && enviandoA === item.id ? "animate-pulse" : ""}`} />
+              Enviar
+            </Button>
             <Switch
               checked={item.activo}
               onCheckedChange={() => alternarNumeroSms(paciente.id, item.id)}
@@ -112,7 +149,8 @@ export function NumerosSms({ paciente }: { paciente: Paciente }) {
               </DropdownMenuContent>
             </DropdownMenu>
           </li>
-        ))}
+          );
+        })}
       </ul>
 
       {/* 3. Agregar número */}
@@ -136,16 +174,7 @@ export function NumerosSms({ paciente }: { paciente: Paciente }) {
             {mensaje.length}/160
           </span>
         </div>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Sin tildes ni caracteres especiales, para que llegue bien a cualquier equipo.
-        </p>
       </section>
-
-      {/* 6. Aviso obligatorio */}
-      <p className="border-t border-border pt-2 text-sm text-muted-foreground">
-        Demostración: la plataforma no envía mensajes reales. Los números se guardan solo en esta
-        sesión.
-      </p>
 
       {/* Hoja: agregar o editar */}
       <Sheet open={editando !== null} onOpenChange={(abierto) => !abierto && setEditando(null)}>

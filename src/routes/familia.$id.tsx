@@ -5,6 +5,8 @@ import { useEstadoClinico } from "@/state/EstadoClinico";
 import { VistaFamilia } from "@/components/familia/VistaFamilia";
 
 export const Route = createFileRoute("/familia/$id")({
+  validateSearch: (search: Record<string, unknown>): { abrir?: string } =>
+    typeof search["abrir"] === "string" ? { abrir: search["abrir"] } : {},
   loader: ({ params }) => {
     const paciente = pacientes.find((item) => item.id === params.id);
     if (!paciente) throw notFound();
@@ -42,6 +44,7 @@ export const Route = createFileRoute("/familia/$id")({
 
 function PaginaFamilia() {
   const { id } = Route.useParams();
+  const { abrir } = Route.useSearch();
   const { obtenerPaciente } = useEstadoClinico();
   const paciente = obtenerPaciente(id);
 
@@ -57,5 +60,5 @@ function PaginaFamilia() {
     );
   }
 
-  return <VistaFamilia paciente={paciente} />;
+  return <VistaFamilia paciente={paciente} {...(abrir ? { seccionInicial: abrir } : {})} />;
 }
