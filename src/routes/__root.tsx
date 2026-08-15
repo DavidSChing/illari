@@ -142,7 +142,7 @@ function RootComponent() {
       <div className="flex min-h-screen w-full flex-col bg-background md:flex-row">
         {!rutaFamilia && <BarraLateral />}
         <div className="flex min-w-0 flex-1 flex-col">
-          <BannerPrototipo compacto={rutaFamilia} />
+          {!rutaFamilia && <BannerPrototipo />}
           <main
             className={
               rutaFamilia

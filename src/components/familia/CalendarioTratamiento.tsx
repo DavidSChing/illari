@@ -27,7 +27,13 @@ function useEsAngosto(limite = 480) {
   return angosto;
 }
 
-export function CalendarioTratamiento({ paciente }: { paciente: Paciente }) {
+export function CalendarioTratamiento({
+  paciente,
+  sinTitulo = false,
+}: {
+  paciente: Paciente;
+  sinTitulo?: boolean;
+}) {
   const sesiones = calendarioSesiones(paciente);
   const porFecha = new Map<string, SesionCalendario>(sesiones.map((sesion) => [sesion.iso, sesion]));
 
@@ -114,10 +120,10 @@ export function CalendarioTratamiento({ paciente }: { paciente: Paciente }) {
   );
 
   return (
-    <section aria-labelledby="titulo-calendario" className="bg-card p-4">
-      <h2 id="titulo-calendario" className="text-xl font-bold text-foreground">
-        Calendario del tratamiento
-      </h2>
+    <section aria-label="Calendario del tratamiento" className="bg-card">
+      {!sinTitulo && (
+        <h2 className="text-xl font-bold text-foreground">Calendario del tratamiento</h2>
+      )}
       <p className="mt-1 text-[1.0625rem] text-foreground">
         Las sesiones con visto verde ya se hicieron. La azul es la próxima. Las grises son fechas
         estimadas.

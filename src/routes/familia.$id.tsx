@@ -57,20 +57,5 @@ function PaginaFamilia() {
     );
   }
 
-  return (
-    <div className="flex w-full min-w-0 flex-col gap-2">
-      <div className="mx-auto w-full max-w-[480px]">
-        <Link
-          to="/paciente/$id"
-          params={{ id: paciente.id }}
-          className="inline-flex min-h-10 items-center gap-2 text-base font-semibold text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-        >
-          <ArrowLeft aria-hidden="true" className="size-5" />
-          Volver a la ficha médica
-        </Link>
-      </div>
-
-      <VistaFamilia paciente={paciente} />
-    </div>
-  );
+  return <VistaFamilia paciente={paciente} />;
 }

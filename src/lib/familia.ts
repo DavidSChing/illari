@@ -32,6 +32,16 @@ export function fechaEnPalabras(iso: string): string {
   );
 }
 
+/** "2026-08-26" → "Mié 26 de agosto" (una sola línea corta) */
+export function fechaCortaEnPalabras(iso: string): string {
+  const fecha = aFecha(iso);
+  const dia = conMayuscula(
+    fecha.toLocaleDateString("es-PE", { weekday: "short" }).replace(".", ""),
+  );
+  const mes = fecha.toLocaleDateString("es-PE", { month: "long" });
+  return `${dia} ${fecha.getDate()} de ${mes}`;
+}
+
 /** "2026-08-26" → "mié. 26/08" */
 export function fechaCorta(iso: string): string {
   const fecha = aFecha(iso);
