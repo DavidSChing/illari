@@ -1,11 +1,11 @@
 import { Link } from "@tanstack/react-router";
-import { CalendarDays, Users, Timer, FileSpreadsheet, CalendarClock } from "lucide-react";
+import { CalendarDays, Users, Timer, CalendarClock, ListOrdered } from "lucide-react";
 
 const secciones = [
   { to: "/", etiqueta: "Jornada", Icono: CalendarDays },
+  { to: "/programacion", etiqueta: "Programar", Icono: ListOrdered },
   { to: "/retrasos", etiqueta: "Retrasos", Icono: CalendarClock },
   { to: "/carga", etiqueta: "Carga", Icono: Users },
-  { to: "/cargar", etiqueta: "Excel", Icono: FileSpreadsheet },
   { to: "/demo", etiqueta: "Demo", Icono: Timer },
 ] as const;
 
