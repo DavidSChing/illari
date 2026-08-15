@@ -1,19 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { CalendarClock, Info, LayoutGrid, Users } from "lucide-react";
+import { CalendarClock, ClipboardCopy, Info, LayoutGrid, PencilLine, Users } from "lucide-react";
+import { toast } from "sonner";
 
 import { useEstadoClinico } from "@/state/EstadoClinico";
 import { formatearFecha } from "@/lib/formato";
 import {
   ETIQUETA_NIVEL,
-  OPCIONES_POR_DEFECTO,
-  aProgramable,
   ocupacionActual,
   ocupacionSugerida,
-  programarCitas,
   type EntradaCola,
-  type OpcionesProgramacion,
 } from "@/lib/programacion";
+import { mensajesDeProgramacion, tablaProgramacion } from "@/lib/salidaProgramacion";
 import {
   DURACION_FRANJA_ACTUAL,
   FRANJAS_ACTUALES,
@@ -22,7 +20,12 @@ import {
 import { BloquesSugeridos } from "@/components/programacion/BloquesSugeridos";
 import { ComparacionOcupacion } from "@/components/programacion/ComparacionOcupacion";
 import { PanelConfiguracion } from "@/components/programacion/PanelConfiguracion";
+import { FueraDeProgramacion } from "@/components/programacion/FueraDeProgramacion";
+import { RegistroCambios } from "@/components/programacion/RegistroCambios";
+import { MensajesFamilias } from "@/components/programacion/MensajesFamilias";
+import { Button } from "@/components/ui/button";
 import type { NivelSemaforo } from "@/data/tipos";
+
 
 export const Route = createFileRoute("/programacion")({
   head: () => ({
