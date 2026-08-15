@@ -1,15 +1,27 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { CalendarClock, Info, LayoutGrid, Users } from "lucide-react";
 
 import { useEstadoClinico } from "@/state/EstadoClinico";
 import { formatearFecha } from "@/lib/formato";
 import {
   ETIQUETA_NIVEL,
+  OPCIONES_POR_DEFECTO,
   aProgramable,
+  ocupacionActual,
+  ocupacionSugerida,
   programarCitas,
   type EntradaCola,
+  type OpcionesProgramacion,
 } from "@/lib/programacion";
+import {
+  DURACION_FRANJA_ACTUAL,
+  FRANJAS_ACTUALES,
+  PESOS_ACTUALES,
+} from "@/data/ocupacionActual";
+import { BloquesSugeridos } from "@/components/programacion/BloquesSugeridos";
+import { ComparacionOcupacion } from "@/components/programacion/ComparacionOcupacion";
+import { PanelConfiguracion } from "@/components/programacion/PanelConfiguracion";
 import type { NivelSemaforo } from "@/data/tipos";
 
 export const Route = createFileRoute("/programacion")({
@@ -48,13 +60,28 @@ const TITULO_GRUPO: Record<1 | 2 | 3, string> = {
 
 function VistaProgramacion() {
   const { pacientes } = useEstadoClinico();
+  const [config, setConfig] = useState<Required<OpcionesProgramacion>>(OPCIONES_POR_DEFECTO);
 
   const resultado = useMemo(
-    () => programarCitas(pacientes.map(aProgramable)),
-    [pacientes],
+    () => programarCitas(pacientes.map(aProgramable), config),
+    [pacientes, config],
   );
 
   const { cola, bloques, horaTermino, opciones } = resultado;
+
+  const sugerida = useMemo(() => ocupacionSugerida(resultado), [resultado]);
+  const actual = useMemo(
+    () =>
+      ocupacionActual(
+        cola.length,
+        opciones.capacidadPorBloque,
+        FRANJAS_ACTUALES,
+        PESOS_ACTUALES,
+        DURACION_FRANJA_ACTUAL,
+      ),
+    [cola.length, opciones.capacidadPorBloque],
+  );
+
 
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 p-3 md:p-6">
@@ -81,6 +108,11 @@ function VistaProgramacion() {
         </p>
       </header>
 
+      <PanelConfiguracion
+        valores={opciones}
+        onCambio={(parcial) => setConfig((previa) => ({ ...previa, ...parcial }))}
+      />
+
       <section aria-label="Indicadores de la programación" className="grid gap-3 sm:grid-cols-3">
         <Indicador
           Icono={Users}
@@ -98,6 +130,19 @@ function VistaProgramacion() {
           valor={bloques.length === 0 ? "—" : horaTermino}
         />
       </section>
+
+      <section aria-labelledby="titulo-bloques" className="grid gap-3">
+        <h2 id="titulo-bloques" className="text-lg font-bold text-foreground">
+          Bloques propuestos
+        </h2>
+        <BloquesSugeridos bloques={bloques} capacidad={opciones.capacidadPorBloque} />
+      </section>
+
+      <ComparacionOcupacion
+        actual={actual}
+        sugerida={sugerida}
+        capacidad={opciones.capacidadPorBloque}
+      />
 
       <section aria-labelledby="titulo-cola" className="rounded-md border border-border bg-card">
         <h2
