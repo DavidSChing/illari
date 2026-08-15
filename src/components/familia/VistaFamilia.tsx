@@ -1,18 +1,9 @@
 import { useState } from "react";
 import {
   AlertTriangle,
-  Backpack,
-  Calendar,
   Check,
-  Clock,
-  CreditCard,
-  FileText,
-  IdCard,
-  MapPin,
   Phone,
-  Smartphone,
   Thermometer,
-  Users,
 } from "lucide-react";
 
 import type { Paciente } from "@/data/tipos";
@@ -34,10 +25,8 @@ import { BarraDemoFamilia } from "@/components/familia/BarraDemoFamilia";
 import { CalendarioTratamiento } from "@/components/familia/CalendarioTratamiento";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
-const ICONOS_LLEVAR = [IdCard, CreditCard, FileText, Backpack];
-
 const BOTON_GRANDE =
-  "flex min-h-14 w-full items-center justify-center gap-2 rounded-md px-4 text-lg font-bold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
+  "flex min-h-14 w-full items-center justify-center gap-2 rounded-md px-4 text-lg font-bold transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
 
 export function VistaFamilia({ paciente }: { paciente: Paciente }) {
   const {
@@ -66,7 +55,7 @@ export function VistaFamilia({ paciente }: { paciente: Paciente }) {
 
   return (
     <div className="mx-auto w-full min-w-0 max-w-[480px]">
-      <div className="flex flex-col gap-3 pb-40">
+      <div className="flex flex-col gap-8 pb-44">
         {/* 1. Franja de demostración, delgada */}
         <BarraDemoFamilia pacienteId={paciente.id} />
 
@@ -108,15 +97,12 @@ export function VistaFamilia({ paciente }: { paciente: Paciente }) {
           </h2>
           <p className="mt-1 text-[2.125rem] font-bold leading-none text-foreground">{fecha}</p>
           <p className="mt-1 flex items-center gap-2 text-[1.75rem] font-bold text-foreground">
-            <Clock aria-hidden="true" className="size-7 shrink-0 text-primary" />
             {hora}
           </p>
           <p className="mt-1 flex items-start gap-2 text-lg font-semibold text-foreground">
-            <MapPin aria-hidden="true" className="mt-1 size-6 shrink-0 text-primary" />
             {LUGAR_CITA}
           </p>
           <p className="mt-2 inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-xl font-bold text-primary-foreground">
-            <Calendar aria-hidden="true" className="size-6 shrink-0" />
             {faltan}
           </p>
 
@@ -184,22 +170,17 @@ export function VistaFamilia({ paciente }: { paciente: Paciente }) {
             Qué llevar
           </h2>
           <ul className="mt-2 grid gap-3">
-            {COSAS_QUE_LLEVAR.map((cosa, indice) => {
-              const Icono = ICONOS_LLEVAR[indice] ?? Check;
-              return (
-                <li key={cosa} className="flex items-center gap-3 text-lg font-semibold text-foreground">
-                  <Icono aria-hidden="true" className="size-7 shrink-0 text-primary" />
-                  {cosa}
-                </li>
-              );
-            })}
+            {COSAS_QUE_LLEVAR.map((cosa) => (
+              <li key={cosa} className="text-lg font-semibold text-foreground">
+                {cosa}
+              </li>
+            ))}
           </ul>
         </section>
 
         {/* 7. Su equipo */}
         <section aria-labelledby="titulo-equipo" className="bg-card p-4">
           <h2 id="titulo-equipo" className="flex items-center gap-2 text-xl font-bold text-foreground">
-            <Users aria-hidden="true" className="size-6 shrink-0 text-primary" />
             Su equipo
           </h2>
           <p className="mt-2 text-lg text-foreground">
@@ -229,7 +210,6 @@ export function VistaFamilia({ paciente }: { paciente: Paciente }) {
             id="titulo-sms"
             className="flex items-center gap-2 text-xl font-bold text-secondary-foreground"
           >
-            <Smartphone aria-hidden="true" className="size-6 shrink-0" />
             Cómo lo recibe una familia sin internet
           </h2>
           <div className="mx-auto mt-3 w-full max-w-xs rounded-3xl border-4 border-foreground bg-card p-3">
