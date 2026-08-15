@@ -40,8 +40,14 @@ const BOTON_GRANDE =
   "flex min-h-14 w-full items-center justify-center gap-2 rounded-lg px-4 text-lg font-bold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
 
 export function VistaFamilia({ paciente }: { paciente: Paciente }) {
-  const { respuestaFamilia, confirmarAsistencia, cancelarAsistencia, reportarFiebre, medicos } =
-    useEstadoClinico();
+  const {
+    respuestaFamilia,
+    confirmarAsistencia,
+    cancelarAsistencia,
+    reportarFiebre,
+    medicos,
+    horaPropuesta,
+  } = useEstadoClinico();
   const respuesta = respuestaFamilia(paciente.id);
   const [eligiendoMotivo, setEligiendoMotivo] = useState(false);
   const [confirmacion, setConfirmacion] = useState<string | null>(null);
@@ -49,7 +55,7 @@ export function VistaFamilia({ paciente }: { paciente: Paciente }) {
   const responsable = obtenerResponsable(paciente.id);
   const nino = primerNombre(paciente.nombre);
   const fecha = fechaEnPalabras(paciente.fechaProximaCita);
-  const hora = horaDeLaCita(paciente.id);
+  const hora = horaPropuesta(paciente.id) ?? horaDeLaCita(paciente.id);
   const faltan = cuentaRegresiva(paciente.fechaProximaCita);
   const sms = mensajeSms(paciente);
   const principal = medicos.find((medico) => medico.id === paciente.medicoPrincipalId);

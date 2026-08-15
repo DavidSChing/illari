@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { CalendarClock, ClipboardCopy, Info, LayoutGrid, PencilLine, Users } from "lucide-react";
-import { toast } from "sonner";
 
 import { useEstadoClinico } from "@/state/EstadoClinico";
 import { formatearFecha } from "@/lib/formato";
@@ -101,10 +100,9 @@ function VistaProgramacion() {
     try {
       await navigator.clipboard.writeText(tablaProgramacion(bloques));
       setCopiado(true);
-      toast.success("Programación copiada. Péguela en Excel.");
       window.setTimeout(() => setCopiado(false), 3000);
     } catch {
-      toast.error("No se pudo copiar. Seleccione el texto manualmente.");
+      setCopiado(false);
     }
   };
 
@@ -149,6 +147,9 @@ function VistaProgramacion() {
           {copiado ? "Programación copiada" : "Copiar programación"}
         </Button>
         <MensajesFamilias mensajes={mensajes} />
+        <p aria-live="polite" className="sr-only">
+          {copiado ? "Programación copiada al portapapeles." : ""}
+        </p>
       </div>
 
       <PanelConfiguracion
