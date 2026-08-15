@@ -4,8 +4,27 @@ import { medicos as medicosIniciales } from "@/data/medicos";
 import { citasDeHoy } from "@/data/agenda";
 import type { Cita, Medico, Paciente } from "@/data/tipos";
 import type { ResultadoCarga } from "@/lib/excel/consolidar";
+import {
+  OPCIONES_POR_DEFECTO,
+  aProgramable,
+  horasPorPaciente,
+  programarCitas,
+  type AjustesManuales,
+  type ResultadoProgramacion,
+} from "@/lib/programacion";
 
 export const ALERTA_FIEBRE_FAMILIA = "Fiebre reportada por la familia";
+
+/** Un ajuste manual del equipo asistencial sobre la propuesta automática. */
+export interface CambioProgramacion {
+  id: string;
+  /** HH:mm en que se hizo el ajuste. */
+  hora: string;
+  accion: string;
+}
+
+export type ConfigProgramacion = Omit<ResultadoProgramacion["opciones"], "ajustes">;
+
 
 export interface RegistroAtencion {
   id: string;
