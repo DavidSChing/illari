@@ -184,7 +184,8 @@ export function repartirPorPesos(total: number, pesos: number[]): number[] {
     .sort((a, b) => b.resto - a.resto);
 
   for (let i = 0; restante > 0 && i < porResto.length; i += 1) {
-    base[porResto[i]!.indice] += 1;
+    const indice = porResto[i]!.indice;
+    base[indice] = (base[indice] ?? 0) + 1;
     restante -= 1;
   }
   return base;
