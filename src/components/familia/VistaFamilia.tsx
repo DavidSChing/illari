@@ -70,9 +70,9 @@ export function VistaFamilia({ paciente }: { paciente: Paciente }) {
         {/* a) Línea de contexto */}
         <section
           aria-label="Contexto del tratamiento"
-          className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 pr-24"
+          className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 pr-[4.75rem]"
         >
-          <p className="min-w-0 truncate text-base font-semibold text-foreground">
+          <p className="min-w-0 truncate text-[0.9375rem] font-semibold text-foreground">
             {nino}, {paciente.edad} años · Sesión {paciente.cicloActual} de {totalSesiones}
           </p>
           <div
@@ -81,7 +81,7 @@ export function VistaFamilia({ paciente }: { paciente: Paciente }) {
             aria-valuemin={0}
             aria-valuemax={totalSesiones}
             aria-label={`Avance: ${paciente.cicloActual} de ${totalSesiones} sesiones`}
-            className="h-1 w-20 shrink-0 overflow-hidden rounded-full bg-muted"
+            className="h-1 w-14 shrink-0 overflow-hidden rounded-full bg-muted"
           >
             <div className="h-full bg-primary" style={{ width: `${avance}%` }} />
           </div>
