@@ -182,11 +182,17 @@ function VistaProgramacion() {
         <BloquesSugeridos bloques={bloques} capacidad={opciones.capacidadPorBloque} />
       </section>
 
+      <FueraDeProgramacion excluidos={excluidos} />
+
+      <RegistroCambios cambios={cambiosProgramacion} />
+
       <ComparacionOcupacion
         actual={actual}
         sugerida={sugerida}
         capacidad={opciones.capacidadPorBloque}
       />
+
+
 
       <section aria-labelledby="titulo-cola" className="rounded-md border border-border bg-card">
         <h2
