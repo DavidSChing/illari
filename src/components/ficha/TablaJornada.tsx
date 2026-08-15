@@ -24,8 +24,8 @@ const CLASES_ALERTA: Record<NivelSemaforo, string> = {
 function IconosAlerta({ alertas }: { alertas: string[] }) {
   if (alertas.length === 0) {
     return (
-      <span className="inline-flex items-center gap-1 text-sm font-semibold text-clinico-verde">
-        <CheckCircle2 aria-hidden="true" className="size-5" />
+      <span className="inline-flex items-center gap-1 text-[0.8125rem] font-medium text-foreground">
+        <CheckCircle2 aria-hidden="true" className="size-4 shrink-0 text-clinico-verde" />
         Sin alertas
       </span>
     );
