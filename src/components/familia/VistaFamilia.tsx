@@ -73,7 +73,7 @@ export function VistaFamilia({ paciente }: { paciente: Paciente }) {
           className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 pr-[4.75rem]"
         >
           <p className="min-w-0 truncate text-[0.9375rem] font-semibold text-foreground">
-            {nino}, {paciente.edad} años · Sesión {paciente.cicloActual} de {totalSesiones}
+            {nino}, {paciente.edad} años · Sesión {paciente.cicloActual}/{totalSesiones}
           </p>
           <div
             role="progressbar"
