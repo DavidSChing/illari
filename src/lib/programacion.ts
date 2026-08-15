@@ -43,12 +43,22 @@ export interface EntradaCola {
   orden: number;
   grupo: 1 | 2 | 3;
   paciente: PacienteProgramable;
+  /** El equipo asistencial fijó a este paciente en su bloque. */
+  fijado?: boolean;
 }
 
 export interface BloqueProgramado {
   indice: number;
   hora: string;
   entradas: EntradaCola[];
+}
+
+/** Ajustes manuales hechos por el equipo asistencial sobre la propuesta. */
+export interface AjustesManuales {
+  /** pacienteId -> índice de bloque en el que queda fijado. */
+  fijados?: Record<string, number>;
+  /** pacienteId -> motivo de exclusión. */
+  excluidos?: Record<string, string>;
 }
 
 export interface OpcionesProgramacion {
@@ -58,15 +68,20 @@ export interface OpcionesProgramacion {
   horaInicio?: string;
   /** Separación entre bloques, en horas. */
   intervaloBloques?: number;
+  /** Ajustes manuales que el motor debe respetar. */
+  ajustes?: AjustesManuales;
 }
 
 export interface ResultadoProgramacion {
   cola: EntradaCola[];
   bloques: BloqueProgramado[];
+  /** Pacientes dejados fuera de la programación por el equipo. */
+  excluidos: { paciente: PacienteProgramable; motivo: string }[];
   /** Hora estimada de término del último bloque. */
   horaTermino: string;
-  opciones: Required<OpcionesProgramacion>;
+  opciones: Required<Omit<OpcionesProgramacion, "ajustes">> & { ajustes: AjustesManuales };
 }
+
 
 export const OPCIONES_POR_DEFECTO: Required<OpcionesProgramacion> = {
   capacidadPorBloque: 9,
