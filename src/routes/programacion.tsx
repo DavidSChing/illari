@@ -131,6 +131,19 @@ function VistaProgramacion() {
         />
       </section>
 
+      <section aria-labelledby="titulo-bloques" className="grid gap-3">
+        <h2 id="titulo-bloques" className="text-lg font-bold text-foreground">
+          Bloques propuestos
+        </h2>
+        <BloquesSugeridos bloques={bloques} capacidad={opciones.capacidadPorBloque} />
+      </section>
+
+      <ComparacionOcupacion
+        actual={actual}
+        sugerida={sugerida}
+        capacidad={opciones.capacidadPorBloque}
+      />
+
       <section aria-labelledby="titulo-cola" className="rounded-md border border-border bg-card">
         <h2
           id="titulo-cola"
