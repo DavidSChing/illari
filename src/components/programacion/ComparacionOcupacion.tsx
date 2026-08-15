@@ -51,9 +51,9 @@ function Grafico({
               style={{ bottom: `${proporcionCapacidad * 100}%` }}
             />
             {franjas.map((franja) => (
-              <div key={franja.hora} className="flex h-full min-w-0 flex-1 items-end">
+              <div key={franja.hora} className="flex h-full min-w-0 flex-1 items-end justify-center">
                 <div
-                  className={`w-full rounded-t-[4px] ${tono}`}
+                  className={`w-full max-w-16 rounded-t-[4px] ${tono}`}
                   style={{ height: `${Math.max(2, (franja.pacientes / escala) * 100)}%` }}
                   title={`${franja.hora}: ${franja.pacientes} pacientes`}
                 />
