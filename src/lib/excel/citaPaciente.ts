@@ -99,7 +99,7 @@ export async function leerExcelDeCita(archivo: File, hoyIso: string): Promise<Le
     return { archivo: archivo.name, fila: 0, valores: {}, problemas: ["El archivo no tiene hojas legibles."], aviso: null };
   }
 
-  const filas = XLSX.utils.sheet_to_json<unknown[]>(hoja, { header: 1, blankrows: false, raw: false, defval: "" });
+  const filas = XLSX.utils.sheet_to_json<unknown[]>(hoja, { header: 1, blankrows: true, raw: false, defval: "" });
   const indiceCabecera = filaCabecera(filas);
   if (indiceCabecera < 0) {
     return {
