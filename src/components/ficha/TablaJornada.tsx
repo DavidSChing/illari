@@ -39,10 +39,10 @@ function IconosAlerta({ alertas }: { alertas: string[] }) {
         return (
           <li key={alerta} title={alerta}>
             <span
-              className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-sm font-semibold ${
+              className={`inline-flex items-center gap-1 rounded-md px-0 py-0.5 text-[0.8125rem] font-medium ${
                 nivel === "rojo"
-                  ? "border-l-[3px] border-l-clinico-rojo bg-muted/40 text-foreground"
-                  : "border-l-[3px] border-l-clinico-ambar bg-muted/40 text-foreground"
+                  ? "text-foreground"
+                  : "text-foreground"
               }`}
             >
               <Icono aria-hidden="true" className="size-4" />
@@ -67,7 +67,7 @@ function EstadoFamilia({ pacienteId }: { pacienteId: string }) {
     <ul className="flex flex-wrap items-center gap-1">
       {respuesta.asistencia === "confirmado" && (
         <li>
-          <span className="inline-flex items-center gap-1 rounded-full border-l-[3px] border-l-clinico-verde bg-muted/40 px-2 py-0.5 text-sm font-bold text-foreground">
+          <span className="inline-flex items-center gap-1 rounded-md px-0 py-0.5 text-[0.8125rem] font-medium text-foreground">
             <CalendarCheck aria-hidden="true" className="size-4" />
             Confirmado
           </span>
@@ -77,7 +77,7 @@ function EstadoFamilia({ pacienteId }: { pacienteId: string }) {
         <>
           <li>
             <span
-              className="inline-flex items-center gap-1 rounded-full border-l-[3px] border-l-clinico-ambar bg-muted/40 px-2 py-0.5 text-sm font-bold text-foreground"
+              className="inline-flex items-center gap-1 rounded-md px-0 py-0.5 text-[0.8125rem] font-medium text-foreground"
               title={respuesta.motivo ? `Motivo: ${respuesta.motivo}` : undefined}
             >
               <CalendarX aria-hidden="true" className="size-4" />
@@ -85,7 +85,7 @@ function EstadoFamilia({ pacienteId }: { pacienteId: string }) {
             </span>
           </li>
           <li>
-            <span className="inline-flex items-center gap-1 rounded-full border border-primary bg-secondary px-2 py-0.5 text-sm font-bold text-secondary-foreground">
+            <span className="inline-flex items-center gap-1 rounded-md px-0 py-0.5 text-[0.8125rem] font-medium text-foreground">
               Cupo liberado
             </span>
           </li>
@@ -93,7 +93,7 @@ function EstadoFamilia({ pacienteId }: { pacienteId: string }) {
       )}
       {respuesta.fiebreReportada && (
         <li>
-          <span className="inline-flex items-center gap-1 rounded-full border-l-[3px] border-l-clinico-rojo bg-muted/40 px-2 py-0.5 text-sm font-bold text-foreground">
+          <span className="inline-flex items-center gap-1 rounded-md px-0 py-0.5 text-[0.8125rem] font-medium text-foreground">
             <Thermometer aria-hidden="true" className="size-4" />
             Fiebre reportada
           </span>
@@ -153,7 +153,7 @@ function FilaPaciente({ cita, paciente }: { cita: Cita; paciente: Paciente }) {
         <div className="flex items-center gap-2">
           {fueraDeDupla && (
             <span
-              className="inline-flex shrink-0 items-center gap-1 rounded-md border-l-[3px] border-l-clinico-ambar bg-muted/40 px-2 py-0.5 text-sm font-bold text-foreground"
+              className="inline-flex shrink-0 items-center gap-1 rounded-md border-l-[3px] border-l-clinico-ambar bg-muted/40 px-2 py-0.5 text-[0.8125rem] font-medium text-foreground"
               title="Este paciente no es de tu dupla"
             >
               <ShieldAlert aria-hidden="true" className="size-4" />
