@@ -153,3 +153,97 @@ export function composicionBloque(bloque: BloqueProgramado): Record<NivelSemafor
   });
   return conteo;
 }
+
+export interface FranjaOcupacion {
+  hora: string;
+  pacientes: number;
+}
+
+export interface ResumenOcupacion {
+  franjas: FranjaOcupacion[];
+  /** Mayor número de pacientes citados en una misma franja. */
+  ocupacionMaxima: number;
+  /** Franjas de la jornada con al menos un sillón sin usar. */
+  franjasConVacios: number;
+  /** Hora en que termina de atenderse al último paciente. */
+  horaTermino: string;
+}
+
+/**
+ * Reparte un total de pacientes entre franjas según pesos, con el método del
+ * resto mayor para que la suma sea exacta. Función pura.
+ */
+export function repartirPorPesos(total: number, pesos: number[]): number[] {
+  const suma = pesos.reduce((acumulado, peso) => acumulado + peso, 0) || 1;
+  const exactos = pesos.map((peso) => (total * peso) / suma);
+  const base = exactos.map((valor) => Math.floor(valor));
+  let restante = total - base.reduce((acumulado, valor) => acumulado + valor, 0);
+
+  const porResto = exactos
+    .map((valor, indice) => ({ indice, resto: valor - Math.floor(valor) }))
+    .sort((a, b) => b.resto - a.resto);
+
+  for (let i = 0; restante > 0 && i < porResto.length; i += 1) {
+    base[porResto[i]!.indice] += 1;
+    restante -= 1;
+  }
+  return base;
+}
+
+/**
+ * Ocupación de la programación actual: las citas llegan concentradas y lo que
+ * excede la capacidad se arrastra a la franja siguiente como espera.
+ */
+export function ocupacionActual(
+  total: number,
+  capacidad: number,
+  franjas: readonly string[],
+  pesos: number[],
+  duracionFranja = 1,
+): ResumenOcupacion {
+  const reparto = repartirPorPesos(total, pesos.slice(0, franjas.length));
+  const detalle: FranjaOcupacion[] = franjas.map((hora, indice) => ({
+    hora,
+    pacientes: reparto[indice] ?? 0,
+  }));
+
+  const cap = Math.max(1, Math.floor(capacidad));
+  let cola = 0;
+  let ultimaConAtencion = -1;
+  detalle.forEach((franja, indice) => {
+    cola += franja.pacientes;
+    if (cola > 0) ultimaConAtencion = indice;
+    cola = Math.max(0, cola - cap);
+  });
+
+  const minutosFin =
+    ultimaConAtencion < 0
+      ? aMinutos(franjas[0] ?? "08:00")
+      : aMinutos(franjas[ultimaConAtencion]!) +
+        (1 + Math.ceil(cola / cap)) * duracionFranja * 60;
+
+  const usadas = detalle.filter((franja) => franja.pacientes > 0);
+
+  return {
+    franjas: detalle,
+    ocupacionMaxima: detalle.reduce((maximo, franja) => Math.max(maximo, franja.pacientes), 0),
+    franjasConVacios: usadas.filter((franja) => franja.pacientes < cap).length,
+    horaTermino: aTexto(minutosFin),
+  };
+}
+
+/** Ocupación resultante del motor de programación. */
+export function ocupacionSugerida(resultado: ResultadoProgramacion): ResumenOcupacion {
+  const capacidad = resultado.opciones.capacidadPorBloque;
+  const franjas: FranjaOcupacion[] = resultado.bloques.map((bloque) => ({
+    hora: bloque.hora,
+    pacientes: bloque.entradas.length,
+  }));
+
+  return {
+    franjas,
+    ocupacionMaxima: franjas.reduce((maximo, franja) => Math.max(maximo, franja.pacientes), 0),
+    franjasConVacios: franjas.filter((franja) => franja.pacientes < capacidad).length,
+    horaTermino: resultado.horaTermino,
+  };
+}
