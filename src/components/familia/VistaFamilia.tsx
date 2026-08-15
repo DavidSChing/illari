@@ -16,6 +16,7 @@ import {
 } from "@/lib/familia";
 import { PanelDemoFamilia } from "@/components/familia/PanelDemoFamilia";
 import { CalendarioTratamiento } from "@/components/familia/CalendarioTratamiento";
+import { NumerosSms } from "@/components/familia/NumerosSms";
 import {
   Accordion,
   AccordionContent,
@@ -38,6 +39,7 @@ export function VistaFamilia({ paciente }: { paciente: Paciente }) {
     reportarFiebre,
     medicos,
     horaPropuesta,
+    numerosSms,
   } = useEstadoClinico();
   const respuesta = respuestaFamilia(paciente.id);
   const [eligiendoMotivo, setEligiendoMotivo] = useState(false);
@@ -54,6 +56,7 @@ export function VistaFamilia({ paciente }: { paciente: Paciente }) {
   const totalSesiones = paciente.ciclosTotales ?? paciente.cicloActual;
   const avance = totalSesiones > 0 ? Math.round((paciente.cicloActual / totalSesiones) * 100) : 0;
   const sinResponder = respuesta.asistencia === "sin_responder";
+  const activos = numerosSms(paciente.id).filter((item) => item.activo).length;
 
   function abrirSeccion(valor: string) {
     setSeccionAbierta(valor);
@@ -240,15 +243,12 @@ export function VistaFamilia({ paciente }: { paciente: Paciente }) {
                 <span className="min-w-0">
                   <span className="block">Avisos por mensaje de texto</span>
                   <span className="block truncate text-[0.9375rem] font-semibold text-muted-foreground">
-                    Recordatorios al celular
+                    {`Avisos · ${activos} ${activos === 1 ? "número activo" : "números activos"}`}
                   </span>
                 </span>
               </AccordionTrigger>
               <AccordionContent>
-                <p className="text-lg text-foreground">
-                  El equipo le envía un mensaje de texto con la fecha y la hora de cada cita, aunque
-                  no tenga internet. Puede responder SI o NO a ese mensaje.
-                </p>
+                <NumerosSms paciente={paciente} />
               </AccordionContent>
             </AccordionItem>
           </Accordion>
