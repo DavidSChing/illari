@@ -50,4 +50,18 @@ describe("programarCitas", () => {
     expect(resultado.bloques).toHaveLength(0);
     expect(resultado.horaTermino).toBe("08:00");
   });
+
+  it("respeta a los pacientes fijados y excluye a los que el equipo retira", () => {
+    const pacientes = [...generar("rojo", 3, 1), ...generar("verde", 3, 1)];
+
+    const { bloques, excluidos } = programarCitas(pacientes, {
+      capacidadPorBloque: 2,
+      ajustes: { fijados: { "verde-0": 0 }, excluidos: { "rojo-1": "Fiebre" } },
+    });
+
+    expect(excluidos.map((e) => e.paciente.id)).toEqual(["rojo-1"]);
+    expect(bloques[0]!.entradas.map((e) => e.paciente.id)).toEqual(["verde-0", "rojo-0"]);
+    expect(bloques[0]!.entradas[0]!.fijado).toBe(true);
+    expect(bloques.flatMap((b) => b.entradas).map((e) => e.paciente.id)).not.toContain("rojo-1");
+  });
 });

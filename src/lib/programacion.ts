@@ -43,12 +43,22 @@ export interface EntradaCola {
   orden: number;
   grupo: 1 | 2 | 3;
   paciente: PacienteProgramable;
+  /** El equipo asistencial fijó a este paciente en su bloque. */
+  fijado?: boolean;
 }
 
 export interface BloqueProgramado {
   indice: number;
   hora: string;
   entradas: EntradaCola[];
+}
+
+/** Ajustes manuales hechos por el equipo asistencial sobre la propuesta. */
+export interface AjustesManuales {
+  /** pacienteId -> índice de bloque en el que queda fijado. */
+  fijados?: Record<string, number>;
+  /** pacienteId -> motivo de exclusión. */
+  excluidos?: Record<string, string>;
 }
 
 export interface OpcionesProgramacion {
@@ -58,21 +68,28 @@ export interface OpcionesProgramacion {
   horaInicio?: string;
   /** Separación entre bloques, en horas. */
   intervaloBloques?: number;
+  /** Ajustes manuales que el motor debe respetar. */
+  ajustes?: AjustesManuales;
 }
 
 export interface ResultadoProgramacion {
   cola: EntradaCola[];
   bloques: BloqueProgramado[];
+  /** Pacientes dejados fuera de la programación por el equipo. */
+  excluidos: { paciente: PacienteProgramable; motivo: string }[];
   /** Hora estimada de término del último bloque. */
   horaTermino: string;
-  opciones: Required<OpcionesProgramacion>;
+  opciones: Required<Omit<OpcionesProgramacion, "ajustes">> & { ajustes: AjustesManuales };
 }
 
-export const OPCIONES_POR_DEFECTO: Required<OpcionesProgramacion> = {
+
+export const OPCIONES_POR_DEFECTO: ResultadoProgramacion["opciones"] = {
   capacidadPorBloque: 9,
   horaInicio: "08:00",
   intervaloBloques: 2,
+  ajustes: {},
 };
+
 
 const GRUPO_POR_NIVEL: Record<NivelSemaforo, 1 | 2 | 3> = { rojo: 1, ambar: 2, verde: 3 };
 
@@ -109,11 +126,23 @@ export function programarCitas(
   pacientes: PacienteProgramable[],
   opciones: OpcionesProgramacion = {},
 ): ResultadoProgramacion {
-  const config: Required<OpcionesProgramacion> = { ...OPCIONES_POR_DEFECTO, ...opciones };
+  const config: ResultadoProgramacion["opciones"] = {
+    ...OPCIONES_POR_DEFECTO,
+    ...opciones,
+    ajustes: opciones.ajustes ?? {},
+  };
   const capacidad = Math.max(1, Math.floor(config.capacidadPorBloque));
+  const fijados = config.ajustes.fijados ?? {};
+  const motivos = config.ajustes.excluidos ?? {};
+
+  const excluidos = pacientes
+    .filter((paciente) => paciente.id in motivos)
+    .map((paciente) => ({ paciente, motivo: motivos[paciente.id] ?? "" }));
+
+  const programables = pacientes.filter((paciente) => !(paciente.id in motivos));
 
   const porGrupo = (grupo: 1 | 2 | 3) =>
-    pacientes
+    programables
       .filter((paciente) => GRUPO_POR_NIVEL[paciente.nivel] === grupo)
       .slice()
       .sort((a, b) => {
@@ -126,24 +155,72 @@ export function programarCitas(
   const cola: EntradaCola[] = [];
   ([1, 2, 3] as const).forEach((grupo) => {
     porGrupo(grupo).forEach((paciente) => {
-      cola.push({ orden: cola.length + 1, grupo, paciente });
+      cola.push({
+        orden: cola.length + 1,
+        grupo,
+        paciente,
+        ...(paciente.id in fijados ? { fijado: true } : {}),
+      });
     });
   });
 
-  const bloques: BloqueProgramado[] = [];
   const inicio = aMinutos(config.horaInicio);
-  for (let i = 0; i * capacidad < cola.length; i += 1) {
-    bloques.push({
-      indice: i,
-      hora: aTexto(inicio + i * config.intervaloBloques * 60),
-      entradas: cola.slice(i * capacidad, (i + 1) * capacidad),
-    });
-  }
+  const minimoPorFijados = cola.reduce(
+    (maximo, entrada) =>
+      entrada.fijado ? Math.max(maximo, (fijados[entrada.paciente.id] ?? 0) + 1) : maximo,
+    0,
+  );
+  const totalBloques = Math.max(Math.ceil(cola.length / capacidad), minimoPorFijados);
+
+  const listas: EntradaCola[][] = Array.from({ length: totalBloques }, () => []);
+  const crearBloque = () => {
+    listas.push([]);
+    return listas.length - 1;
+  };
+
+  // Paso A: los pacientes fijados ocupan primero su bloque.
+  const pendientes: EntradaCola[] = [];
+  cola.forEach((entrada) => {
+    if (!entrada.fijado) {
+      pendientes.push(entrada);
+      return;
+    }
+    const destino = Math.max(0, Math.floor(fijados[entrada.paciente.id] ?? 0));
+    while (listas.length <= destino) crearBloque();
+    listas[destino]!.push(entrada);
+  });
+
+  // Paso B: el resto entra por prioridad en el primer bloque con sillón libre.
+  let cursor = 0;
+  pendientes.forEach((entrada) => {
+    while (cursor < listas.length && listas[cursor]!.length >= capacidad) cursor += 1;
+    if (cursor >= listas.length) cursor = crearBloque();
+    listas[cursor]!.push(entrada);
+  });
+
+  const bloques: BloqueProgramado[] = listas.map((entradas, indice) => ({
+    indice,
+    hora: aTexto(inicio + indice * config.intervaloBloques * 60),
+    entradas,
+  }));
 
   const horaTermino = aTexto(inicio + bloques.length * config.intervaloBloques * 60);
 
-  return { cola, bloques, horaTermino, opciones: config };
+  return { cola, bloques, excluidos, horaTermino, opciones: config };
 }
+
+/** Hora asignada a cada paciente en la propuesta vigente. */
+export function horasPorPaciente(resultado: ResultadoProgramacion): Record<string, string> {
+  const mapa: Record<string, string> = {};
+  resultado.bloques.forEach((bloque) => {
+    bloque.entradas.forEach((entrada) => {
+      mapa[entrada.paciente.id] = bloque.hora;
+    });
+  });
+  return mapa;
+}
+
+
 
 /** Cantidad de pacientes de cada grupo dentro de un bloque. */
 export function composicionBloque(bloque: BloqueProgramado): Record<NivelSemaforo, number> {

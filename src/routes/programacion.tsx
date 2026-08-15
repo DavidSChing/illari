@@ -1,19 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { CalendarClock, Info, LayoutGrid, Users } from "lucide-react";
+import { CalendarClock, ClipboardCopy, Info, LayoutGrid, PencilLine, Users } from "lucide-react";
 
 import { useEstadoClinico } from "@/state/EstadoClinico";
 import { formatearFecha } from "@/lib/formato";
 import {
   ETIQUETA_NIVEL,
-  OPCIONES_POR_DEFECTO,
-  aProgramable,
   ocupacionActual,
   ocupacionSugerida,
-  programarCitas,
   type EntradaCola,
-  type OpcionesProgramacion,
 } from "@/lib/programacion";
+import { mensajesDeProgramacion, tablaProgramacion } from "@/lib/salidaProgramacion";
 import {
   DURACION_FRANJA_ACTUAL,
   FRANJAS_ACTUALES,
@@ -22,7 +19,12 @@ import {
 import { BloquesSugeridos } from "@/components/programacion/BloquesSugeridos";
 import { ComparacionOcupacion } from "@/components/programacion/ComparacionOcupacion";
 import { PanelConfiguracion } from "@/components/programacion/PanelConfiguracion";
+import { FueraDeProgramacion } from "@/components/programacion/FueraDeProgramacion";
+import { RegistroCambios } from "@/components/programacion/RegistroCambios";
+import { MensajesFamilias } from "@/components/programacion/MensajesFamilias";
+import { Button } from "@/components/ui/button";
 import type { NivelSemaforo } from "@/data/tipos";
+
 
 export const Route = createFileRoute("/programacion")({
   head: () => ({
@@ -59,15 +61,16 @@ const TITULO_GRUPO: Record<1 | 2 | 3, string> = {
 };
 
 function VistaProgramacion() {
-  const { pacientes } = useEstadoClinico();
-  const [config, setConfig] = useState<Required<OpcionesProgramacion>>(OPCIONES_POR_DEFECTO);
+  const {
+    programacion: resultado,
+    configProgramacion,
+    setConfigProgramacion,
+    cambiosProgramacion,
+    obtenerPaciente,
+  } = useEstadoClinico();
+  const [copiado, setCopiado] = useState(false);
 
-  const resultado = useMemo(
-    () => programarCitas(pacientes.map(aProgramable), config),
-    [pacientes, config],
-  );
-
-  const { cola, bloques, horaTermino, opciones } = resultado;
+  const { cola, bloques, excluidos, horaTermino, opciones } = resultado;
 
   const sugerida = useMemo(() => ocupacionSugerida(resultado), [resultado]);
   const actual = useMemo(
@@ -82,6 +85,26 @@ function VistaProgramacion() {
     [cola.length, opciones.capacidadPorBloque],
   );
 
+  const mensajes = useMemo(
+    () =>
+      mensajesDeProgramacion(
+        bloques,
+        (pacienteId) => obtenerPaciente(pacienteId)?.fechaProximaCita ?? "",
+      ),
+    [bloques, obtenerPaciente],
+  );
+
+  const ultimoCambio = cambiosProgramacion[0];
+
+  const copiarProgramacion = async () => {
+    try {
+      await navigator.clipboard.writeText(tablaProgramacion(bloques));
+      setCopiado(true);
+      window.setTimeout(() => setCopiado(false), 3000);
+    } catch {
+      setCopiado(false);
+    }
+  };
 
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 p-3 md:p-6">
@@ -108,10 +131,32 @@ function VistaProgramacion() {
         </p>
       </header>
 
+      {ultimoCambio ? (
+        <p
+          role="status"
+          className="flex items-start gap-2 rounded-md border border-primary bg-primary/10 px-3 py-2 text-base font-semibold text-foreground"
+        >
+          <PencilLine aria-hidden="true" className="mt-0.5 size-5 shrink-0" />
+          Ajuste manual del equipo asistencial · {ultimoCambio.hora} · {ultimoCambio.accion}
+        </p>
+      ) : null}
+
+      <div className="flex flex-wrap gap-2">
+        <Button type="button" className="min-h-12 text-base" onClick={copiarProgramacion}>
+          <ClipboardCopy aria-hidden="true" className="size-5" />
+          {copiado ? "Programación copiada" : "Copiar programación"}
+        </Button>
+        <MensajesFamilias mensajes={mensajes} />
+        <p aria-live="polite" className="sr-only">
+          {copiado ? "Programación copiada al portapapeles." : ""}
+        </p>
+      </div>
+
       <PanelConfiguracion
-        valores={opciones}
-        onCambio={(parcial) => setConfig((previa) => ({ ...previa, ...parcial }))}
+        valores={configProgramacion}
+        onCambio={(parcial) => setConfigProgramacion(parcial)}
       />
+
 
       <section aria-label="Indicadores de la programación" className="grid gap-3 sm:grid-cols-3">
         <Indicador
@@ -138,11 +183,17 @@ function VistaProgramacion() {
         <BloquesSugeridos bloques={bloques} capacidad={opciones.capacidadPorBloque} />
       </section>
 
+      <FueraDeProgramacion excluidos={excluidos} />
+
+      <RegistroCambios cambios={cambiosProgramacion} />
+
       <ComparacionOcupacion
         actual={actual}
         sugerida={sugerida}
         capacidad={opciones.capacidadPorBloque}
       />
+
+
 
       <section aria-labelledby="titulo-cola" className="rounded-md border border-border bg-card">
         <h2

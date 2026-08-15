@@ -1,5 +1,9 @@
+import { Anchor } from "lucide-react";
+
 import { composicionBloque, type BloqueProgramado } from "@/lib/programacion";
+import { MenuAjustePaciente } from "@/components/programacion/MenuAjustePaciente";
 import type { NivelSemaforo } from "@/data/tipos";
+
 
 const BARRA: Record<NivelSemaforo, string> = {
   rojo: "bg-clinico-rojo",
@@ -64,35 +68,54 @@ export function BloquesSugeridos({
 
             <ul
               aria-label={`Sillones del bloque de las ${bloque.hora}`}
-              className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-9"
+              className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3"
             >
-              {Array.from({ length: capacidad }, (_, indice) => {
-                const entrada = bloque.entradas[indice];
-                if (!entrada) {
+              {Array.from(
+                { length: Math.max(capacidad, bloque.entradas.length) },
+                (_, indice) => {
+                  const entrada = bloque.entradas[indice];
+                  if (!entrada) {
+                    return (
+                      <li
+                        key={`libre-${indice}`}
+                        className="flex min-h-12 items-center justify-center rounded-sm border-2 border-dashed border-border text-sm font-semibold text-muted-foreground"
+                      >
+                        Libre
+                      </li>
+                    );
+                  }
                   return (
                     <li
-                      key={`libre-${indice}`}
-                      className="flex min-h-12 items-center justify-center rounded-sm border-2 border-dashed border-border text-sm font-semibold text-muted-foreground"
+                      key={entrada.paciente.id}
+                      className="flex min-h-12 items-center rounded-sm border border-border bg-muted/40"
                     >
-                      Libre
+                      <span
+                        aria-hidden="true"
+                        className={`w-[3px] shrink-0 self-stretch rounded-l-sm ${BARRA[entrada.paciente.nivel]}`}
+                      />
+                      <span className="flex min-w-0 flex-1 items-center gap-1 px-2">
+                        {entrada.fijado ? (
+                          <Anchor
+                            aria-label="Fijado por el equipo"
+                            className="size-4 shrink-0 text-foreground"
+                          />
+                        ) : null}
+                        <span className="truncate text-sm font-semibold text-foreground">
+                          {nombreCorto(entrada.paciente.nombre)}
+                        </span>
+                      </span>
+                      <MenuAjustePaciente
+                        pacienteId={entrada.paciente.id}
+                        nombre={entrada.paciente.nombre}
+                        indiceBloque={bloque.indice}
+                        horasDeBloques={bloques.map((otro) => otro.hora)}
+                        fijado={Boolean(entrada.fijado)}
+                      />
                     </li>
                   );
-                }
-                return (
-                  <li
-                    key={entrada.paciente.id}
-                    className="flex min-h-12 items-center rounded-sm border border-border bg-muted/40"
-                  >
-                    <span
-                      aria-hidden="true"
-                      className={`w-[3px] shrink-0 self-stretch rounded-l-sm ${BARRA[entrada.paciente.nivel]}`}
-                    />
-                    <span className="truncate px-2 text-sm font-semibold text-foreground">
-                      {nombreCorto(entrada.paciente.nombre)}
-                    </span>
-                  </li>
-                );
-              })}
+                },
+              )}
+
             </ul>
 
             {libres > 0 ? (
