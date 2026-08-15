@@ -3,6 +3,7 @@ import { pacientes as pacientesIniciales } from "@/data/pacientes";
 import { medicos as medicosIniciales } from "@/data/medicos";
 import { citasDeHoy } from "@/data/agenda";
 import type { Cita, Medico, Paciente } from "@/data/tipos";
+import { numerosInicialesDe, type NumeroSms } from "@/data/numerosSms";
 import type { ResultadoCarga } from "@/lib/excel/consolidar";
 import {
   OPCIONES_POR_DEFECTO,
@@ -78,6 +79,12 @@ interface EstadoClinicoValor {
   excluirPaciente: (pacienteId: string, motivo: string) => void;
   cambiarMotivoExclusion: (pacienteId: string, motivo: string) => void;
   reincluirPaciente: (pacienteId: string) => void;
+  // --- Números para recordatorios por SMS (solo en memoria) ---
+  numerosSms: (pacienteId: string) => NumeroSms[];
+  agregarNumeroSms: (pacienteId: string, etiqueta: string, numero: string) => void;
+  editarNumeroSms: (pacienteId: string, id: string, etiqueta: string, numero: string) => void;
+  alternarNumeroSms: (pacienteId: string, id: string) => void;
+  eliminarNumeroSms: (pacienteId: string, id: string) => void;
   /** Hora propuesta para el paciente en la programación vigente. */
   horaPropuesta: (pacienteId: string) => string | null;
 }
@@ -95,6 +102,57 @@ export function ProveedorEstadoClinico({ children }: { children: ReactNode }) {
   const [medicoActualId, setMedicoActualId] = useState("med-4");
   const [atenciones, setAtenciones] = useState<RegistroAtencion[]>([]);
   const [respuestas, setRespuestas] = useState<Record<string, RespuestaFamilia>>({});
+  const [numeros, setNumeros] = useState<Record<string, NumeroSms[]>>({});
+
+  const numerosSms = useCallback(
+    (pacienteId: string) => numeros[pacienteId] ?? numerosInicialesDe(pacienteId),
+    [numeros],
+  );
+
+  const actualizarNumeros = useCallback(
+    (pacienteId: string, cambio: (lista: NumeroSms[]) => NumeroSms[]) => {
+      setNumeros((previos) => ({
+        ...previos,
+        [pacienteId]: cambio(previos[pacienteId] ?? numerosInicialesDe(pacienteId)),
+      }));
+    },
+    [],
+  );
+
+  const agregarNumeroSms = useCallback(
+    (pacienteId: string, etiqueta: string, numero: string) => {
+      actualizarNumeros(pacienteId, (lista) => [
+        ...lista,
+        { id: `${pacienteId}-sms-${Date.now()}`, etiqueta, numero, activo: true },
+      ]);
+    },
+    [actualizarNumeros],
+  );
+
+  const editarNumeroSms = useCallback(
+    (pacienteId: string, id: string, etiqueta: string, numero: string) => {
+      actualizarNumeros(pacienteId, (lista) =>
+        lista.map((item) => (item.id === id ? { ...item, etiqueta, numero } : item)),
+      );
+    },
+    [actualizarNumeros],
+  );
+
+  const alternarNumeroSms = useCallback(
+    (pacienteId: string, id: string) => {
+      actualizarNumeros(pacienteId, (lista) =>
+        lista.map((item) => (item.id === id ? { ...item, activo: !item.activo } : item)),
+      );
+    },
+    [actualizarNumeros],
+  );
+
+  const eliminarNumeroSms = useCallback(
+    (pacienteId: string, id: string) => {
+      actualizarNumeros(pacienteId, (lista) => lista.filter((item) => item.id !== id));
+    },
+    [actualizarNumeros],
+  );
 
 
   const registrarAtencion = useCallback(
@@ -333,6 +391,11 @@ export function ProveedorEstadoClinico({ children }: { children: ReactNode }) {
       excluirPaciente,
       cambiarMotivoExclusion,
       reincluirPaciente,
+      numerosSms,
+      agregarNumeroSms,
+      editarNumeroSms,
+      alternarNumeroSms,
+      eliminarNumeroSms,
       horaPropuesta: (pacienteId) => horas[pacienteId] ?? null,
     }),
     [
@@ -361,6 +424,11 @@ export function ProveedorEstadoClinico({ children }: { children: ReactNode }) {
       excluirPaciente,
       cambiarMotivoExclusion,
       reincluirPaciente,
+      numerosSms,
+      agregarNumeroSms,
+      editarNumeroSms,
+      alternarNumeroSms,
+      eliminarNumeroSms,
       horas,
     ],
   );
