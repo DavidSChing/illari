@@ -83,11 +83,13 @@ export interface ResultadoProgramacion {
 }
 
 
-export const OPCIONES_POR_DEFECTO: Required<OpcionesProgramacion> = {
+export const OPCIONES_POR_DEFECTO: ResultadoProgramacion["opciones"] = {
   capacidadPorBloque: 9,
   horaInicio: "08:00",
   intervaloBloques: 2,
+  ajustes: {},
 };
+
 
 const GRUPO_POR_NIVEL: Record<NivelSemaforo, 1 | 2 | 3> = { rojo: 1, ambar: 2, verde: 3 };
 
