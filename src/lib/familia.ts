@@ -191,7 +191,8 @@ export function mensajeRecordatorio(paciente: Paciente, hora?: string): string {
   const nombre = primerNombre(paciente.nombre);
   const fecha = aFecha(paciente.fechaProximaCita);
   const dia = fecha.toLocaleDateString("es-PE", { weekday: "short" }).replace(".", "");
-  const horaTexto = (hora ?? horaDeLaCita(paciente.id))
+  const base = hora ?? horaDeLaCita(paciente.id);
+  const horaTexto = (/^\d{1,2}:\d{2}$/.test(base) ? horaEnPalabras(base) : base)
     .replace(" a. m.", " am")
     .replace(" p. m.", " pm");
   return sinTildes(
