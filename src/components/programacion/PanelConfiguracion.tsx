@@ -1,8 +1,8 @@
-import type { OpcionesProgramacion } from "@/lib/programacion";
+import type { ConfigProgramacion } from "@/state/EstadoClinico";
 
 interface Props {
-  valores: Required<OpcionesProgramacion>;
-  onCambio: (parcial: Partial<Required<OpcionesProgramacion>>) => void;
+  valores: ConfigProgramacion;
+  onCambio: (parcial: Partial<ConfigProgramacion>) => void;
 }
 
 const campo =
