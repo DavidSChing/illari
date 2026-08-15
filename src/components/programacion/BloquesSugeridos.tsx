@@ -68,7 +68,7 @@ export function BloquesSugeridos({
 
             <ul
               aria-label={`Sillones del bloque de las ${bloque.hora}`}
-              className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-9"
+              className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3"
             >
               {Array.from(
                 { length: Math.max(capacidad, bloque.entradas.length) },
