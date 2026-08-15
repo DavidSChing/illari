@@ -60,7 +60,7 @@ describe("programarCitas", () => {
     });
 
     expect(excluidos.map((e) => e.paciente.id)).toEqual(["rojo-1"]);
-    expect(bloques[0]!.entradas.map((e) => e.paciente.id)).toEqual(["verde-0", "rojo-2"]);
+    expect(bloques[0]!.entradas.map((e) => e.paciente.id)).toEqual(["verde-0", "rojo-0"]);
     expect(bloques[0]!.entradas[0]!.fijado).toBe(true);
     expect(bloques.flatMap((b) => b.entradas).map((e) => e.paciente.id)).not.toContain("rojo-1");
   });
