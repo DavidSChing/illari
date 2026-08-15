@@ -1,15 +1,27 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { CalendarClock, Info, LayoutGrid, Users } from "lucide-react";
 
 import { useEstadoClinico } from "@/state/EstadoClinico";
 import { formatearFecha } from "@/lib/formato";
 import {
   ETIQUETA_NIVEL,
+  OPCIONES_POR_DEFECTO,
   aProgramable,
+  ocupacionActual,
+  ocupacionSugerida,
   programarCitas,
   type EntradaCola,
+  type OpcionesProgramacion,
 } from "@/lib/programacion";
+import {
+  DURACION_FRANJA_ACTUAL,
+  FRANJAS_ACTUALES,
+  PESOS_ACTUALES,
+} from "@/data/ocupacionActual";
+import { BloquesSugeridos } from "@/components/programacion/BloquesSugeridos";
+import { ComparacionOcupacion } from "@/components/programacion/ComparacionOcupacion";
+import { PanelConfiguracion } from "@/components/programacion/PanelConfiguracion";
 import type { NivelSemaforo } from "@/data/tipos";
 
 export const Route = createFileRoute("/programacion")({
