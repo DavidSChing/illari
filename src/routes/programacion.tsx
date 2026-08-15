@@ -62,15 +62,16 @@ const TITULO_GRUPO: Record<1 | 2 | 3, string> = {
 };
 
 function VistaProgramacion() {
-  const { pacientes } = useEstadoClinico();
-  const [config, setConfig] = useState<Required<OpcionesProgramacion>>(OPCIONES_POR_DEFECTO);
+  const {
+    programacion: resultado,
+    configProgramacion,
+    setConfigProgramacion,
+    cambiosProgramacion,
+    obtenerPaciente,
+  } = useEstadoClinico();
+  const [copiado, setCopiado] = useState(false);
 
-  const resultado = useMemo(
-    () => programarCitas(pacientes.map(aProgramable), config),
-    [pacientes, config],
-  );
-
-  const { cola, bloques, horaTermino, opciones } = resultado;
+  const { cola, bloques, excluidos, horaTermino, opciones } = resultado;
 
   const sugerida = useMemo(() => ocupacionSugerida(resultado), [resultado]);
   const actual = useMemo(
@@ -85,6 +86,27 @@ function VistaProgramacion() {
     [cola.length, opciones.capacidadPorBloque],
   );
 
+  const mensajes = useMemo(
+    () =>
+      mensajesDeProgramacion(
+        bloques,
+        (pacienteId) => obtenerPaciente(pacienteId)?.fechaProximaCita ?? "",
+      ),
+    [bloques, obtenerPaciente],
+  );
+
+  const ultimoCambio = cambiosProgramacion[0];
+
+  const copiarProgramacion = async () => {
+    try {
+      await navigator.clipboard.writeText(tablaProgramacion(bloques));
+      setCopiado(true);
+      toast.success("Programación copiada. Péguela en Excel.");
+      window.setTimeout(() => setCopiado(false), 3000);
+    } catch {
+      toast.error("No se pudo copiar. Seleccione el texto manualmente.");
+    }
+  };
 
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 p-3 md:p-6">
@@ -111,10 +133,29 @@ function VistaProgramacion() {
         </p>
       </header>
 
+      {ultimoCambio ? (
+        <p
+          role="status"
+          className="flex items-start gap-2 rounded-md border border-primary bg-primary/10 px-3 py-2 text-base font-semibold text-foreground"
+        >
+          <PencilLine aria-hidden="true" className="mt-0.5 size-5 shrink-0" />
+          Ajuste manual del equipo asistencial · {ultimoCambio.hora} · {ultimoCambio.accion}
+        </p>
+      ) : null}
+
+      <div className="flex flex-wrap gap-2">
+        <Button type="button" className="min-h-12 text-base" onClick={copiarProgramacion}>
+          <ClipboardCopy aria-hidden="true" className="size-5" />
+          {copiado ? "Programación copiada" : "Copiar programación"}
+        </Button>
+        <MensajesFamilias mensajes={mensajes} />
+      </div>
+
       <PanelConfiguracion
-        valores={opciones}
-        onCambio={(parcial) => setConfig((previa) => ({ ...previa, ...parcial }))}
+        valores={configProgramacion}
+        onCambio={(parcial) => setConfigProgramacion(parcial)}
       />
+
 
       <section aria-label="Indicadores de la programación" className="grid gap-3 sm:grid-cols-3">
         <Indicador
