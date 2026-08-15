@@ -243,7 +243,7 @@ export function VistaFamilia({ paciente }: { paciente: Paciente }) {
                 <span className="min-w-0">
                   <span className="block">Avisos por mensaje de texto</span>
                   <span className="block truncate text-[0.9375rem] font-semibold text-muted-foreground">
-                    {activos === 1 ? "1 número activo" : `${activos} números activos`}
+                    {`Avisos · ${activos} ${activos === 1 ? "número activo" : "números activos"}`}
                   </span>
                 </span>
               </AccordionTrigger>
