@@ -108,6 +108,11 @@ function VistaProgramacion() {
         </p>
       </header>
 
+      <PanelConfiguracion
+        valores={opciones}
+        onCambio={(parcial) => setConfig((previa) => ({ ...previa, ...parcial }))}
+      />
+
       <section aria-label="Indicadores de la programación" className="grid gap-3 sm:grid-cols-3">
         <Indicador
           Icono={Users}
