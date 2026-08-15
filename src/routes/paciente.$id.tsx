@@ -73,7 +73,7 @@ function FichaContinuidad() {
       <Tabs defaultValue="resumen" className="flex flex-col gap-2">
       <header className="grid grid-cols-1 items-start gap-2 bg-card px-3 py-2 sm:px-4 md:grid-cols-[minmax(0,1fr)_auto]">
         <div className="min-w-0">
-          <h1 className="text-xl font-bold leading-tight text-foreground sm:text-2xl">
+          <h1 className="text-2xl font-semibold leading-tight tracking-[-0.02em] text-foreground sm:titulo-paciente">
             {paciente.nombre}
           </h1>
           <p className="text-base text-foreground sm:text-lg">

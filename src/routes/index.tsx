@@ -24,7 +24,7 @@ function JornadaDeHoy() {
   return (
     <section aria-labelledby="titulo-jornada" className="flex flex-col gap-3">
       <header>
-        <h1 id="titulo-jornada" className="text-2xl font-bold text-foreground">
+        <h1 id="titulo-jornada" className="text-2xl font-semibold tracking-[-0.02em] text-foreground">
           Jornada de hoy
         </h1>
         <p className="mt-1 text-base text-muted-foreground">

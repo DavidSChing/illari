@@ -109,7 +109,7 @@ function VistaProgramacion() {
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 p-3 md:p-6">
       <header className="flex flex-col gap-2">
-        <h1 className="text-2xl font-bold text-foreground md:text-3xl">
+        <h1 className="text-2xl font-semibold tracking-[-0.02em] text-foreground">
           Programación sugerida de clínica de día
         </h1>
         <p className="text-base text-muted-foreground">
@@ -238,7 +238,7 @@ function Indicador({
         <Icono aria-hidden="true" className="size-4 shrink-0" />
         {etiqueta}
       </p>
-      <p className="mt-1 text-3xl font-bold tabular-nums text-foreground">{valor}</p>
+      <p className="mt-1 cifra-clinica text-foreground">{valor}</p>
     </div>
   );
 }
