@@ -180,3 +180,21 @@ export const SENALES_DE_ALARMA = [
 ] as const;
 
 export const TELEFONO_EQUIPO = "(01) 619-1234";
+
+/** Quita tildes y caracteres especiales para que el SMS llegue a cualquier equipo. */
+export function sinTildes(texto: string): string {
+  return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^\x20-\x7E]/g, "");
+}
+
+/** Mensaje de recordatorio que recibirían los números activos. */
+export function mensajeRecordatorio(paciente: Paciente, hora?: string): string {
+  const nombre = primerNombre(paciente.nombre);
+  const fecha = aFecha(paciente.fechaProximaCita);
+  const dia = fecha.toLocaleDateString("es-PE", { weekday: "short" }).replace(".", "");
+  const horaTexto = (hora ?? horaDeLaCita(paciente.id))
+    .replace(" a. m.", " am")
+    .replace(" p. m.", " pm");
+  return sinTildes(
+    `INSN: ${nombre} tiene cita el ${dia} ${fechaCorta(paciente.fechaProximaCita)} a las ${horaTexto}. Clinica de dia p3. Lleve DNI y SIS. Responda SI para confirmar o NO si no podra ir.`,
+  );
+}
