@@ -5,7 +5,7 @@ import { formatearFecha } from "@/lib/formato";
 
 const ESTILO: Record<EstadoCiclo, { clase: string; etiqueta: string; Icono: typeof Check }> = {
   realizado: {
-    clase: "border-clinico-verde bg-clinico-verde-suave text-clinico-verde-foreground",
+    clase: "border-l-[3px] border-l-clinico-verde bg-muted/40 text-foreground",
     etiqueta: "Realizado",
     Icono: Check,
   },
@@ -20,7 +20,7 @@ const ESTILO: Record<EstadoCiclo, { clase: string; etiqueta: string; Icono: type
     Icono: CalendarClock,
   },
   retrasado: {
-    clase: "border-clinico-rojo bg-clinico-rojo-suave text-clinico-rojo-foreground",
+    clase: "border-l-[3px] border-l-clinico-rojo bg-muted/40 text-foreground",
     etiqueta: "Retrasado",
     Icono: AlertTriangle,
   },
@@ -30,7 +30,7 @@ export function LineaTiempoEsquema({ ciclos }: { ciclos: CicloEvaluado[] }) {
   return (
     <section
       aria-labelledby="titulo-linea-tiempo"
-      className="rounded-md border border-border bg-card px-4 py-3"
+      className="bg-card px-4 py-3"
     >
       <h2
         id="titulo-linea-tiempo"

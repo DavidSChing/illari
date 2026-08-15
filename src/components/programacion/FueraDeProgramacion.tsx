@@ -15,7 +15,7 @@ export function FueraDeProgramacion({
   return (
     <section
       aria-labelledby="titulo-fuera"
-      className="rounded-md border border-border bg-card"
+      className="bg-card"
     >
       <h2
         id="titulo-fuera"

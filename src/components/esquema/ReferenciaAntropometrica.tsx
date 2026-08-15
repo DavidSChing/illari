@@ -11,7 +11,7 @@ export function ReferenciaAntropometrica({ antropometria }: { antropometria: Ant
       aria-labelledby="titulo-antropometria"
       className={`rounded-md border px-4 py-3 ${
         desactualizada
-          ? "border-clinico-ambar bg-clinico-ambar-suave text-clinico-ambar-foreground"
+          ? "border-l-[3px] border-l-clinico-ambar bg-muted/40 text-foreground"
           : "border-border bg-card"
       }`}
     >
@@ -36,7 +36,7 @@ export function ReferenciaAntropometrica({ antropometria }: { antropometria: Ant
             {FORMULA_MOSTELLER} · Medición del {formatearFecha(antropometria.fecha)}
           </p>
           {desactualizada && (
-            <p className="mt-1 inline-flex items-center gap-2 rounded-md border border-clinico-ambar px-2 py-1 text-sm font-bold">
+            <p className="mt-1 inline-flex items-center gap-2 rounded-md border-l-[3px] border-l-clinico-ambar px-2 py-1 text-sm font-bold">
               <AlertTriangle aria-hidden="true" className="size-4" />
               Medición desactualizada
             </p>

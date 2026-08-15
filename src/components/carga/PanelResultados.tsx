@@ -5,7 +5,7 @@ import { formatearFecha } from "@/lib/formato";
 
 function Indicador({ etiqueta, valor, detalle }: { etiqueta: string; valor: number; detalle: string }) {
   return (
-    <div className="rounded-lg border border-border bg-card p-4">
+    <div className="bg-card p-4">
       <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">{etiqueta}</p>
       <p className="mt-1 text-3xl font-bold tabular-nums text-foreground">{valor}</p>
       <p className="mt-1 text-sm text-muted-foreground">{detalle}</p>
@@ -53,7 +53,7 @@ export function PanelResultados({ resultado }: { resultado: ResultadoCarga }) {
       </div>
 
       {resultado.problemas.length > 0 && (
-        <section aria-labelledby="titulo-problemas" className="rounded-lg border border-border bg-card p-4">
+        <section aria-labelledby="titulo-problemas" className="bg-card p-4">
           <h2 id="titulo-problemas" className="flex items-center gap-2 text-lg font-semibold text-foreground">
             <FileWarning aria-hidden="true" className="size-5 text-clinico-ambar" />
             Filas con problemas
@@ -75,11 +75,11 @@ export function PanelResultados({ resultado }: { resultado: ResultadoCarga }) {
       {resultado.discrepancias.length > 0 && (
         <section
           aria-labelledby="titulo-discrepancias"
-          className="rounded-lg border-2 border-clinico-rojo bg-card p-4"
+          className="rounded-md border-l-[3px] border-l-clinico-rojo bg-card p-4"
         >
           <h2
             id="titulo-discrepancias"
-            className="flex items-center gap-2 text-lg font-bold text-clinico-rojo-foreground"
+            className="flex items-center gap-2 text-lg font-bold text-foreground"
           >
             <AlertTriangle aria-hidden="true" className="size-5" />
             Discrepancias: requiere revisión del equipo médico
@@ -98,7 +98,7 @@ export function PanelResultados({ resultado }: { resultado: ResultadoCarga }) {
                   {discrepancia.versiones.map((version) => (
                     <div
                       key={version.fila}
-                      className="rounded-md border border-clinico-rojo bg-clinico-rojo-suave px-3 py-2 text-sm text-clinico-rojo-foreground"
+                      className="rounded-md border-l-[3px] border-l-clinico-rojo bg-muted/40 px-3 py-2 text-sm text-foreground"
                     >
                       <p className="font-bold">Versión de la fila {version.fila}</p>
                       <p>Paciente: {version.nombreOriginal || "(vacío)"}</p>
@@ -114,7 +114,7 @@ export function PanelResultados({ resultado }: { resultado: ResultadoCarga }) {
         </section>
       )}
 
-      <section aria-labelledby="titulo-vacios" className="rounded-lg border border-border bg-card p-4">
+      <section aria-labelledby="titulo-vacios" className="bg-card p-4">
         <h2 id="titulo-vacios" className="text-lg font-semibold text-foreground">
           Requiere atención del equipo
         </h2>
@@ -122,7 +122,7 @@ export function PanelResultados({ resultado }: { resultado: ResultadoCarga }) {
           Cada punto es informativo. La plataforma señala; la acción y la decisión son de una persona.
         </p>
         {resultado.vacios.length === 0 ? (
-          <p className="mt-3 rounded-md border border-clinico-verde bg-clinico-verde-suave px-3 py-2 text-base text-clinico-verde-foreground">
+          <p className="mt-3 rounded-md border-l-[3px] border-l-clinico-verde bg-muted/40 px-3 py-2 text-base text-foreground">
             No se detectaron vacíos en el archivo cargado.
           </p>
         ) : (
@@ -149,7 +149,7 @@ export function PanelResultados({ resultado }: { resultado: ResultadoCarga }) {
         )}
       </section>
 
-      <section aria-labelledby="titulo-consolidado" className="rounded-lg border border-border bg-card p-4">
+      <section aria-labelledby="titulo-consolidado" className="bg-card p-4">
         <h2 id="titulo-consolidado" className="text-lg font-semibold text-foreground">
           Pacientes consolidados
         </h2>

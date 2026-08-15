@@ -82,7 +82,7 @@ function VistaRetrasos() {
 
       <ul className="grid gap-2 md:grid-cols-3">
         {indicadores.map(({ etiqueta, valor, Icono }) => (
-          <li key={etiqueta} className="rounded-md border border-border bg-card px-4 py-3">
+          <li key={etiqueta} className="bg-card px-4 py-3">
             <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
               <Icono aria-hidden="true" className="size-5" />
               {etiqueta}
@@ -92,7 +92,7 @@ function VistaRetrasos() {
         ))}
       </ul>
 
-      <section aria-labelledby="titulo-tabla-retrasos" className="rounded-md border border-border bg-card">
+      <section aria-labelledby="titulo-tabla-retrasos" className="bg-card">
         <h2 id="titulo-tabla-retrasos" className="sr-only">
           Lista de pacientes con retraso
         </h2>
@@ -103,13 +103,13 @@ function VistaRetrasos() {
                 <Link
                   to="/paciente/$id"
                   params={{ id: paciente.id }}
-                  className="flex min-h-24 w-full min-w-0 flex-col gap-1 rounded-md border border-border bg-card px-3 py-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                  className="flex min-h-24 w-full min-w-0 flex-col gap-1 bg-card px-3 py-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                 >
                   <div className="flex min-w-0 items-baseline justify-between gap-2">
                     <span className="truncate text-lg font-bold text-primary underline">
                       {paciente.nombre}
                     </span>
-                    <span className="shrink-0 rounded-md border border-clinico-rojo bg-clinico-rojo-suave px-2 py-0.5 text-base font-bold text-clinico-rojo-foreground">
+                    <span className="shrink-0 rounded-md border-l-[3px] border-l-clinico-rojo bg-muted/40 px-2 py-0.5 text-base font-bold text-foreground">
                       {evaluacion.retrasoActual} días
                     </span>
                   </div>
@@ -160,7 +160,7 @@ function VistaRetrasos() {
                     {evaluacion.proximo?.fase ?? "No registrada"} · Ciclo {evaluacion.proximo?.numero}
                   </td>
                   <td className="px-3 py-2">
-                    <span className="inline-block rounded-md border border-clinico-rojo bg-clinico-rojo-suave px-2 py-1 text-base font-bold text-clinico-rojo-foreground">
+                    <span className="inline-block rounded-md border-l-[3px] border-l-clinico-rojo bg-muted/40 px-2 py-1 text-base font-bold text-foreground">
                       {evaluacion.retrasoActual} días
                     </span>
                   </td>

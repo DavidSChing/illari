@@ -109,7 +109,7 @@ function VistaProgramacion() {
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 p-3 md:p-6">
       <header className="flex flex-col gap-2">
-        <h1 className="text-2xl font-bold text-foreground md:text-3xl">
+        <h1 className="text-2xl font-semibold tracking-[-0.02em] text-foreground">
           Programación sugerida de clínica de día
         </h1>
         <p className="text-base text-muted-foreground">
@@ -118,7 +118,7 @@ function VistaProgramacion() {
         </p>
         <p
           role="note"
-          className="flex items-start gap-2 rounded-md border border-clinico-ambar bg-clinico-ambar-suave px-3 py-2 text-base font-semibold text-clinico-ambar-foreground"
+          className="flex items-start gap-2 rounded-md border-l-[3px] border-l-clinico-ambar bg-muted/40 px-3 py-2 text-base font-semibold text-foreground"
         >
           <Info aria-hidden="true" className="mt-0.5 size-5 shrink-0" />
           Programación sugerida. La confirmación corresponde al equipo asistencial.
@@ -195,7 +195,7 @@ function VistaProgramacion() {
 
 
 
-      <section aria-labelledby="titulo-cola" className="rounded-md border border-border bg-card">
+      <section aria-labelledby="titulo-cola" className="bg-card">
         <h2
           id="titulo-cola"
           className="border-b border-border px-3 py-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground md:px-4"
@@ -233,12 +233,12 @@ function Indicador({
   valor: string;
 }) {
   return (
-    <div className="rounded-md border border-border bg-card px-4 py-3">
+    <div className="bg-card px-4 py-3">
       <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
         <Icono aria-hidden="true" className="size-4 shrink-0" />
         {etiqueta}
       </p>
-      <p className="mt-1 text-3xl font-bold tabular-nums text-foreground">{valor}</p>
+      <p className="mt-1 cifra-clinica text-foreground">{valor}</p>
     </div>
   );
 }

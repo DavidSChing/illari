@@ -47,7 +47,7 @@ function PaginaFamilia() {
 
   if (!paciente) {
     return (
-      <div className="mx-auto max-w-md rounded-lg border border-border bg-card p-6">
+      <div className="mx-auto max-w-md bg-card p-6">
         <h1 className="text-2xl font-bold text-foreground">Paciente no encontrado</h1>
         <Link to="/" className="mt-3 inline-flex items-center gap-2 text-lg text-primary underline">
           <ArrowLeft aria-hidden="true" className="size-5" />

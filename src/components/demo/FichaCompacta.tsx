@@ -15,7 +15,7 @@ export function FichaCompacta({ paciente }: { paciente: PacienteCompleto }) {
       role="group"
       aria-label={`Ficha de Continuidad de ${paciente.nombre}`}
     >
-      <header className="rounded-md border border-border bg-card px-3 py-2">
+      <header className="bg-card px-3 py-2">
         <h3 className="text-xl font-bold leading-tight text-foreground">{paciente.nombre}</h3>
         <p className="text-base text-foreground">
           {paciente.edad} años · {paciente.sexo} ·{" "}
@@ -36,7 +36,7 @@ export function FichaCompacta({ paciente }: { paciente: PacienteCompleto }) {
       />
       <PanelAlertas alertas={paciente.alertas} />
       <TarjetasLaboratorio laboratorio={paciente.laboratorio} />
-      <p className="flex flex-wrap items-center gap-x-2 rounded-md border border-border bg-card px-3 py-2 text-base font-semibold text-foreground">
+      <p className="flex flex-wrap items-center gap-x-2 bg-card px-3 py-2 text-base font-semibold text-foreground">
         <Syringe aria-hidden="true" className="size-4 text-primary" />
         {paciente.ultimaAdministracion.medicamento}
         <span className="font-medium">{paciente.ultimaAdministracion.dosis}</span>

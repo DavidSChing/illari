@@ -15,7 +15,7 @@ export function BarraFases({
   const porcentaje = ciclosTotales ? Math.round((cicloActual / ciclosTotales) * 100) : null;
 
   return (
-    <section aria-labelledby="titulo-fases" className="rounded-md border border-border bg-card px-4 py-3">
+    <section aria-labelledby="titulo-fases" className="bg-card px-4 py-3">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h2 id="titulo-fases" className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
           Fase del tratamiento

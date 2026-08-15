@@ -71,9 +71,9 @@ function FichaContinuidad() {
   return (
     <div className="mx-auto flex w-full min-w-0 max-w-[1400px] flex-col gap-2 pb-20 md:pb-0">
       <Tabs defaultValue="resumen" className="flex flex-col gap-2">
-      <header className="grid grid-cols-1 items-start gap-2 rounded-md border border-border bg-card px-3 py-2 sm:px-4 md:grid-cols-[minmax(0,1fr)_auto]">
+      <header className="grid grid-cols-1 items-start gap-2 bg-card px-3 py-2 sm:px-4 md:grid-cols-[minmax(0,1fr)_auto]">
         <div className="min-w-0">
-          <h1 className="text-xl font-bold leading-tight text-foreground sm:text-2xl">
+          <h1 className="text-2xl font-semibold leading-tight tracking-[-0.02em] text-foreground sm:titulo-paciente">
             {paciente.nombre}
           </h1>
           <p className="text-base text-foreground sm:text-lg">
@@ -168,7 +168,7 @@ function FichaContinuidad() {
 
           <section
             aria-labelledby="titulo-administracion"
-            className="rounded-md border border-border bg-card p-4 lg:col-span-2 lg:col-start-1 lg:row-start-4"
+            className="bg-card p-4 lg:col-span-2 lg:col-start-1 lg:row-start-4"
           >
             <h2
               id="titulo-administracion"
@@ -192,7 +192,7 @@ function FichaContinuidad() {
             )}
           </section>
 
-          <div className="flex flex-col gap-2 rounded-md border border-border bg-card px-4 py-3 lg:col-start-3 lg:row-start-4">
+          <div className="flex flex-col gap-2 bg-card px-4 py-3 lg:col-start-3 lg:row-start-4">
             <div className="hidden md:block">
               <DialogoRegistrarAtencion paciente={paciente} />
             </div>
@@ -218,7 +218,7 @@ function FichaContinuidad() {
           </div>
 
           {franjaOrigen && (
-            <div className="rounded-md border border-border bg-card px-3 py-2 md:hidden">
+            <div className="bg-card px-3 py-2 md:hidden">
               {franjaOrigen}
             </div>
           )}

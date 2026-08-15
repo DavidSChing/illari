@@ -12,7 +12,7 @@ export function PanelConfiguracion({ valores, onCambio }: Props) {
   return (
     <section
       aria-labelledby="titulo-configuracion"
-      className="rounded-md border border-border bg-card px-3 py-3 md:px-4"
+      className="bg-card px-3 py-3 md:px-4"
     >
       <h2
         id="titulo-configuracion"

@@ -41,7 +41,7 @@ export function BloquesSugeridos({
 }) {
   if (bloques.length === 0) {
     return (
-      <p className="rounded-md border border-border bg-card px-4 py-6 text-base text-muted-foreground">
+      <p className="bg-card px-4 py-6 text-base text-muted-foreground">
         No hay bloques por mostrar con los datos cargados.
       </p>
     );
@@ -54,7 +54,7 @@ export function BloquesSugeridos({
         return (
           <li
             key={bloque.indice}
-            className="rounded-md border border-border bg-card px-3 py-3 md:px-4"
+            className="bg-card px-3 py-3 md:px-4"
           >
             <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
               <p className="text-3xl font-bold tabular-nums text-foreground">{bloque.hora}</p>

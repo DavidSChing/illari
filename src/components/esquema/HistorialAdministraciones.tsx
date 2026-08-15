@@ -13,7 +13,7 @@ export function HistorialAdministraciones({
   return (
     <section
       aria-labelledby="titulo-historial"
-      className="rounded-md border border-border bg-card px-4 py-3"
+      className="bg-card px-4 py-3"
     >
       <h2
         id="titulo-historial"

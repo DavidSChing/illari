@@ -11,8 +11,8 @@ export function TarjetaDesviacion({ evaluacion }: { evaluacion: EvaluacionEsquem
       aria-labelledby="titulo-desviacion"
       className={`rounded-md border-2 px-4 py-3 ${
         alDia
-          ? "border-clinico-verde bg-clinico-verde-suave text-clinico-verde-foreground"
-          : "border-clinico-rojo bg-clinico-rojo-suave text-clinico-rojo-foreground"
+          ? "border-l-[3px] border-l-clinico-verde bg-muted/40 text-foreground"
+          : "border-l-[3px] border-l-clinico-rojo bg-muted/40 text-foreground"
       }`}
     >
       <h2 id="titulo-desviacion" className="text-sm font-semibold uppercase tracking-wide">

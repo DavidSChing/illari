@@ -41,9 +41,9 @@ function sumarDias(iso: string, dias: number): string {
 }
 
 const CLASES_SEMAFORO: Record<string, string> = {
-  rojo: "border-clinico-rojo bg-clinico-rojo-suave text-clinico-rojo-foreground",
-  ambar: "border-clinico-ambar bg-clinico-ambar-suave text-clinico-ambar-foreground",
-  verde: "border-clinico-verde bg-clinico-verde-suave text-clinico-verde-foreground",
+  rojo: "border-l-[3px] border-l-clinico-rojo bg-muted/40 text-foreground",
+  ambar: "border-l-[3px] border-l-clinico-ambar bg-muted/40 text-foreground",
+  verde: "border-l-[3px] border-l-clinico-verde bg-muted/40 text-foreground",
 };
 
 function Semaforo({ lectura }: { lectura: LecturaSemaforo | null }) {
@@ -194,7 +194,7 @@ export function DialogoRegistrarAtencion({ paciente }: { paciente: Paciente }) {
 
         {guardado ? (
           <div className="grid gap-4">
-            <p className="rounded-md border border-clinico-verde bg-clinico-verde-suave px-4 py-3 text-lg font-semibold text-clinico-verde-foreground">
+            <p className="rounded-md border-l-[3px] border-l-clinico-verde bg-muted/40 px-4 py-3 text-lg font-semibold text-foreground">
               Atención registrada en esta sesión.
             </p>
             <div className="overflow-x-auto rounded-md border border-border">

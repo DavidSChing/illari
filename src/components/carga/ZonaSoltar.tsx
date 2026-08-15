@@ -30,7 +30,7 @@ export function ZonaSoltar({
         tomar(evento.dataTransfer.files);
       }}
       className={[
-        "flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed px-6 py-12 text-center",
+        "flex flex-col items-center justify-center gap-3 rounded-md border-2 border-dashed px-6 py-12 text-center",
         encima ? "border-primary bg-accent" : "border-border bg-card",
       ].join(" ")}
     >
