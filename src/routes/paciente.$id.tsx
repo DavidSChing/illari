@@ -44,7 +44,8 @@ export const Route = createFileRoute("/paciente/$id")({
 
 function FichaContinuidad() {
   const { id } = Route.useParams();
-  const { obtenerPaciente, atencionesDePaciente, nombreMedico } = useEstadoClinico();
+  const { obtenerPaciente, atencionesDePaciente, nombreMedico, horaPropuesta } =
+    useEstadoClinico();
   const paciente = obtenerPaciente(id);
 
   if (!paciente) {
@@ -92,6 +93,9 @@ function FichaContinuidad() {
           <p className="text-sm text-muted-foreground">
             {paciente.protocolo} · Última atención {formatearFecha(paciente.fechaUltimaAtencion)} · Próxima
             cita {formatearFecha(paciente.fechaProximaCita)}
+            {horaPropuesta(paciente.id)
+              ? ` · Hora propuesta en clínica de día: ${horaPropuesta(paciente.id)}`
+              : ""}
             {paciente.diasDesdeUltimaAtencion !== undefined
               ? ` · ${paciente.diasDesdeUltimaAtencion} días desde la última atención`
               : ""}
