@@ -126,11 +126,23 @@ export function programarCitas(
   pacientes: PacienteProgramable[],
   opciones: OpcionesProgramacion = {},
 ): ResultadoProgramacion {
-  const config: Required<OpcionesProgramacion> = { ...OPCIONES_POR_DEFECTO, ...opciones };
+  const config: ResultadoProgramacion["opciones"] = {
+    ...OPCIONES_POR_DEFECTO,
+    ...opciones,
+    ajustes: opciones.ajustes ?? {},
+  };
   const capacidad = Math.max(1, Math.floor(config.capacidadPorBloque));
+  const fijados = config.ajustes.fijados ?? {};
+  const motivos = config.ajustes.excluidos ?? {};
+
+  const excluidos = pacientes
+    .filter((paciente) => paciente.id in motivos)
+    .map((paciente) => ({ paciente, motivo: motivos[paciente.id] ?? "" }));
+
+  const programables = pacientes.filter((paciente) => !(paciente.id in motivos));
 
   const porGrupo = (grupo: 1 | 2 | 3) =>
-    pacientes
+    programables
       .filter((paciente) => GRUPO_POR_NIVEL[paciente.nivel] === grupo)
       .slice()
       .sort((a, b) => {
@@ -143,24 +155,72 @@ export function programarCitas(
   const cola: EntradaCola[] = [];
   ([1, 2, 3] as const).forEach((grupo) => {
     porGrupo(grupo).forEach((paciente) => {
-      cola.push({ orden: cola.length + 1, grupo, paciente });
+      cola.push({
+        orden: cola.length + 1,
+        grupo,
+        paciente,
+        ...(paciente.id in fijados ? { fijado: true } : {}),
+      });
     });
   });
 
-  const bloques: BloqueProgramado[] = [];
   const inicio = aMinutos(config.horaInicio);
-  for (let i = 0; i * capacidad < cola.length; i += 1) {
-    bloques.push({
-      indice: i,
-      hora: aTexto(inicio + i * config.intervaloBloques * 60),
-      entradas: cola.slice(i * capacidad, (i + 1) * capacidad),
-    });
-  }
+  const minimoPorFijados = cola.reduce(
+    (maximo, entrada) =>
+      entrada.fijado ? Math.max(maximo, (fijados[entrada.paciente.id] ?? 0) + 1) : maximo,
+    0,
+  );
+  const totalBloques = Math.max(Math.ceil(cola.length / capacidad), minimoPorFijados);
+
+  const listas: EntradaCola[][] = Array.from({ length: totalBloques }, () => []);
+  const crearBloque = () => {
+    listas.push([]);
+    return listas.length - 1;
+  };
+
+  // Paso A: los pacientes fijados ocupan primero su bloque.
+  const pendientes: EntradaCola[] = [];
+  cola.forEach((entrada) => {
+    if (!entrada.fijado) {
+      pendientes.push(entrada);
+      return;
+    }
+    const destino = Math.max(0, Math.floor(fijados[entrada.paciente.id] ?? 0));
+    while (listas.length <= destino) crearBloque();
+    listas[destino]!.push(entrada);
+  });
+
+  // Paso B: el resto entra por prioridad en el primer bloque con sillón libre.
+  let cursor = 0;
+  pendientes.forEach((entrada) => {
+    while (cursor < listas.length && listas[cursor]!.length >= capacidad) cursor += 1;
+    if (cursor >= listas.length) cursor = crearBloque();
+    listas[cursor]!.push(entrada);
+  });
+
+  const bloques: BloqueProgramado[] = listas.map((entradas, indice) => ({
+    indice,
+    hora: aTexto(inicio + indice * config.intervaloBloques * 60),
+    entradas,
+  }));
 
   const horaTermino = aTexto(inicio + bloques.length * config.intervaloBloques * 60);
 
-  return { cola, bloques, horaTermino, opciones: config };
+  return { cola, bloques, excluidos, horaTermino, opciones: config };
 }
+
+/** Hora asignada a cada paciente en la propuesta vigente. */
+export function horasPorPaciente(resultado: ResultadoProgramacion): Record<string, string> {
+  const mapa: Record<string, string> = {};
+  resultado.bloques.forEach((bloque) => {
+    bloque.entradas.forEach((entrada) => {
+      mapa[entrada.paciente.id] = bloque.hora;
+    });
+  });
+  return mapa;
+}
+
+
 
 /** Cantidad de pacientes de cada grupo dentro de un bloque. */
 export function composicionBloque(bloque: BloqueProgramado): Record<NivelSemaforo, number> {
