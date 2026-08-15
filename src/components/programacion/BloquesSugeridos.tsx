@@ -85,7 +85,7 @@ export function BloquesSugeridos({
                   >
                     <span
                       aria-hidden="true"
-                      className={`h-full w-[3px] shrink-0 rounded-l-sm ${BARRA[entrada.paciente.nivel]}`}
+                      className={`w-[3px] shrink-0 self-stretch rounded-l-sm ${BARRA[entrada.paciente.nivel]}`}
                     />
                     <span className="truncate px-2 text-sm font-semibold text-foreground">
                       {nombreCorto(entrada.paciente.nombre)}
