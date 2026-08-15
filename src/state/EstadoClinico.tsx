@@ -66,7 +66,22 @@ interface EstadoClinicoValor {
   confirmarAsistencia: (pacienteId: string) => void;
   cancelarAsistencia: (pacienteId: string, motivo: string) => void;
   reportarFiebre: (pacienteId: string) => void;
+  // --- Programación de clínica de día ---
+  configProgramacion: ConfigProgramacion;
+  setConfigProgramacion: (parcial: Partial<ConfigProgramacion>) => void;
+  programacion: ResultadoProgramacion;
+  ajustesProgramacion: AjustesManuales;
+  cambiosProgramacion: CambioProgramacion[];
+  moverABloque: (pacienteId: string, indiceBloque: number) => void;
+  fijarEnBloque: (pacienteId: string, indiceBloque: number) => void;
+  liberarPaciente: (pacienteId: string) => void;
+  excluirPaciente: (pacienteId: string, motivo: string) => void;
+  cambiarMotivoExclusion: (pacienteId: string, motivo: string) => void;
+  reincluirPaciente: (pacienteId: string) => void;
+  /** Hora propuesta para el paciente en la programación vigente. */
+  horaPropuesta: (pacienteId: string) => string | null;
 }
+
 
 
 const Contexto = createContext<EstadoClinicoValor | null>(null);
