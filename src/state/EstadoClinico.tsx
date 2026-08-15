@@ -190,6 +190,117 @@ export function ProveedorEstadoClinico({ children }: { children: ReactNode }) {
     );
   }, []);
 
+
+  // --- Programación de clínica de día: la plataforma propone, el equipo decide ---
+  const [configProgramacion, setConfig] = useState<ConfigProgramacion>({
+    capacidadPorBloque: OPCIONES_POR_DEFECTO.capacidadPorBloque,
+    horaInicio: OPCIONES_POR_DEFECTO.horaInicio,
+    intervaloBloques: OPCIONES_POR_DEFECTO.intervaloBloques,
+  });
+  const [ajustesProgramacion, setAjustes] = useState<AjustesManuales>({});
+  const [cambiosProgramacion, setCambios] = useState<CambioProgramacion[]>([]);
+
+  const setConfigProgramacion = useCallback((parcial: Partial<ConfigProgramacion>) => {
+    setConfig((previa) => ({ ...previa, ...parcial }));
+  }, []);
+
+  const anotarCambio = useCallback((accion: string) => {
+    const hora = new Date().toLocaleTimeString("es-PE", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
+    setCambios((previos) => [
+      { id: `cambio-${previos.length + 1}-${Date.now()}`, hora, accion },
+      ...previos,
+    ]);
+  }, []);
+
+  const nombreDe = useCallback(
+    (pacienteId: string) =>
+      pacientes.find((paciente) => paciente.id === pacienteId)?.nombre ?? "Paciente",
+    [pacientes],
+  );
+
+  const moverABloque = useCallback(
+    (pacienteId: string, indiceBloque: number) => {
+      setAjustes((previos) => ({
+        ...previos,
+        fijados: { ...(previos.fijados ?? {}), [pacienteId]: indiceBloque },
+      }));
+      anotarCambio(`${nombreDe(pacienteId)}: movido al bloque ${indiceBloque + 1}`);
+    },
+    [anotarCambio, nombreDe],
+  );
+
+  const fijarEnBloque = useCallback(
+    (pacienteId: string, indiceBloque: number) => {
+      setAjustes((previos) => ({
+        ...previos,
+        fijados: { ...(previos.fijados ?? {}), [pacienteId]: indiceBloque },
+      }));
+      anotarCambio(`${nombreDe(pacienteId)}: fijado en el bloque ${indiceBloque + 1}`);
+    },
+    [anotarCambio, nombreDe],
+  );
+
+  const liberarPaciente = useCallback(
+    (pacienteId: string) => {
+      setAjustes((previos) => {
+        const fijados = { ...(previos.fijados ?? {}) };
+        delete fijados[pacienteId];
+        return { ...previos, fijados };
+      });
+      anotarCambio(`${nombreDe(pacienteId)}: liberado del bloque fijado`);
+    },
+    [anotarCambio, nombreDe],
+  );
+
+  const excluirPaciente = useCallback(
+    (pacienteId: string, motivo: string) => {
+      setAjustes((previos) => {
+        const fijados = { ...(previos.fijados ?? {}) };
+        delete fijados[pacienteId];
+        return {
+          fijados,
+          excluidos: { ...(previos.excluidos ?? {}), [pacienteId]: motivo },
+        };
+      });
+      anotarCambio(`${nombreDe(pacienteId)}: excluido de la programación`);
+    },
+    [anotarCambio, nombreDe],
+  );
+
+  const cambiarMotivoExclusion = useCallback((pacienteId: string, motivo: string) => {
+    setAjustes((previos) => ({
+      ...previos,
+      excluidos: { ...(previos.excluidos ?? {}), [pacienteId]: motivo },
+    }));
+  }, []);
+
+  const reincluirPaciente = useCallback(
+    (pacienteId: string) => {
+      setAjustes((previos) => {
+        const excluidos = { ...(previos.excluidos ?? {}) };
+        delete excluidos[pacienteId];
+        return { ...previos, excluidos };
+      });
+      anotarCambio(`${nombreDe(pacienteId)}: devuelto a la programación`);
+    },
+    [anotarCambio, nombreDe],
+  );
+
+  const programacion = useMemo(
+    () =>
+      programarCitas(pacientes.map(aProgramable), {
+        ...configProgramacion,
+        ajustes: ajustesProgramacion,
+      }),
+    [pacientes, configProgramacion, ajustesProgramacion],
+  );
+
+  const horas = useMemo(() => horasPorPaciente(programacion), [programacion]);
+
   const valor = useMemo<EstadoClinicoValor>(
     () => ({
       pacientes,
@@ -211,6 +322,18 @@ export function ProveedorEstadoClinico({ children }: { children: ReactNode }) {
       confirmarAsistencia,
       cancelarAsistencia,
       reportarFiebre,
+      configProgramacion,
+      setConfigProgramacion,
+      programacion,
+      ajustesProgramacion,
+      cambiosProgramacion,
+      moverABloque,
+      fijarEnBloque,
+      liberarPaciente,
+      excluirPaciente,
+      cambiarMotivoExclusion,
+      reincluirPaciente,
+      horaPropuesta: (pacienteId) => horas[pacienteId] ?? null,
     }),
     [
       pacientes,
@@ -227,8 +350,21 @@ export function ProveedorEstadoClinico({ children }: { children: ReactNode }) {
       confirmarAsistencia,
       cancelarAsistencia,
       reportarFiebre,
+      configProgramacion,
+      setConfigProgramacion,
+      programacion,
+      ajustesProgramacion,
+      cambiosProgramacion,
+      moverABloque,
+      fijarEnBloque,
+      liberarPaciente,
+      excluirPaciente,
+      cambiarMotivoExclusion,
+      reincluirPaciente,
+      horas,
     ],
   );
+
 
 
   return <Contexto.Provider value={valor}>{children}</Contexto.Provider>;
