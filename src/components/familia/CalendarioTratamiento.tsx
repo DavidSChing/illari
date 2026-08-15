@@ -87,7 +87,7 @@ export function CalendarioTratamiento({ paciente }: { paciente: Paciente }) {
 
           const estilo =
             sesion.estado === "realizada"
-              ? "border-clinico-verde bg-clinico-verde-suave text-clinico-verde-foreground"
+              ? "border-l-[3px] border-l-clinico-verde bg-muted/40 text-foreground"
               : sesion.estado === "proxima"
                 ? "border-primary bg-primary text-primary-foreground"
                 : "border-border bg-muted text-foreground";
@@ -114,7 +114,7 @@ export function CalendarioTratamiento({ paciente }: { paciente: Paciente }) {
   );
 
   return (
-    <section aria-labelledby="titulo-calendario" className="rounded-lg border border-border bg-card p-4">
+    <section aria-labelledby="titulo-calendario" className="bg-card p-4">
       <h2 id="titulo-calendario" className="text-xl font-bold text-foreground">
         Calendario del tratamiento
       </h2>
@@ -129,7 +129,7 @@ export function CalendarioTratamiento({ paciente }: { paciente: Paciente }) {
             {sesiones.map((sesion) => {
               const estilo =
                 sesion.estado === "realizada"
-                  ? "border-clinico-verde bg-clinico-verde-suave text-clinico-verde-foreground"
+                  ? "border-l-[3px] border-l-clinico-verde bg-muted/40 text-foreground"
                   : sesion.estado === "proxima"
                     ? "border-primary bg-primary text-primary-foreground"
                     : "border-border bg-card text-foreground";
@@ -163,7 +163,7 @@ export function CalendarioTratamiento({ paciente }: { paciente: Paciente }) {
           <button
             type="button"
             onClick={() => setMesCompleto(true)}
-            className="mt-3 flex min-h-14 w-full items-center justify-center rounded-lg border-2 border-foreground bg-card px-4 text-lg font-bold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            className="mt-3 flex min-h-14 w-full items-center justify-center rounded-md border-2 border-foreground bg-card px-4 text-lg font-bold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           >
             Ver mes completo
           </button>

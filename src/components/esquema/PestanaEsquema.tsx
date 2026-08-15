@@ -19,7 +19,7 @@ export function PestanaEsquema({
 
   if (!seguimiento) {
     return (
-      <div className="rounded-md border border-border bg-card px-4 py-6">
+      <div className="bg-card px-4 py-6">
         <h2 className="text-lg font-bold text-foreground">Sin esquema registrado</h2>
         <p className="mt-1 text-base text-muted-foreground">
           Este paciente no tiene un esquema de demostración asociado. El archivo cargado no incluye el

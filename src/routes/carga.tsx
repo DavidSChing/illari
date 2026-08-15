@@ -88,7 +88,7 @@ function CargaMedica() {
         />
       </div>
 
-      <div className="rounded-lg border border-border bg-card p-4">
+      <div className="bg-card p-4">
         <h2 className="text-lg font-semibold text-foreground">
           Pacientes por médico principal
         </h2>
@@ -121,7 +121,7 @@ function CargaMedica() {
         </ul>
       </div>
 
-      <div className="rounded-lg border border-border bg-card p-4">
+      <div className="bg-card p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-lg font-semibold text-foreground">Sugerencias de reasignación</h2>
           <Button onClick={aplicar} disabled={sugerencias.length === 0} className="min-h-11">
@@ -130,7 +130,7 @@ function CargaMedica() {
         </div>
 
         {sugerencias.length === 0 ? (
-          <p className="mt-3 rounded-md border border-clinico-verde/40 bg-clinico-verde-suave px-3 py-2 text-base text-foreground">
+          <p className="mt-3 rounded-md border-l-[3px] border-l-clinico-verde/40 bg-muted/40 px-3 py-2 text-base text-foreground">
             La carga está equilibrada: la diferencia entre médicos es de {dispersion}{" "}
             {dispersion === 1 ? "paciente" : "pacientes"}. No hay sugerencias pendientes.
           </p>
@@ -180,7 +180,7 @@ function IndicadorDispersion({
 }) {
   return (
     <div
-      className={`rounded-lg border p-4 ${destacado ? "border-primary/40 bg-primary/5" : "border-border bg-card"}`}
+      className={`rounded-md border p-4 ${destacado ? "border-primary/40 bg-primary/5" : "border-border bg-card"}`}
     >
       <p className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
         {etiqueta}

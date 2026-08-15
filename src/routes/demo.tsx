@@ -96,7 +96,7 @@ function PantallaDemo() {
 
   return (
     <div className="mx-auto flex w-full min-w-0 max-w-[1600px] flex-col gap-2 lg:h-[calc(100vh-9rem)]">
-      <header className="rounded-md border border-border bg-card px-3 py-3 sm:px-4">
+      <header className="bg-card px-3 py-3 sm:px-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="min-w-0">
             <h1 className="text-xl font-bold text-foreground">Demostración de tiempos</h1>
@@ -161,7 +161,7 @@ function PantallaDemo() {
             </strong>
           </span>
           {reduccion !== null ? (
-            <span className="rounded-md border-2 border-clinico-verde bg-clinico-verde-suave px-3 py-1 font-bold text-clinico-verde-foreground">
+            <span className="rounded-md border-l-[3px] border-l-clinico-verde bg-muted/40 px-3 py-1 font-bold text-foreground">
               Reducción de tiempo: {reduccion} % ({formatearTiempo(tiempoExcel!)} →{" "}
               {formatearTiempo(tiempoFicha!)})
             </span>

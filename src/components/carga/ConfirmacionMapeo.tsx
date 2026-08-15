@@ -22,7 +22,7 @@ export function ConfirmacionMapeo({
 
   return (
     <section aria-labelledby="titulo-mapeo" className="flex flex-col gap-4">
-      <div className="rounded-lg border border-border bg-card p-4">
+      <div className="bg-card p-4">
         <h2 id="titulo-mapeo" className="text-xl font-bold text-foreground">
           Confirme cómo se interpretó cada columna
         </h2>
@@ -40,7 +40,7 @@ export function ConfirmacionMapeo({
                 <label htmlFor={idSelector} className="text-base font-semibold text-foreground">
                   {campo.etiqueta}
                   {campo.requerido ? (
-                    <span className="ml-1 text-sm font-bold text-clinico-rojo-foreground">
+                    <span className="ml-1 text-sm font-bold text-foreground">
                       (obligatorio)
                     </span>
                   ) : (
@@ -76,7 +76,7 @@ export function ConfirmacionMapeo({
         {faltantes.length > 0 && (
           <p
             role="status"
-            className="mt-3 rounded-md border border-clinico-ambar bg-clinico-ambar-suave px-3 py-2 text-base font-semibold text-clinico-ambar-foreground"
+            className="mt-3 rounded-md border-l-[3px] border-l-clinico-ambar bg-muted/40 px-3 py-2 text-base font-semibold text-foreground"
           >
             Falta indicar: {faltantes.map((campo) => campo.etiqueta).join(", ")}.
           </p>
@@ -97,7 +97,7 @@ export function ConfirmacionMapeo({
         </div>
       </div>
 
-      <div className="overflow-auto rounded-lg border border-border">
+      <div className="overflow-auto rounded-md border border-border">
         <table className="w-full border-collapse text-left text-sm">
           <caption className="sr-only">Primeras filas del archivo, tal como están en el Excel</caption>
           <thead className="bg-muted">

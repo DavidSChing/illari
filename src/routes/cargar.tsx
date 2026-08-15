@@ -123,14 +123,14 @@ function CargarExcel() {
       {error && (
         <p
           role="alert"
-          className="rounded-md border border-clinico-rojo bg-clinico-rojo-suave px-3 py-2 text-base font-semibold text-clinico-rojo-foreground"
+          className="rounded-md border-l-[3px] border-l-clinico-rojo bg-muted/40 px-3 py-2 text-base font-semibold text-foreground"
         >
           {error}
         </p>
       )}
 
       {carga && !archivo && (
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-secondary px-4 py-3">
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-border bg-secondary px-4 py-3">
           <p className="text-base text-secondary-foreground">
             Datos en uso: <span className="font-bold">{carga.archivo}</span>, cargado el{" "}
             {formatearFecha(carga.fechaCarga)}. Alimenta la jornada de hoy, cada Ficha de Continuidad y

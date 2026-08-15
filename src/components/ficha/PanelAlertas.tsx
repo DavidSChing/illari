@@ -9,14 +9,14 @@ const SEVERIDAD: Record<string, NivelSemaforo> = {
 };
 
 const CLASES: Record<NivelSemaforo, string> = {
-  rojo: "border-clinico-rojo bg-clinico-rojo-suave text-clinico-rojo-foreground",
-  ambar: "border-clinico-ambar bg-clinico-ambar-suave text-clinico-ambar-foreground",
-  verde: "border-clinico-verde bg-clinico-verde-suave text-clinico-verde-foreground",
+  rojo: "border-l-[3px] border-l-clinico-rojo bg-muted/40 text-foreground",
+  ambar: "border-l-[3px] border-l-clinico-ambar bg-muted/40 text-foreground",
+  verde: "border-l-[3px] border-l-clinico-verde bg-muted/40 text-foreground",
 };
 
 export function PanelAlertas({ alertas }: { alertas: string[] }) {
   return (
-    <section aria-labelledby="titulo-alertas" className="rounded-md border border-border bg-card px-4 py-3">
+    <section aria-labelledby="titulo-alertas" className="bg-card px-4 py-3">
       <h2 id="titulo-alertas" className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
         Alertas
       </h2>

@@ -41,8 +41,8 @@ function IconosAlerta({ alertas }: { alertas: string[] }) {
             <span
               className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-sm font-semibold ${
                 nivel === "rojo"
-                  ? "border-clinico-rojo bg-clinico-rojo-suave text-clinico-rojo-foreground"
-                  : "border-clinico-ambar bg-clinico-ambar-suave text-clinico-ambar-foreground"
+                  ? "border-l-[3px] border-l-clinico-rojo bg-muted/40 text-foreground"
+                  : "border-l-[3px] border-l-clinico-ambar bg-muted/40 text-foreground"
               }`}
             >
               <Icono aria-hidden="true" className="size-4" />
@@ -67,7 +67,7 @@ function EstadoFamilia({ pacienteId }: { pacienteId: string }) {
     <ul className="flex flex-wrap items-center gap-1">
       {respuesta.asistencia === "confirmado" && (
         <li>
-          <span className="inline-flex items-center gap-1 rounded-full border border-clinico-verde bg-clinico-verde-suave px-2 py-0.5 text-sm font-bold text-clinico-verde-foreground">
+          <span className="inline-flex items-center gap-1 rounded-full border-l-[3px] border-l-clinico-verde bg-muted/40 px-2 py-0.5 text-sm font-bold text-foreground">
             <CalendarCheck aria-hidden="true" className="size-4" />
             Confirmado
           </span>
@@ -77,7 +77,7 @@ function EstadoFamilia({ pacienteId }: { pacienteId: string }) {
         <>
           <li>
             <span
-              className="inline-flex items-center gap-1 rounded-full border border-clinico-ambar bg-clinico-ambar-suave px-2 py-0.5 text-sm font-bold text-clinico-ambar-foreground"
+              className="inline-flex items-center gap-1 rounded-full border-l-[3px] border-l-clinico-ambar bg-muted/40 px-2 py-0.5 text-sm font-bold text-foreground"
               title={respuesta.motivo ? `Motivo: ${respuesta.motivo}` : undefined}
             >
               <CalendarX aria-hidden="true" className="size-4" />
@@ -93,7 +93,7 @@ function EstadoFamilia({ pacienteId }: { pacienteId: string }) {
       )}
       {respuesta.fiebreReportada && (
         <li>
-          <span className="inline-flex items-center gap-1 rounded-full border border-clinico-rojo bg-clinico-rojo-suave px-2 py-0.5 text-sm font-bold text-clinico-rojo-foreground">
+          <span className="inline-flex items-center gap-1 rounded-full border-l-[3px] border-l-clinico-rojo bg-muted/40 px-2 py-0.5 text-sm font-bold text-foreground">
             <Thermometer aria-hidden="true" className="size-4" />
             Fiebre reportada
           </span>
@@ -114,7 +114,7 @@ function TarjetaPaciente({ cita, paciente }: { cita: Cita; paciente: Paciente })
       params={{ id: paciente.id }}
       className={[
         "flex min-h-24 w-full min-w-0 flex-col gap-1 rounded-md border px-3 py-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
-        fueraDeDupla ? "border-clinico-ambar bg-clinico-ambar-suave/60" : "border-border bg-card",
+        fueraDeDupla ? "border-clinico-ambar bg-muted/40" : "border-border bg-card",
       ].join(" ")}
     >
       <div className="flex min-w-0 items-baseline justify-between gap-2">
@@ -128,7 +128,7 @@ function TarjetaPaciente({ cita, paciente }: { cita: Cita; paciente: Paciente })
       </p>
       <p className="text-base text-foreground">{nombreMedico(paciente.medicoPrincipalId)}</p>
       {fueraDeDupla && (
-        <p className="inline-flex items-center gap-1 text-sm font-bold text-clinico-ambar-foreground">
+        <p className="inline-flex items-center gap-1 text-sm font-bold text-foreground">
           <ShieldAlert aria-hidden="true" className="size-4 shrink-0" />
           No es de tu dupla
         </p>
@@ -146,14 +146,14 @@ function FilaPaciente({ cita, paciente }: { cita: Cita; paciente: Paciente }) {
     <tr
       className={[
         "group border-b border-border transition-colors hover:bg-accent",
-        fueraDeDupla ? "bg-clinico-ambar-suave/50" : "bg-card",
+        fueraDeDupla ? "bg-muted/40" : "bg-card",
       ].join(" ")}
     >
       <td className="px-3 py-2">
         <div className="flex items-center gap-2">
           {fueraDeDupla && (
             <span
-              className="inline-flex shrink-0 items-center gap-1 rounded-md border border-clinico-ambar bg-clinico-ambar-suave px-2 py-0.5 text-sm font-bold text-clinico-ambar-foreground"
+              className="inline-flex shrink-0 items-center gap-1 rounded-md border-l-[3px] border-l-clinico-ambar bg-muted/40 px-2 py-0.5 text-sm font-bold text-foreground"
               title="Este paciente no es de tu dupla"
             >
               <ShieldAlert aria-hidden="true" className="size-4" />
@@ -226,7 +226,7 @@ export function TablaJornada() {
       {/* Móvil: una tarjeta por paciente con los datos indispensables. */}
       <ul className="flex flex-col gap-2 md:hidden">
         {filas.length === 0 ? (
-          <li className="rounded-md border border-border bg-card px-3 py-6 text-center text-base text-muted-foreground">
+          <li className="bg-card px-3 py-6 text-center text-base text-muted-foreground">
             {citasDeHoy.length === 0
               ? "El archivo cargado no registra próximas citas."
               : `No se encontraron pacientes para “${busqueda}”.`}

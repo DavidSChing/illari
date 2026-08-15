@@ -25,7 +25,7 @@ function Grafico({
   const proporcionCapacidad = Math.min(1, capacidad / escala);
 
   return (
-    <figure className="rounded-md border border-border bg-card px-3 py-3">
+    <figure className="bg-card px-3 py-3">
       <figcaption className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
         {titulo}
       </figcaption>
@@ -105,7 +105,7 @@ function Cifra({
   despues: string;
 }) {
   return (
-    <div className="rounded-md border border-border bg-card px-3 py-3">
+    <div className="bg-card px-3 py-3">
       <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
         {etiqueta}
       </p>

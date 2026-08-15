@@ -10,7 +10,7 @@ import type { CambioProgramacion } from "@/state/EstadoClinico";
 /** Trazabilidad: qué ajustó el equipo asistencial sobre la propuesta automática. */
 export function RegistroCambios({ cambios }: { cambios: CambioProgramacion[] }) {
   return (
-    <Collapsible defaultOpen className="rounded-md border border-border bg-card">
+    <Collapsible defaultOpen className="bg-card">
       <CollapsibleTrigger className="group flex min-h-12 w-full items-center gap-2 px-3 py-2 text-left focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring md:px-4">
         <History aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />
         <span className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">

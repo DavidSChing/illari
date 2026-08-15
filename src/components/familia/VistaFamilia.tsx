@@ -37,7 +37,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 const ICONOS_LLEVAR = [IdCard, CreditCard, FileText, Backpack];
 
 const BOTON_GRANDE =
-  "flex min-h-14 w-full items-center justify-center gap-2 rounded-lg px-4 text-lg font-bold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
+  "flex min-h-14 w-full items-center justify-center gap-2 rounded-md px-4 text-lg font-bold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
 
 export function VistaFamilia({ paciente }: { paciente: Paciente }) {
   const {
@@ -71,7 +71,7 @@ export function VistaFamilia({ paciente }: { paciente: Paciente }) {
         <BarraDemoFamilia pacienteId={paciente.id} />
 
         {/* 2. Saludo compacto */}
-        <section aria-labelledby="titulo-saludo" className="rounded-lg border border-border bg-card px-4 py-3">
+        <section aria-labelledby="titulo-saludo" className="bg-card px-4 py-3">
           <h1 id="titulo-saludo" className="text-2xl font-bold text-foreground">
             Hola, {responsable.nombre}
           </h1>
@@ -98,7 +98,7 @@ export function VistaFamilia({ paciente }: { paciente: Paciente }) {
         {/* 4. Próxima cita: lo más grande de la pantalla */}
         <section
           aria-labelledby="titulo-proxima-cita"
-          className="rounded-lg border-2 border-primary bg-card px-4 py-3"
+          className="rounded-md border-2 border-primary bg-card px-4 py-3"
         >
           <h2
             id="titulo-proxima-cita"
@@ -122,12 +122,12 @@ export function VistaFamilia({ paciente }: { paciente: Paciente }) {
 
           <div aria-live="polite">
             {respuesta.asistencia === "confirmado" && (
-              <p className="mt-3 rounded-lg border-2 border-clinico-verde bg-clinico-verde-suave p-3 text-lg font-bold text-clinico-verde-foreground">
+              <p className="mt-3 rounded-md border-l-[3px] border-l-clinico-verde bg-muted/40 p-3 text-lg font-bold text-foreground">
                 Gracias. Los esperamos el {fecha.toLowerCase()} a las {hora}.
               </p>
             )}
             {respuesta.asistencia === "no_asistira" && (
-              <p className="mt-3 rounded-lg border-2 border-clinico-ambar bg-clinico-ambar-suave p-3 text-lg font-bold text-clinico-ambar-foreground">
+              <p className="mt-3 rounded-md border-l-[3px] border-l-clinico-ambar bg-muted/40 p-3 text-lg font-bold text-foreground">
                 Listo. Avisamos al equipo de {nino}. Se comunicarán con usted para reprogramar.
               </p>
             )}
@@ -137,11 +137,11 @@ export function VistaFamilia({ paciente }: { paciente: Paciente }) {
         {/* 5. Señales de alarma */}
         <section
           aria-labelledby="titulo-alarma"
-          className="rounded-lg border-4 border-clinico-rojo bg-clinico-rojo-suave p-4"
+          className="rounded-md border-l-[3px] border-l-clinico-rojo bg-muted/40 p-4"
         >
           <div className="flex items-start gap-2">
             <AlertTriangle aria-hidden="true" className="mt-1 size-7 shrink-0 text-clinico-rojo" />
-            <h2 id="titulo-alarma" className="text-xl font-bold text-clinico-rojo-foreground">
+            <h2 id="titulo-alarma" className="text-xl font-bold text-foreground">
               Vaya a emergencia de inmediato si {nino} presenta:
             </h2>
           </div>
@@ -149,7 +149,7 @@ export function VistaFamilia({ paciente }: { paciente: Paciente }) {
             {SENALES_DE_ALARMA.map((senal) => (
               <li
                 key={senal}
-                className="flex items-start gap-2 text-lg font-semibold text-clinico-rojo-foreground"
+                className="flex items-start gap-2 text-lg font-semibold text-foreground"
               >
                 <span aria-hidden="true" className="mt-2 size-2.5 shrink-0 rounded-full bg-clinico-rojo" />
                 {senal}
@@ -159,7 +159,7 @@ export function VistaFamilia({ paciente }: { paciente: Paciente }) {
 
           <div aria-live="polite">
             {respuesta.fiebreReportada ? (
-              <p className="mt-3 rounded-lg border-2 border-clinico-rojo bg-card p-4 text-lg font-bold text-clinico-rojo-foreground">
+              <p className="mt-3 rounded-md border-l-[3px] border-l-clinico-rojo bg-card p-4 text-lg font-bold text-foreground">
                 Reportado. El equipo de {nino} ya fue avisado.
               </p>
             ) : (
@@ -179,7 +179,7 @@ export function VistaFamilia({ paciente }: { paciente: Paciente }) {
         </section>
 
         {/* 6. Qué llevar */}
-        <section aria-labelledby="titulo-llevar" className="rounded-lg border border-border bg-card p-4">
+        <section aria-labelledby="titulo-llevar" className="bg-card p-4">
           <h2 id="titulo-llevar" className="text-xl font-bold text-foreground">
             Qué llevar
           </h2>
@@ -197,7 +197,7 @@ export function VistaFamilia({ paciente }: { paciente: Paciente }) {
         </section>
 
         {/* 7. Su equipo */}
-        <section aria-labelledby="titulo-equipo" className="rounded-lg border border-border bg-card p-4">
+        <section aria-labelledby="titulo-equipo" className="bg-card p-4">
           <h2 id="titulo-equipo" className="flex items-center gap-2 text-xl font-bold text-foreground">
             <Users aria-hidden="true" className="size-6 shrink-0 text-primary" />
             Su equipo
@@ -224,7 +224,7 @@ export function VistaFamilia({ paciente }: { paciente: Paciente }) {
         <CalendarioTratamiento paciente={paciente} />
 
         {/* 9. Vista SMS */}
-        <section aria-labelledby="titulo-sms" className="rounded-lg border border-border bg-secondary p-4">
+        <section aria-labelledby="titulo-sms" className="rounded-md border border-border bg-secondary p-4">
           <h2
             id="titulo-sms"
             className="flex items-center gap-2 text-xl font-bold text-secondary-foreground"
@@ -236,7 +236,7 @@ export function VistaFamilia({ paciente }: { paciente: Paciente }) {
             <p className="text-center text-[0.9375rem] font-bold uppercase tracking-wide text-foreground">
               Mensaje de texto
             </p>
-            <p className="mt-2 rounded-2xl bg-muted p-3 text-lg leading-snug text-foreground">{sms}</p>
+            <p className="mt-2 rounded-md bg-muted p-3 text-lg leading-snug text-foreground">{sms}</p>
             <p className="mt-2 text-center text-[0.9375rem] text-foreground">
               {sms.length} / 160 caracteres
             </p>

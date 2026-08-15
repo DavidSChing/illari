@@ -118,7 +118,7 @@ function VistaProgramacion() {
         </p>
         <p
           role="note"
-          className="flex items-start gap-2 rounded-md border border-clinico-ambar bg-clinico-ambar-suave px-3 py-2 text-base font-semibold text-clinico-ambar-foreground"
+          className="flex items-start gap-2 rounded-md border-l-[3px] border-l-clinico-ambar bg-muted/40 px-3 py-2 text-base font-semibold text-foreground"
         >
           <Info aria-hidden="true" className="mt-0.5 size-5 shrink-0" />
           Programación sugerida. La confirmación corresponde al equipo asistencial.
@@ -195,7 +195,7 @@ function VistaProgramacion() {
 
 
 
-      <section aria-labelledby="titulo-cola" className="rounded-md border border-border bg-card">
+      <section aria-labelledby="titulo-cola" className="bg-card">
         <h2
           id="titulo-cola"
           className="border-b border-border px-3 py-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground md:px-4"
@@ -233,7 +233,7 @@ function Indicador({
   valor: string;
 }) {
   return (
-    <div className="rounded-md border border-border bg-card px-4 py-3">
+    <div className="bg-card px-4 py-3">
       <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
         <Icono aria-hidden="true" className="size-4 shrink-0" />
         {etiqueta}
