@@ -1,5 +1,9 @@
+import { Anchor } from "lucide-react";
+
 import { composicionBloque, type BloqueProgramado } from "@/lib/programacion";
+import { MenuAjustePaciente } from "@/components/programacion/MenuAjustePaciente";
 import type { NivelSemaforo } from "@/data/tipos";
+
 
 const BARRA: Record<NivelSemaforo, string> = {
   rojo: "bg-clinico-rojo",
