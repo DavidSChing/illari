@@ -15,8 +15,8 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { BarraLateral } from "../components/layout/BarraLateral";
 import { BarraInferior } from "../components/layout/BarraInferior";
 import { BannerPrototipo } from "../components/layout/BannerPrototipo";
-import { ProveedorEstadoClinico } from "../state/EstadoClinico";
-
+import { PantallaLogin } from "../components/layout/PantallaLogin";
+import { ProveedorEstadoClinico, useEstadoClinico } from "../state/EstadoClinico";
 
 function NotFoundComponent() {
   return (
@@ -79,7 +79,6 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
-
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
     meta: [
@@ -132,33 +131,46 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  const rutaFamilia = useRouterState({
-    select: (estado) => estado.location.pathname.startsWith("/familia"),
-  });
 
   return (
     <QueryClientProvider client={queryClient}>
-     <ProveedorEstadoClinico>
-      <div className="flex min-h-screen w-full flex-col bg-background md:flex-row">
-        {!rutaFamilia && <BarraLateral />}
-        <div className="flex min-w-0 flex-1 flex-col">
-          {!rutaFamilia && <BannerPrototipo />}
-          <main
-            className={
-              rutaFamilia
-                ? "flex-1 px-3 py-2"
-                : "flex-1 px-3 pb-24 pt-3 sm:px-4 md:px-6 md:pb-6"
-            }
-          >
-            {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-            <Outlet />
-          </main>
-        </div>
-        {!rutaFamilia && <BarraInferior />}
-      </div>
-     </ProveedorEstadoClinico>
+      <ProveedorEstadoClinico>
+        <Compuerta />
+      </ProveedorEstadoClinico>
     </QueryClientProvider>
   );
 }
 
+function Compuerta() {
+  const rutaFamilia = useRouterState({
+    select: (estado) => estado.location.pathname.startsWith("/familia"),
+  });
+  const { autenticado, iniciarSesion } = useEstadoClinico();
 
+  // El enlace que reciben las familias (por SMS) es público: no debe pedir login de personal.
+  if (rutaFamilia) {
+    return (
+      <main className="flex-1 px-3 py-2">
+        <Outlet />
+      </main>
+    );
+  }
+
+  if (!autenticado) {
+    return <PantallaLogin onIngresar={iniciarSesion} />;
+  }
+
+  return (
+    <div className="flex min-h-screen w-full flex-col bg-background md:flex-row">
+      <BarraLateral />
+      <div className="flex min-w-0 flex-1 flex-col">
+        <BannerPrototipo />
+        <main className="flex-1 px-3 pb-24 pt-3 sm:px-4 md:px-6 md:pb-6">
+          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+          <Outlet />
+        </main>
+      </div>
+      <BarraInferior />
+    </div>
+  );
+}

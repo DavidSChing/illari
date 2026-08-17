@@ -66,6 +66,7 @@ const ESTADO_SEMILLA: EstadoPersistido = {
 
 const CLAVE_MEDICO_ACTUAL = "illari:medico-actual";
 const CLAVE_ROL = "illari:rol";
+const CLAVE_AUTENTICADO = "illari:autenticado";
 const CLAVE_CONSULTA = ["estado-clinico"] as const;
 const CLAVE_DISPONIBILIDAD_SMS = ["disponibilidad-sms"] as const;
 
@@ -81,6 +82,9 @@ interface EstadoClinicoValor {
   setMedicoActualId: (id: string) => void;
   rol: Rol;
   setRol: (rol: Rol) => void;
+  autenticado: boolean;
+  iniciarSesion: (rol: Rol) => void;
+  cerrarSesion: () => void;
   atenciones: RegistroAtencion[];
   registrarAtencion: (registro: Omit<RegistroAtencion, "id" | "fecha">) => void;
   obtenerPaciente: (id: string) => Paciente | undefined;
@@ -134,11 +138,13 @@ export function ProveedorEstadoClinico({ children }: { children: ReactNode }) {
 
   const [medicoActualId, establecerMedicoActualId] = useState("med-4");
   const [rol, establecerRol] = useState<Rol>("medico");
+  const [autenticado, establecerAutenticado] = useState(false);
   useEffect(() => {
     const medico = window.localStorage.getItem(CLAVE_MEDICO_ACTUAL);
     if (medico) establecerMedicoActualId(medico);
     const rolGuardado = window.localStorage.getItem(CLAVE_ROL);
     if (rolGuardado === "medico" || rolGuardado === "enfermera") establecerRol(rolGuardado);
+    establecerAutenticado(window.localStorage.getItem(CLAVE_AUTENTICADO) === "1");
   }, []);
   const setMedicoActualId = useCallback((id: string) => {
     establecerMedicoActualId(id);
@@ -147,6 +153,16 @@ export function ProveedorEstadoClinico({ children }: { children: ReactNode }) {
   const setRol = useCallback((nuevo: Rol) => {
     establecerRol(nuevo);
     window.localStorage.setItem(CLAVE_ROL, nuevo);
+  }, []);
+  const iniciarSesion = useCallback((nuevo: Rol) => {
+    establecerRol(nuevo);
+    window.localStorage.setItem(CLAVE_ROL, nuevo);
+    establecerAutenticado(true);
+    window.localStorage.setItem(CLAVE_AUTENTICADO, "1");
+  }, []);
+  const cerrarSesion = useCallback(() => {
+    establecerAutenticado(false);
+    window.localStorage.removeItem(CLAVE_AUTENTICADO);
   }, []);
 
   const actualizarCache = useCallback(
@@ -232,6 +248,9 @@ export function ProveedorEstadoClinico({ children }: { children: ReactNode }) {
       setMedicoActualId,
       rol,
       setRol,
+      autenticado,
+      iniciarSesion,
+      cerrarSesion,
       atenciones: estado.atenciones,
       registrarAtencion: (r) => mRegistrarAtencion.mutate(r),
       reasignarPrincipal: (c) => mReasignar.mutate(c),
@@ -263,7 +282,19 @@ export function ProveedorEstadoClinico({ children }: { children: ReactNode }) {
       enviarSms: (pacienteId, numero) => mEnviarSms.mutate({ pacienteId, numero }),
       enviandoSms: mEnviarSms.isPending,
     }),
-    [estado, medicoActualId, setMedicoActualId, rol, setRol, programacion, horas, consultaSms.data],
+    [
+      estado,
+      medicoActualId,
+      setMedicoActualId,
+      rol,
+      setRol,
+      autenticado,
+      iniciarSesion,
+      cerrarSesion,
+      programacion,
+      horas,
+      consultaSms.data,
+    ],
   );
 
   return <Contexto.Provider value={valor}>{children}</Contexto.Provider>;
