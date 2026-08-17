@@ -1,63 +1,86 @@
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
 import { pacientes as pacientesIniciales } from "@/data/pacientes";
 import { medicos as medicosIniciales } from "@/data/medicos";
 import { citasDeHoy } from "@/data/agenda";
 import type { Cita, Medico, Paciente } from "@/data/tipos";
 import { numerosInicialesDe, type NumeroSms } from "@/data/numerosSms";
 import type { ResultadoCarga } from "@/lib/excel/consolidar";
+import { OPCIONES_POR_DEFECTO, type AjustesManuales, type ResultadoProgramacion } from "@/lib/programacion";
+import { programarCitas, aProgramable, horasPorPaciente } from "@/lib/programacion";
 import {
-  OPCIONES_POR_DEFECTO,
-  aProgramable,
-  horasPorPaciente,
-  programarCitas,
-  type AjustesManuales,
-  type ResultadoProgramacion,
-} from "@/lib/programacion";
+  ALERTA_FIEBRE_FAMILIA,
+  agregarNumeroSms as agregarNumeroSmsFn,
+  alternarNumeroSms as alternarNumeroSmsFn,
+  aplicarCarga as aplicarCargaFn,
+  cambiarMotivoExclusion as cambiarMotivoExclusionFn,
+  cancelarAsistencia as cancelarAsistenciaFn,
+  confirmarAsistencia as confirmarAsistenciaFn,
+  disponibilidadSms,
+  editarNumeroSms as editarNumeroSmsFn,
+  eliminarNumeroSms as eliminarNumeroSmsFn,
+  enviarSms as enviarSmsFn,
+  excluirPaciente as excluirPacienteFn,
+  fijarEnBloque as fijarEnBloqueFn,
+  liberarPaciente as liberarPacienteFn,
+  limpiarCarga as limpiarCargaFn,
+  obtenerEstado,
+  reasignarPrincipal as reasignarPrincipalFn,
+  registrarAtencion as registrarAtencionFn,
+  reincluirPaciente as reincluirPacienteFn,
+  reportarFiebre as reportarFiebreFn,
+  setConfigProgramacion as setConfigProgramacionFn,
+  type CambioProgramacion,
+  type ConfigProgramacion,
+  type EstadoPersistido,
+  type RegistroAtencion,
+  type RegistroSms,
+  type RespuestaFamilia,
+} from "@/lib/clinico";
 
-export const ALERTA_FIEBRE_FAMILIA = "Fiebre reportada por la familia";
-
-/** Un ajuste manual del equipo asistencial sobre la propuesta automática. */
-export interface CambioProgramacion {
-  id: string;
-  /** HH:mm en que se hizo el ajuste. */
-  hora: string;
-  accion: string;
-}
-
-export type ConfigProgramacion = Omit<ResultadoProgramacion["opciones"], "ajustes">;
-
-
-export interface RegistroAtencion {
-  id: string;
-  pacienteId: string;
-  medicoId: string;
-  queSeHizo: string;
-  observaciones: string;
-  fechaProximaCita: string;
-  fecha: string;
-}
-
-export type AsistenciaFamilia = "sin_responder" | "confirmado" | "no_asistira";
-
-export interface RespuestaFamilia {
-  asistencia: AsistenciaFamilia;
-  motivo?: string;
-  fiebreReportada: boolean;
-}
+export { ALERTA_FIEBRE_FAMILIA };
+export type { AsistenciaFamilia, RegistroAtencion, RespuestaFamilia } from "@/lib/clinico";
+export type { CambioProgramacion, ConfigProgramacion };
 
 const RESPUESTA_VACIA: RespuestaFamilia = { asistencia: "sin_responder", fiebreReportada: false };
+export type Rol = "medico" | "enfermera";
+
+const ESTADO_SEMILLA: EstadoPersistido = {
+  pacientes: pacientesIniciales,
+  medicos: medicosIniciales,
+  citas: citasDeHoy,
+  carga: null,
+  atenciones: [],
+  respuestas: {},
+  numeros: {},
+  configProgramacion: {
+    capacidadPorBloque: OPCIONES_POR_DEFECTO.capacidadPorBloque,
+    horaInicio: OPCIONES_POR_DEFECTO.horaInicio,
+    intervaloBloques: OPCIONES_POR_DEFECTO.intervaloBloques,
+  },
+  ajustesProgramacion: {},
+  cambiosProgramacion: [],
+  smsEnviados: [],
+};
+
+const CLAVE_MEDICO_ACTUAL = "illari:medico-actual";
+const CLAVE_ROL = "illari:rol";
+const CLAVE_CONSULTA = ["estado-clinico"] as const;
+const CLAVE_DISPONIBILIDAD_SMS = ["disponibilidad-sms"] as const;
 
 interface EstadoClinicoValor {
   pacientes: Paciente[];
   medicos: Medico[];
   citas: Cita[];
   nombreMedico: (id: string) => string;
-  /** Resultado de la última carga de Excel (solo lectura sobre el archivo). */
   carga: ResultadoCarga | null;
   aplicarCarga: (resultado: ResultadoCarga) => void;
   limpiarCarga: () => void;
   medicoActualId: string;
   setMedicoActualId: (id: string) => void;
+  rol: Rol;
+  setRol: (rol: Rol) => void;
   atenciones: RegistroAtencion[];
   registrarAtencion: (registro: Omit<RegistroAtencion, "id" | "fecha">) => void;
   obtenerPaciente: (id: string) => Paciente | undefined;
@@ -67,7 +90,6 @@ interface EstadoClinicoValor {
   confirmarAsistencia: (pacienteId: string) => void;
   cancelarAsistencia: (pacienteId: string, motivo: string) => void;
   reportarFiebre: (pacienteId: string) => void;
-  // --- Programación de clínica de día ---
   configProgramacion: ConfigProgramacion;
   setConfigProgramacion: (parcial: Partial<ConfigProgramacion>) => void;
   programacion: ResultadoProgramacion;
@@ -79,361 +101,170 @@ interface EstadoClinicoValor {
   excluirPaciente: (pacienteId: string, motivo: string) => void;
   cambiarMotivoExclusion: (pacienteId: string, motivo: string) => void;
   reincluirPaciente: (pacienteId: string) => void;
-  // --- Números para recordatorios por SMS (solo en memoria) ---
   numerosSms: (pacienteId: string) => NumeroSms[];
   agregarNumeroSms: (pacienteId: string, etiqueta: string, numero: string) => void;
   editarNumeroSms: (pacienteId: string, id: string, etiqueta: string, numero: string) => void;
   alternarNumeroSms: (pacienteId: string, id: string) => void;
   eliminarNumeroSms: (pacienteId: string, id: string) => void;
-  /** Hora propuesta para el paciente en la programación vigente. */
   horaPropuesta: (pacienteId: string) => string | null;
+  smsReales: boolean;
+  smsEnviados: RegistroSms[];
+  enviarSms: (pacienteId: string, numero: string) => void;
+  enviandoSms: boolean;
 }
-
-
 
 const Contexto = createContext<EstadoClinicoValor | null>(null);
 
-/** Estado en memoria. No hay backend ni persistencia: al recargar vuelve a los datos sintéticos. */
 export function ProveedorEstadoClinico({ children }: { children: ReactNode }) {
-  const [pacientes, setPacientes] = useState<Paciente[]>(pacientesIniciales);
-  const [medicos, setMedicos] = useState<Medico[]>(medicosIniciales);
-  const [citas, setCitas] = useState<Cita[]>(citasDeHoy);
-  const [carga, setCarga] = useState<ResultadoCarga | null>(null);
-  const [medicoActualId, setMedicoActualId] = useState("med-4");
-  const [atenciones, setAtenciones] = useState<RegistroAtencion[]>([]);
-  const [respuestas, setRespuestas] = useState<Record<string, RespuestaFamilia>>({});
-  const [numeros, setNumeros] = useState<Record<string, NumeroSms[]>>({});
+  const queryClient = useQueryClient();
 
-  const numerosSms = useCallback(
-    (pacienteId: string) => numeros[pacienteId] ?? numerosInicialesDe(pacienteId),
-    [numeros],
-  );
-
-  const actualizarNumeros = useCallback(
-    (pacienteId: string, cambio: (lista: NumeroSms[]) => NumeroSms[]) => {
-      setNumeros((previos) => ({
-        ...previos,
-        [pacienteId]: cambio(previos[pacienteId] ?? numerosInicialesDe(pacienteId)),
-      }));
-    },
-    [],
-  );
-
-  const agregarNumeroSms = useCallback(
-    (pacienteId: string, etiqueta: string, numero: string) => {
-      actualizarNumeros(pacienteId, (lista) => [
-        ...lista,
-        { id: `${pacienteId}-sms-${Date.now()}`, etiqueta, numero, activo: true },
-      ]);
-    },
-    [actualizarNumeros],
-  );
-
-  const editarNumeroSms = useCallback(
-    (pacienteId: string, id: string, etiqueta: string, numero: string) => {
-      actualizarNumeros(pacienteId, (lista) =>
-        lista.map((item) => (item.id === id ? { ...item, etiqueta, numero } : item)),
-      );
-    },
-    [actualizarNumeros],
-  );
-
-  const alternarNumeroSms = useCallback(
-    (pacienteId: string, id: string) => {
-      actualizarNumeros(pacienteId, (lista) =>
-        lista.map((item) => (item.id === id ? { ...item, activo: !item.activo } : item)),
-      );
-    },
-    [actualizarNumeros],
-  );
-
-  const eliminarNumeroSms = useCallback(
-    (pacienteId: string, id: string) => {
-      actualizarNumeros(pacienteId, (lista) => lista.filter((item) => item.id !== id));
-    },
-    [actualizarNumeros],
-  );
-
-
-  const registrarAtencion = useCallback(
-    (registro: Omit<RegistroAtencion, "id" | "fecha">) => {
-      const hoy = new Date().toISOString().slice(0, 10);
-      setAtenciones((previas) => [
-        { ...registro, id: `at-${previas.length + 1}`, fecha: hoy },
-        ...previas,
-      ]);
-      setPacientes((previos) =>
-        previos.map((paciente) =>
-          paciente.id === registro.pacienteId
-            ? {
-                ...paciente,
-                fechaUltimaAtencion: hoy,
-                fechaProximaCita: registro.fechaProximaCita || paciente.fechaProximaCita,
-                atendidoUltimaVezPorId: registro.medicoId,
-              }
-            : paciente,
-        ),
-      );
-    },
-    [],
-  );
-
-  const reasignarPrincipal = useCallback(
-    (cambios: { pacienteId: string; aMedicoId: string }[]) => {
-      const mapa = new Map(cambios.map((cambio) => [cambio.pacienteId, cambio.aMedicoId]));
-      setPacientes((previos) =>
-        previos.map((paciente) => {
-          const nuevo = mapa.get(paciente.id);
-          return nuevo ? { ...paciente, medicoPrincipalId: nuevo } : paciente;
-        }),
-      );
-    },
-    [],
-  );
-
-  /** Reemplaza los datos sintéticos por los del Excel leído. Nunca modifica el archivo. */
-  const aplicarCarga = useCallback((resultado: ResultadoCarga) => {
-    setCarga(resultado);
-    setPacientes(resultado.pacientesApp);
-    setMedicos(resultado.medicos);
-    setCitas(resultado.citas);
-    setAtenciones([]);
-    setRespuestas({});
-    setMedicoActualId(resultado.medicos[0]?.id ?? "");
-  }, []);
-
-  const limpiarCarga = useCallback(() => {
-    setCarga(null);
-    setPacientes(pacientesIniciales);
-    setMedicos(medicosIniciales);
-    setCitas(citasDeHoy);
-    setAtenciones([]);
-    setRespuestas({});
-    setMedicoActualId("med-4");
-  }, []);
-
-  const confirmarAsistencia = useCallback((pacienteId: string) => {
-    setRespuestas((previas) => ({
-      ...previas,
-      [pacienteId]: {
-        ...(previas[pacienteId] ?? RESPUESTA_VACIA),
-        asistencia: "confirmado",
-        motivo: "",
-      },
-    }));
-  }, []);
-
-  const cancelarAsistencia = useCallback((pacienteId: string, motivo: string) => {
-    setRespuestas((previas) => ({
-      ...previas,
-      [pacienteId]: {
-        ...(previas[pacienteId] ?? RESPUESTA_VACIA),
-        asistencia: "no_asistira",
-        motivo,
-      },
-    }));
-  }, []);
-
-  const reportarFiebre = useCallback((pacienteId: string) => {
-    setRespuestas((previas) => ({
-      ...previas,
-      [pacienteId]: { ...(previas[pacienteId] ?? RESPUESTA_VACIA), fiebreReportada: true },
-    }));
-    setPacientes((previos) =>
-      previos.map((paciente) =>
-        paciente.id === pacienteId && !paciente.alertas.includes(ALERTA_FIEBRE_FAMILIA)
-          ? { ...paciente, alertas: [ALERTA_FIEBRE_FAMILIA, ...paciente.alertas] }
-          : paciente,
-      ),
-    );
-  }, []);
-
-
-  // --- Programación de clínica de día: la plataforma propone, el equipo decide ---
-  const [configProgramacion, setConfig] = useState<ConfigProgramacion>({
-    capacidadPorBloque: OPCIONES_POR_DEFECTO.capacidadPorBloque,
-    horaInicio: OPCIONES_POR_DEFECTO.horaInicio,
-    intervaloBloques: OPCIONES_POR_DEFECTO.intervaloBloques,
+  const consulta = useQuery({
+    queryKey: CLAVE_CONSULTA,
+    queryFn: () => obtenerEstado(),
+    refetchInterval: 4000,
+    refetchOnWindowFocus: true,
   });
-  const [ajustesProgramacion, setAjustes] = useState<AjustesManuales>({});
-  const [cambiosProgramacion, setCambios] = useState<CambioProgramacion[]>([]);
+  const estado = consulta.data ?? ESTADO_SEMILLA;
 
-  const setConfigProgramacion = useCallback((parcial: Partial<ConfigProgramacion>) => {
-    setConfig((previa) => ({ ...previa, ...parcial }));
+  const consultaSms = useQuery({
+    queryKey: CLAVE_DISPONIBILIDAD_SMS,
+    queryFn: () => disponibilidadSms(),
+    staleTime: 5 * 60_000,
+  });
+
+  const [medicoActualId, establecerMedicoActualId] = useState("med-4");
+  const [rol, establecerRol] = useState<Rol>("medico");
+  useEffect(() => {
+    const medico = window.localStorage.getItem(CLAVE_MEDICO_ACTUAL);
+    if (medico) establecerMedicoActualId(medico);
+    const rolGuardado = window.localStorage.getItem(CLAVE_ROL);
+    if (rolGuardado === "medico" || rolGuardado === "enfermera") establecerRol(rolGuardado);
+  }, []);
+  const setMedicoActualId = useCallback((id: string) => {
+    establecerMedicoActualId(id);
+    window.localStorage.setItem(CLAVE_MEDICO_ACTUAL, id);
+  }, []);
+  const setRol = useCallback((nuevo: Rol) => {
+    establecerRol(nuevo);
+    window.localStorage.setItem(CLAVE_ROL, nuevo);
   }, []);
 
-  const anotarCambio = useCallback((accion: string) => {
-    const hora = new Date().toLocaleTimeString("es-PE", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    });
-    setCambios((previos) => [
-      { id: `cambio-${previos.length + 1}-${Date.now()}`, hora, accion },
-      ...previos,
-    ]);
-  }, []);
-
-  const nombreDe = useCallback(
-    (pacienteId: string) =>
-      pacientes.find((paciente) => paciente.id === pacienteId)?.nombre ?? "Paciente",
-    [pacientes],
+  const actualizarCache = useCallback(
+    (nuevoEstado: EstadoPersistido) => queryClient.setQueryData(CLAVE_CONSULTA, nuevoEstado),
+    [queryClient],
   );
 
-  const moverABloque = useCallback(
-    (pacienteId: string, indiceBloque: number) => {
-      setAjustes((previos) => ({
-        ...previos,
-        fijados: { ...(previos.fijados ?? {}), [pacienteId]: indiceBloque },
-      }));
-      anotarCambio(`${nombreDe(pacienteId)}: movido al bloque ${indiceBloque + 1}`);
-    },
-    [anotarCambio, nombreDe],
+  function useMutar<T>(fn: (data: T) => Promise<EstadoPersistido>) {
+    return useMutation({ mutationFn: fn, onSuccess: actualizarCache });
+  }
+
+  const mRegistrarAtencion = useMutar((registro: Omit<RegistroAtencion, "id" | "fecha">) =>
+    registrarAtencionFn({ data: registro }),
   );
-
-  const fijarEnBloque = useCallback(
-    (pacienteId: string, indiceBloque: number) => {
-      setAjustes((previos) => ({
-        ...previos,
-        fijados: { ...(previos.fijados ?? {}), [pacienteId]: indiceBloque },
-      }));
-      anotarCambio(`${nombreDe(pacienteId)}: fijado en el bloque ${indiceBloque + 1}`);
-    },
-    [anotarCambio, nombreDe],
+  const mReasignar = useMutar((cambios: { pacienteId: string; aMedicoId: string }[]) =>
+    reasignarPrincipalFn({ data: { cambios } }),
   );
-
-  const liberarPaciente = useCallback(
-    (pacienteId: string) => {
-      setAjustes((previos) => {
-        const fijados = { ...(previos.fijados ?? {}) };
-        delete fijados[pacienteId];
-        return { ...previos, fijados };
-      });
-      anotarCambio(`${nombreDe(pacienteId)}: liberado del bloque fijado`);
+  const mAplicarCarga = useMutation({
+    mutationFn: (resultado: ResultadoCarga) => aplicarCargaFn({ data: resultado }),
+    onSuccess: (nuevo) => {
+      actualizarCache(nuevo);
+      setMedicoActualId(nuevo.medicos[0]?.id ?? "");
     },
-    [anotarCambio, nombreDe],
+  });
+  const mLimpiarCarga = useMutation({
+    mutationFn: () => limpiarCargaFn(),
+    onSuccess: (nuevo) => {
+      actualizarCache(nuevo);
+      setMedicoActualId("med-4");
+    },
+  });
+  const mConfirmar = useMutar((pacienteId: string) => confirmarAsistenciaFn({ data: { pacienteId } }));
+  const mCancelar = useMutar(({ pacienteId, motivo }: { pacienteId: string; motivo: string }) =>
+    cancelarAsistenciaFn({ data: { pacienteId, motivo } }),
   );
-
-  const excluirPaciente = useCallback(
-    (pacienteId: string, motivo: string) => {
-      setAjustes((previos) => {
-        const fijados = { ...(previos.fijados ?? {}) };
-        delete fijados[pacienteId];
-        return {
-          fijados,
-          excluidos: { ...(previos.excluidos ?? {}), [pacienteId]: motivo },
-        };
-      });
-      anotarCambio(`${nombreDe(pacienteId)}: excluido de la programación`);
-    },
-    [anotarCambio, nombreDe],
+  const mFiebre = useMutar((pacienteId: string) => reportarFiebreFn({ data: { pacienteId } }));
+  const mConfig = useMutar((parcial: Partial<ConfigProgramacion>) => setConfigProgramacionFn({ data: parcial }));
+  const mFijar = useMutar(({ pacienteId, indiceBloque }: { pacienteId: string; indiceBloque: number }) =>
+    fijarEnBloqueFn({ data: { pacienteId, indiceBloque } }),
   );
-
-  const cambiarMotivoExclusion = useCallback((pacienteId: string, motivo: string) => {
-    setAjustes((previos) => ({
-      ...previos,
-      excluidos: { ...(previos.excluidos ?? {}), [pacienteId]: motivo },
-    }));
-  }, []);
-
-  const reincluirPaciente = useCallback(
-    (pacienteId: string) => {
-      setAjustes((previos) => {
-        const excluidos = { ...(previos.excluidos ?? {}) };
-        delete excluidos[pacienteId];
-        return { ...previos, excluidos };
-      });
-      anotarCambio(`${nombreDe(pacienteId)}: devuelto a la programación`);
-    },
-    [anotarCambio, nombreDe],
+  const mLiberar = useMutar((pacienteId: string) => liberarPacienteFn({ data: { pacienteId } }));
+  const mExcluir = useMutar(({ pacienteId, motivo }: { pacienteId: string; motivo: string }) =>
+    excluirPacienteFn({ data: { pacienteId, motivo } }),
+  );
+  const mMotivoExclusion = useMutar(({ pacienteId, motivo }: { pacienteId: string; motivo: string }) =>
+    cambiarMotivoExclusionFn({ data: { pacienteId, motivo } }),
+  );
+  const mReincluir = useMutar((pacienteId: string) => reincluirPacienteFn({ data: { pacienteId } }));
+  const mAgregarNumero = useMutar(
+    ({ pacienteId, etiqueta, numero }: { pacienteId: string; etiqueta: string; numero: string }) =>
+      agregarNumeroSmsFn({ data: { pacienteId, etiqueta, numero } }),
+  );
+  const mEditarNumero = useMutar(
+    ({ pacienteId, id, etiqueta, numero }: { pacienteId: string; id: string; etiqueta: string; numero: string }) =>
+      editarNumeroSmsFn({ data: { pacienteId, id, etiqueta, numero } }),
+  );
+  const mAlternarNumero = useMutar(({ pacienteId, id }: { pacienteId: string; id: string }) =>
+    alternarNumeroSmsFn({ data: { pacienteId, id } }),
+  );
+  const mEliminarNumero = useMutar(({ pacienteId, id }: { pacienteId: string; id: string }) =>
+    eliminarNumeroSmsFn({ data: { pacienteId, id } }),
+  );
+  const mEnviarSms = useMutar(({ pacienteId, numero }: { pacienteId: string; numero: string }) =>
+    enviarSmsFn({ data: { pacienteId, numero } }),
   );
 
   const programacion = useMemo(
-    () =>
-      programarCitas(pacientes.map(aProgramable), {
-        ...configProgramacion,
-        ajustes: ajustesProgramacion,
-      }),
-    [pacientes, configProgramacion, ajustesProgramacion],
+    () => programarCitas(estado.pacientes.map(aProgramable), { ...estado.configProgramacion, ajustes: estado.ajustesProgramacion }),
+    [estado.pacientes, estado.configProgramacion, estado.ajustesProgramacion],
   );
-
   const horas = useMemo(() => horasPorPaciente(programacion), [programacion]);
 
   const valor = useMemo<EstadoClinicoValor>(
     () => ({
-      pacientes,
-      medicos,
-      citas,
-      nombreMedico: (id: string) => medicos.find((medico) => medico.id === id)?.nombre ?? "No registrado",
-      carga,
-      aplicarCarga,
-      limpiarCarga,
+      pacientes: estado.pacientes,
+      medicos: estado.medicos,
+      citas: estado.citas,
+      nombreMedico: (id) => estado.medicos.find((m) => m.id === id)?.nombre ?? "No registrado",
+      carga: estado.carga,
+      aplicarCarga: (r) => mAplicarCarga.mutate(r),
+      limpiarCarga: () => mLimpiarCarga.mutate(),
       medicoActualId,
       setMedicoActualId,
-      atenciones,
-      registrarAtencion,
-      reasignarPrincipal,
-      obtenerPaciente: (id) => pacientes.find((paciente) => paciente.id === id),
-      atencionesDePaciente: (pacienteId) =>
-        atenciones.filter((atencion) => atencion.pacienteId === pacienteId),
-      respuestaFamilia: (pacienteId) => respuestas[pacienteId] ?? RESPUESTA_VACIA,
-      confirmarAsistencia,
-      cancelarAsistencia,
-      reportarFiebre,
-      configProgramacion,
-      setConfigProgramacion,
+      rol,
+      setRol,
+      atenciones: estado.atenciones,
+      registrarAtencion: (r) => mRegistrarAtencion.mutate(r),
+      reasignarPrincipal: (c) => mReasignar.mutate(c),
+      obtenerPaciente: (id) => estado.pacientes.find((p) => p.id === id),
+      atencionesDePaciente: (pacienteId) => estado.atenciones.filter((a) => a.pacienteId === pacienteId),
+      respuestaFamilia: (pacienteId) => estado.respuestas[pacienteId] ?? RESPUESTA_VACIA,
+      confirmarAsistencia: (id) => mConfirmar.mutate(id),
+      cancelarAsistencia: (pacienteId, motivo) => mCancelar.mutate({ pacienteId, motivo }),
+      reportarFiebre: (id) => mFiebre.mutate(id),
+      configProgramacion: estado.configProgramacion,
+      setConfigProgramacion: (parcial) => mConfig.mutate(parcial),
       programacion,
-      ajustesProgramacion,
-      cambiosProgramacion,
-      moverABloque,
-      fijarEnBloque,
-      liberarPaciente,
-      excluirPaciente,
-      cambiarMotivoExclusion,
-      reincluirPaciente,
-      numerosSms,
-      agregarNumeroSms,
-      editarNumeroSms,
-      alternarNumeroSms,
-      eliminarNumeroSms,
+      ajustesProgramacion: estado.ajustesProgramacion,
+      cambiosProgramacion: estado.cambiosProgramacion,
+      moverABloque: (pacienteId, indiceBloque) => mFijar.mutate({ pacienteId, indiceBloque }),
+      fijarEnBloque: (pacienteId, indiceBloque) => mFijar.mutate({ pacienteId, indiceBloque }),
+      liberarPaciente: (id) => mLiberar.mutate(id),
+      excluirPaciente: (pacienteId, motivo) => mExcluir.mutate({ pacienteId, motivo }),
+      cambiarMotivoExclusion: (pacienteId, motivo) => mMotivoExclusion.mutate({ pacienteId, motivo }),
+      reincluirPaciente: (id) => mReincluir.mutate(id),
+      numerosSms: (pacienteId) => estado.numeros[pacienteId] ?? numerosInicialesDe(pacienteId),
+      agregarNumeroSms: (pacienteId, etiqueta, numero) => mAgregarNumero.mutate({ pacienteId, etiqueta, numero }),
+      editarNumeroSms: (pacienteId, id, etiqueta, numero) => mEditarNumero.mutate({ pacienteId, id, etiqueta, numero }),
+      alternarNumeroSms: (pacienteId, id) => mAlternarNumero.mutate({ pacienteId, id }),
+      eliminarNumeroSms: (pacienteId, id) => mEliminarNumero.mutate({ pacienteId, id }),
       horaPropuesta: (pacienteId) => horas[pacienteId] ?? null,
+      smsReales: consultaSms.data?.real ?? false,
+      smsEnviados: estado.smsEnviados,
+      enviarSms: (pacienteId, numero) => mEnviarSms.mutate({ pacienteId, numero }),
+      enviandoSms: mEnviarSms.isPending,
     }),
-    [
-      pacientes,
-      medicos,
-      citas,
-      carga,
-      aplicarCarga,
-      limpiarCarga,
-      medicoActualId,
-      atenciones,
-      registrarAtencion,
-      reasignarPrincipal,
-      respuestas,
-      confirmarAsistencia,
-      cancelarAsistencia,
-      reportarFiebre,
-      configProgramacion,
-      setConfigProgramacion,
-      programacion,
-      ajustesProgramacion,
-      cambiosProgramacion,
-      moverABloque,
-      fijarEnBloque,
-      liberarPaciente,
-      excluirPaciente,
-      cambiarMotivoExclusion,
-      reincluirPaciente,
-      numerosSms,
-      agregarNumeroSms,
-      editarNumeroSms,
-      alternarNumeroSms,
-      eliminarNumeroSms,
-      horas,
-    ],
+    [estado, medicoActualId, setMedicoActualId, rol, setRol, programacion, horas, consultaSms.data],
   );
-
-
 
   return <Contexto.Provider value={valor}>{children}</Contexto.Provider>;
 }

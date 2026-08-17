@@ -1,10 +1,6 @@
 import { ETIQUETA_NIVEL, type BloqueProgramado } from "@/lib/programacion";
-import { formatearFecha } from "@/lib/formato";
-
-/**
- * Salidas de la programación: texto para pegar en Excel y vista previa de los
- * mensajes a familias. Nada de esto envía información: solo la muestra.
- */
+import { mensajeRecordatorio } from "@/lib/familia";
+import type { Paciente } from "@/data/tipos";
 
 const ENCABEZADOS = ["Hora", "Paciente", "Nivel de alerta", "Bloque"] as const;
 
@@ -23,11 +19,6 @@ export function tablaProgramacion(bloques: BloqueProgramado[]): string {
   return [ENCABEZADOS.join("\t"), ...filas].join("\n");
 }
 
-/** Texto del SMS que se le mostraría a la familia. No se envía nada. */
-export function mensajeFamilia(fechaIso: string, hora: string): string {
-  return `INSN: cita de quimioterapia el ${formatearFecha(fechaIso)} a las ${hora}. Clinica de dia p3. Lleve DNI y SIS. Responda SI para confirmar.`;
-}
-
 export interface MensajePrograma {
   pacienteId: string;
   nombre: string;
@@ -35,16 +26,23 @@ export interface MensajePrograma {
   texto: string;
 }
 
+/** Mismo texto que se envía de verdad desde la ficha del paciente (lib/familia.ts). */
 export function mensajesDeProgramacion(
   bloques: BloqueProgramado[],
-  fechaPorPaciente: (pacienteId: string) => string,
+  obtenerPaciente: (pacienteId: string) => Paciente | undefined,
 ): MensajePrograma[] {
   return bloques.flatMap((bloque) =>
-    bloque.entradas.map((entrada) => ({
-      pacienteId: entrada.paciente.id,
-      nombre: entrada.paciente.nombre,
-      hora: bloque.hora,
-      texto: mensajeFamilia(fechaPorPaciente(entrada.paciente.id), bloque.hora),
-    })),
+    bloque.entradas.flatMap((entrada) => {
+      const paciente = obtenerPaciente(entrada.paciente.id);
+      if (!paciente) return [];
+      return [
+        {
+          pacienteId: entrada.paciente.id,
+          nombre: entrada.paciente.nombre,
+          hora: bloque.hora,
+          texto: mensajeRecordatorio(paciente, bloque.hora),
+        },
+      ];
+    }),
   );
 }

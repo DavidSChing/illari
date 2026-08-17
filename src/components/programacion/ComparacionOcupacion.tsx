@@ -128,13 +128,15 @@ export function ComparacionOcupacion({ actual, sugerida, capacidad }: Props) {
 
   return (
     <section aria-labelledby="titulo-comparacion" className="grid gap-3">
-      <h2 id="titulo-comparacion" className="text-lg font-bold text-foreground">
-        Comparación de la ocupación
-      </h2>
-      <p className="text-sm text-muted-foreground">
-        Ambos gráficos usan la misma escala vertical. La línea punteada marca la capacidad de{" "}
-        {capacidad} {capacidad === 1 ? "sillón" : "sillones"}.
-      </p>
+      <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+        <h2 id="titulo-comparacion" className="text-lg font-bold text-foreground">
+          Comparación de la ocupación
+        </h2>
+        <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+          <span aria-hidden="true" className="h-0 w-4 border-t-2 border-dashed border-foreground/40" />
+          Capacidad ({capacidad})
+        </span>
+      </div>
 
       <div className="grid gap-3 sm:grid-cols-2">
         <Grafico
