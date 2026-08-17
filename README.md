@@ -1,4 +1,4 @@
-# Ficha Rápida
+# ILLARI
 
 PROYECTO: Prototipo demostrativo para la Hackatón del Instituto Nacional de
 
