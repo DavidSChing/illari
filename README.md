@@ -8,6 +8,8 @@
 
 Solución desarrollada para la **Hackatón Niño San Borja 2026** del Instituto Nacional de Salud del Niño San Borja, en el **Desafío 3 — Ruta Hematológica: continuidad y calidad para cada paciente**.
 
+**[Ver demo](https://illari.lovable.app/)** · [El problema](#el-problema) · [La solución](#la-solución) · [Módulos](#módulos) · [Cómo ejecutarlo](#cómo-ejecutarlo) · [Cómo adaptarlo a otro servicio](#cómo-adaptarlo-a-otro-servicio) · [Componentes reutilizables](#componentes-reutilizables) · [Impacto y medición](#impacto-esperado-y-medición) · [Equipo](#equipo)
+
 ---
 
 ## El problema
@@ -210,13 +212,13 @@ La definición del problema proviene de la mentoría con un especialista del INS
 
 ## Equipo
 
-**ILLARI** — Pontificia Universidad Católica del Perú
+**ILLARI** — Estudiantes de Ingeniería Mecatrónica, Pontificia Universidad Católica del Perú
 
-| Integrante | Aporte |
-|---|---|
-| David Sung Ching Sato | Coordinación · Sistemas embebidos y procesamiento de señales |
-| Renzo Giancarlo Aliaga Sinche | Visión computacional e IA aplicada |
-| Zhaid Simon Condori Chocce | Instrumentación biomédica y adquisición de señales |
+| Integrante | GitHub | LinkedIn |
+|---|---|---|
+| David Sung Ching Sato | [@DavidSChing](https://github.com/DavidSChing) | [davidchingsato](https://www.linkedin.com/in/davidchingsato) |
+| Renzo Giancarlo Aliaga Sinche | [@RenAlisin23](https://github.com/RenAlisin23) | [renzoaliaga](https://www.linkedin.com/in/renzoaliaga/) |
+| Zhaid Simon Condori Chocce | — | [zhaidsimon](https://www.linkedin.com/in/zhaidsimon/) |
 
 Con la mentoría de especialistas del INSN San Borja.
 
